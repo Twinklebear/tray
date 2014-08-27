@@ -18,7 +18,8 @@ public:
 
 class Node {
 	std::vector<std::shared_ptr<Node>> children;
-	std::shared_ptr<Geometry> geometry;
+	//Non-owning reference to some geometry in the cache
+	Geometry *geometry;
 	Transform transform;
 	std::string name;
 
@@ -27,11 +28,10 @@ public:
 	 * Create a node in the scene graph, placing some named geometry in
 	 * the scene
 	 */
-	Node(const std::shared_ptr<Geometry> &geom, const Transform &t,
-		const std::string &name);
+	Node(Geometry *geom, const Transform &t, const std::string &name);
 	const std::vector<std::shared_ptr<Node>>& get_children() const;
 	std::vector<std::shared_ptr<Node>>& get_children();
-	const Geometry& get_geometry() const;
+	const Geometry* get_geometry() const;
 	const Transform& get_transform() const;
 	Transform& get_transform();
 };
