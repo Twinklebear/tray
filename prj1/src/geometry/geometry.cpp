@@ -22,4 +22,7 @@ const Transform& Node::get_transform() const {
 Transform& Node::get_transform(){
 	return transform;
 }
+const std::string& Node::get_name() const {
+	return name;
+}
 

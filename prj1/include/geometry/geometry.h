@@ -31,9 +31,13 @@ public:
 	Node(Geometry *geom, const Transform &t, const std::string &name);
 	const std::vector<std::shared_ptr<Node>>& get_children() const;
 	std::vector<std::shared_ptr<Node>>& get_children();
+	/*
+	 * Get the geometry for the node, or null if it has none associated with it
+	 */
 	const Geometry* get_geometry() const;
 	const Transform& get_transform() const;
 	Transform& get_transform();
+	const std::string& get_name() const;
 };
 
 #endif
