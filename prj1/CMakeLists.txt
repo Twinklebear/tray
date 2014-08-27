@@ -13,6 +13,8 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	endif()
 endif()
 
+# Use the math libs M_PI & etc
+add_definitions(-D_USE_MATH_DEFINES)
 set(CS6620_Prj1_INSTALL_DIR "${CS6620-Prj1_SOURCE_DIR}/bin")
 set(tinyxml2_SRC "${CS6620-Prj1_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
 include_directories(tinyxml2 include)
