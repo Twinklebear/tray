@@ -7,7 +7,7 @@
 #include "render/render_target.h"
 
 RenderTarget::RenderTarget(size_t width, size_t height) : width(width), height(height),
-	color(width * height), depth(width * height)
+	color(width * height), depth(width * height, std::numeric_limits<float>::max())
 {}
 void RenderTarget::write_pixel(size_t x, size_t y, const Color &c){
 	color[y * width + x] = c;

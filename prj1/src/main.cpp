@@ -25,9 +25,10 @@ int main(int argc, char **argv){
 	target.write_pixel(0, 1, Color{0, 0, 255});
 	target.write_pixel(1, 1, Color{255, 255, 255});
 
-	target.write_depth(0, 0, 100);
+	target.write_depth(1, 1, 100);
 	target.write_depth(1, 0, 50);
 	target.write_depth(0, 1, 25);
+	target.write_depth(0, 0, 0);
 
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");
