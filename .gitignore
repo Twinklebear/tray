@@ -6,6 +6,9 @@
 build/
 bin/
 
+# Ignored ycm compiled python file
+*.pyc
+
 # Swap files
 *.swp
 
