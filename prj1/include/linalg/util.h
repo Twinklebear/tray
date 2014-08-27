@@ -1,5 +1,5 @@
-#ifndef GEOM_UTIL_H
-#define GEOM_UTIL_H
+#ifndef LINALG_UTIL_H
+#define LINALG_UTIL_H
 
 #include <cmath>
 #include <algorithm>
