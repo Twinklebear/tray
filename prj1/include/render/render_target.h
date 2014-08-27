@@ -38,6 +38,8 @@ public:
 	bool save_depth(const std::string &file) const;
 	size_t get_width() const;
 	size_t get_height() const;
+	const std::vector<Color>& get_colorbuf() const;
+	const std::vector<float>& get_depthbuf() const;
 
 private:
 	/*

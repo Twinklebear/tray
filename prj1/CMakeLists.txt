@@ -3,6 +3,7 @@ project(CS6620_Prj1)
 
 # Bump up warning levels appropriately for each compiler
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+	# TODO: debug & release configurations
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -ggdb -std=c++11")
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")

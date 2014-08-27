@@ -28,6 +28,12 @@ size_t RenderTarget::get_width() const {
 size_t RenderTarget::get_height() const {
 	return height;
 }
+const std::vector<Color>& RenderTarget::get_colorbuf() const { 
+	return color;
+}
+const std::vector<float>& RenderTarget::get_depthbuf() const {
+	return depth;
+}
 std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 	std::vector<uint8_t> depth_norm(width * height);
 	//Determine the min/max range of depth values so we can scale
