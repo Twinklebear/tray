@@ -36,17 +36,13 @@ public:
 	 */
 	static Transform look_at(const Point &pos, const Point &center, const Vector &up);
 	/*
+	 * Get the perspective projection matrix
+	 */
+	static Transform perspective(float fov, float near, float far);
+	/*
 	 * Get a transform representing the inverse of this one
 	 */
 	Transform inverse() const;
-	/*
-	 * Check if the matrix contains a scaling component
-	 */
-	bool has_scaling() const;
-	/*
-	 * Check if this transformation swaps coordinate system handedness
-	 */
-	bool swaps_handedness() const;
 	bool operator==(const Transform &t) const;
 	bool operator!=(const Transform &t) const;
 	/*

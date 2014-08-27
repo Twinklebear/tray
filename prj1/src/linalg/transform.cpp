@@ -118,23 +118,24 @@ Transform Transform::look_at(const Point &pos, const Point &center, const Vector
 	m[3][3] = 1;
 	return Transform(m.inverse(), m);
 }
+Transform Transform::perspective(float fov, float near, float far){
+	Matrix4 proj_div{{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, far / (far - near), -far * near / (far - near),
+		0, 0, 1, 0
+	}};
+	float inv_tan = 1 / std::tan(radians(fov) / 2);
+	Matrix4 scale{{
+		inv_tan, 0, 0, 0,
+		0, inv_tan, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	}};
+	return Transform{scale * proj_div};
+}
 Transform Transform::inverse() const {
 	return Transform{inv, mat};
-}
-bool Transform::has_scaling() const {
-	float x = (*this)(Vector{1, 0, 0}).length_sqr();
-	float y = (*this)(Vector{0, 1, 0}).length_sqr();
-	float z = (*this)(Vector{0, 1, 0}).length_sqr();
-#define NOT_ONE(X) ((X) < .999f || (X) > 1.001f)
-	return NOT_ONE(x) || NOT_ONE(y) || NOT_ONE(z);
-#undef NOT_ONE
-	return false;
-}
-bool Transform::swaps_handedness() const {
-	float det = mat[0][0] * (mat[1][1] * mat[2][2] - mat[1][2] * mat[2][1])
-		- mat[0][1] * (mat[1][0] * mat[2][2] - mat[1][2] * mat[2][0])
-		+ mat[0][2] * (mat[1][0] * mat[2][1] - mat[1][1] * mat[2][0]);
-	return det < 0.f;
 }
 bool Transform::operator==(const Transform &t) const {
 	return mat == t.mat && inv == t.inv;
