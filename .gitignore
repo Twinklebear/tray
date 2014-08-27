@@ -1,0 +1,65 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.dll
+build/
+bin/
+
+# Swap files
+*.swp
+
+# external projects
+external
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+*.exe
+*.pdb
+*.ilk
+*.tlog
+*.obj
+*.log
+*.lastbuildstate
+*.opensdf
+*.sdf
+*.suo
+*.out
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.vspscc
+.builds
+*.dotCover
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+
+# Visual Studio profiler
+*.psess
+*.vsp
+
+Lesson*/Debug
+Lesson*/Release
+out/
