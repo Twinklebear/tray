@@ -9,6 +9,10 @@
 
 class Geometry {
 public:
+	/*
+	 * Test a ray for intersection with the geometry.
+	 * The ray should have been previously transformed into object space
+	 */
 	virtual bool intersect(Ray &r) = 0;
 };
 
