@@ -13,7 +13,7 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 endif()
 
 set(CS6620_Prj1_INSTALL_DIR "${CS6620-Prj1_SOURCE_DIR}/bin")
-set(tinyxml2_SRC "${CS6620-Prj1_SOURCE_DIR}/external/tinyxml2.cpp")
-include_directories(external include)
+set(tinyxml2_SRC "${CS6620-Prj1_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
+include_directories(tinyxml2 include)
 add_subdirectory(src)
 

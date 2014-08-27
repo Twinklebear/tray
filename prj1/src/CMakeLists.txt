@@ -1,5 +1,5 @@
 add_subdirectory(linalg)
-add_executable(proj1 main.cpp ${tinyxml2_SRC})
+add_executable(proj1 main.cpp args.cpp load_scene.cpp ${tinyxml2_SRC})
 
 # Need to link libm on Unix
 if (NOT WIN32)
