@@ -1,6 +1,9 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include "point.h"
+#include "vector.h"
+#include "ray.h"
 #include "matrix4.h"
 
 /*
@@ -40,6 +43,10 @@ public:
 	 */
 	static Transform perspective(float fov, float near, float far);
 	/*
+	 * Get the orthographic projection matrix
+	 */
+	static Transform orthographic(float near, float far);
+	/*
 	 * Get a transform representing the inverse of this one
 	 */
 	Transform inverse() const;
@@ -65,7 +72,10 @@ public:
 	 */
 	Transform operator*(const Transform &t) const;
 	Transform& operator*=(const Transform &t);
+	//Debug printing
+	void print(std::ostream &os) const;
 };
+std::ostream& operator<<(std::ostream &os, const Transform &t);
 
 #endif
 

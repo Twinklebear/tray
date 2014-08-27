@@ -126,13 +126,10 @@ Transform Transform::perspective(float fov, float near, float far){
 		0, 0, 1, 0
 	}};
 	float inv_tan = 1 / std::tan(radians(fov) / 2);
-	Matrix4 scale{{
-		inv_tan, 0, 0, 0,
-		0, inv_tan, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	}};
-	return Transform{scale * proj_div};
+	return scale(inv_tan, inv_tan, 1) * Transform{proj_div};
+}
+Transform Transform::orthographic(float near, float far){
+	return scale(1, 1, 1 / (far - near)) * translate(Vector{0, 0, -near});
 }
 Transform Transform::inverse() const {
 	return Transform{inv, mat};
@@ -211,5 +208,12 @@ Transform& Transform::operator*=(const Transform &t){
 	inv *= t.inv;
 	return *this;
 }
-
+void Transform::print(std::ostream &os) const {
+	os << "Transform [mat = " << mat
+		<< "\n\tinv = " << inv << "]";
+}
+std::ostream& operator<<(std::ostream &os, const Transform &t){
+	t.print(os);
+	return os;
+}
 
