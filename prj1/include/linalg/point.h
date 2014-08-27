@@ -96,5 +96,7 @@ inline std::ostream& operator<<(std::ostream &os, const Point &p){
 	return os;
 }
 
+Vector::Vector(const Point &p) : x(p.x), y(p.y), z(p.z){}
+
 #endif
 

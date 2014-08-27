@@ -6,6 +6,7 @@
 
 struct Vector;
 struct Normal;
+struct Point;
 inline Vector operator+(const Vector &a, const Vector &b);
 inline Vector operator-(const Vector &a, const Vector &b);
 inline Vector operator*(const Vector &v, float s);
@@ -25,6 +26,7 @@ struct Vector {
 	inline Vector(float x = 0) : x(x), y(x), z(x) {}
 	inline Vector(float x, float y, float z) : x(x), y(y), z(z) {}
 	inline explicit Vector(const Normal &n);
+	inline explicit Vector(const Point &p);
 	inline float dot(const Vector &v) const {
 		return x * v.x + y * v.y + z * v.z;
 	}
