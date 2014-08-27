@@ -1,6 +1,7 @@
 #ifndef RENDER_TARGET_H
 #define RENDER_TARGET_H
 
+#include <string>
 #include <vector>
 
 //Since we fwrite this struct directly and PPM only takes RGB (24 bits)
@@ -27,7 +28,7 @@ public:
 	/*
 	 * Write a color value to the image at pixel(x, y)
 	 */
-	void write_pixel(size_t x, size_t y, const Color &color);
+	void write_pixel(size_t x, size_t y, const Color &c);
 	/*
 	 * Write a depth value to the depth buffer at pixel(x, y)
 	 */
@@ -39,13 +40,20 @@ public:
 	size_t get_height() const;
 
 private:
-	//Generate a normalized luminosity image of the depth buffer
-	void generate_depth_img();
 	/*
-	 * Save data as a PPM image to the file, the PPM will have n_comp
-	 * components per pixel
+	 * Generate a normalized luminosity image of the depth buffer
 	 */
-	bool save_ppm(const std::string &file, int n_comp, uint8_t *data) const;
+	std::vector<uint8_t> generate_depth_img() const;
+	/*
+	 * Save color data as a PPM image to the file, data should be
+	 * RGB8 data and have width * height elements
+	 */
+	bool save_ppm(const std::string &file, const uint8_t *data) const;
+	/*
+	 * Save data as a PGM image to the file, data should
+	 * be R8 data and have width * height elements, image will be grayscale
+	 */
+	bool save_pgm(const std::string &file, const uint8_t *data) const;
 };
 
 #endif
