@@ -14,7 +14,8 @@
 inline float lerp(float t, float a, float b){
 	return (1.f - t) * a + t * b;
 }
-inline float clamp(float x, float l, float h){
+template<typename T>
+inline T clamp(T x, T l, T h){
 	return x < l ? l : x > h ? h : x;
 }
 //Version of mod that handles negatives cleaner, % is undefined in this case
