@@ -1,2 +1,2 @@
-add_library(render render_target.cpp)
+add_library(render render_target.cpp camera.cpp)
 
