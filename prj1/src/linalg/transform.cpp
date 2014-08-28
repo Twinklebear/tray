@@ -112,10 +112,7 @@ Transform Transform::look_at(const Point &pos, const Point &center, const Vector
 		m[i][2] = dir[i];
 		m[i][3] = pos[i];
 	}
-	m[0][3] = 0;
-	m[1][3] = 0;
-	m[2][3] = 0;
-	m[3][3] = 1;
+	std::cout << "Matrix: " << m << std::endl;
 	return Transform(m.inverse(), m);
 }
 Transform Transform::perspective(float fov, float near, float far){
