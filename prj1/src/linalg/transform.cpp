@@ -112,7 +112,6 @@ Transform Transform::look_at(const Point &pos, const Point &center, const Vector
 		m[i][2] = dir[i];
 		m[i][3] = pos[i];
 	}
-	std::cout << "Matrix: " << m << std::endl;
 	return Transform(m.inverse(), m);
 }
 Transform Transform::perspective(float fov, float near, float far){
@@ -122,7 +121,7 @@ Transform Transform::perspective(float fov, float near, float far){
 		0, 0, far / (far - near), -far * near / (far - near),
 		0, 0, 1, 0
 	}};
-	float inv_tan = 1 / std::tan(radians(fov) / 2);
+	float inv_tan = 1 / std::tan(radians(fov) / 2.f);
 	return scale(inv_tan, inv_tan, 1) * Transform{proj_div};
 }
 Transform Transform::orthographic(float near, float far){

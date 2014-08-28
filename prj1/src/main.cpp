@@ -34,9 +34,9 @@ int main(int argc, char **argv){
 
 	for (size_t y = 0; y < target.get_height(); ++y){
 		for (size_t x = 0; x < target.get_width(); ++x){
+			//std::cout << "Pixel at " << x << ", " << y << std::endl;
 			Ray ray = camera.generate_ray(x + 0.5, y + 0.5);
 			if (intersect_children(root, ray)){
-				std::cout << "Got a hit at t = " << ray.max_t << "!\n";
 				target.write_pixel(x, y, Color{255, 255, 255});
 				target.write_depth(x, y, ray.max_t);
 			}
@@ -52,8 +52,6 @@ bool intersect_children(Node &node, Ray &ray){
 	//Transform the ray into this nodes space
 	Ray node_space = ray;
 	node.get_transform().inverse()(ray, node_space);
-	std::cout << "Testing node: " << node.get_name()
-		<< " node_space ray: " << node_space << std::endl;
 	for (auto &c : node.get_children()){
 		hit = intersect_children(*c, node_space);
 	}
