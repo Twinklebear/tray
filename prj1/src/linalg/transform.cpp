@@ -6,7 +6,7 @@
 #include "linalg/matrix4.h"
 #include "linalg/transform.h"
 
-Transform::Transform() : mat(), inv() {}
+Transform::Transform(){}
 Transform::Transform(const Matrix4 &mat) : mat(mat), inv(mat.inverse()) {}
 Transform::Transform(const Matrix4 &mat, const Matrix4 &inv) : mat(mat), inv(inv) {}
 Transform Transform::translate(const Vector &v){
