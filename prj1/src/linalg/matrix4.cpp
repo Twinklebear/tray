@@ -16,119 +16,119 @@ Matrix4 Matrix4::inverse() const {
 	Matrix4 inv;
 	float det;
 	inv.mat[0] = mat[5] * mat[10] * mat[15]
-		- mat[5]  * mat[11] * mat[14]
-		- mat[9]  * mat[6]  * mat[15]
-		+ mat[9]  * mat[7]  * mat[14]
-		+ mat[13] * mat[6]  * mat[11]
-		- mat[13] * mat[7]  * mat[10];
-
-	inv.mat[4] = -mat[4]  * mat[10] * mat[15]
-		+ mat[4]  * mat[11] * mat[14]
-		+ mat[8]  * mat[6]  * mat[15]
-		- mat[8]  * mat[7]  * mat[14]
-		- mat[12] * mat[6]  * mat[11]
-		+ mat[12] * mat[7]  * mat[10];
-
-	inv.mat[8] = mat[4]  * mat[9] * mat[15]
-		- mat[4]  * mat[11] * mat[13]
-		- mat[8]  * mat[5] * mat[15]
-		+ mat[8]  * mat[7] * mat[13]
-		+ mat[12] * mat[5] * mat[11]
-		- mat[12] * mat[7] * mat[9];
-
-	inv.mat[12] = -mat[4]  * mat[9] * mat[14]
-		+ mat[4]  * mat[10] * mat[13]
-		+ mat[8]  * mat[5] * mat[14]
-		- mat[8]  * mat[6] * mat[13]
-		- mat[12] * mat[5] * mat[10]
-		+ mat[12] * mat[6] * mat[9];
+		- mat[5]  * mat[14] * mat[11]
+		- mat[6]  * mat[9]  * mat[15]
+		+ mat[6]  * mat[13]  * mat[11]
+		+ mat[7] * mat[9]  * mat[14]
+		- mat[7] * mat[13]  * mat[10];
 
 	inv.mat[1] = -mat[1]  * mat[10] * mat[15]
-		+ mat[1]  * mat[11] * mat[14]
-		+ mat[9]  * mat[2] * mat[15]
-		- mat[9]  * mat[3] * mat[14]
-		- mat[13] * mat[2] * mat[11]
-		+ mat[13] * mat[3] * mat[10];
-
-	inv.mat[5] = mat[0]  * mat[10] * mat[15]
-		- mat[0]  * mat[11] * mat[14]
-		- mat[8]  * mat[2] * mat[15]
-		+ mat[8]  * mat[3] * mat[14]
-		+ mat[12] * mat[2] * mat[11]
-		- mat[12] * mat[3] * mat[10];
-
-	inv.mat[9] = -mat[0]  * mat[9] * mat[15]
-		+ mat[0]  * mat[11] * mat[13]
-		+ mat[8]  * mat[1] * mat[15]
-		- mat[8]  * mat[3] * mat[13]
-		- mat[12] * mat[1] * mat[11]
-		+ mat[12] * mat[3] * mat[9];
-
-	inv.mat[13] = mat[0]  * mat[9] * mat[14]
-		- mat[0]  * mat[10] * mat[13]
-		- mat[8]  * mat[1] * mat[14]
-		+ mat[8]  * mat[2] * mat[13]
-		+ mat[12] * mat[1] * mat[10]
-		- mat[12] * mat[2] * mat[9];
+		+ mat[1]  * mat[14] * mat[11]
+		+ mat[2]  * mat[9]  * mat[15]
+		- mat[2]  * mat[13]  * mat[11]
+		- mat[3] * mat[9]  * mat[14]
+		+ mat[3] * mat[13]  * mat[10];
 
 	inv.mat[2] = mat[1]  * mat[6] * mat[15]
-		- mat[1]  * mat[7] * mat[14]
-		- mat[5]  * mat[2] * mat[15]
-		+ mat[5]  * mat[3] * mat[14]
-		+ mat[13] * mat[2] * mat[7]
-		- mat[13] * mat[3] * mat[6];
+		- mat[1]  * mat[14] * mat[7]
+		- mat[2]  * mat[5] * mat[15]
+		+ mat[2]  * mat[13] * mat[7]
+		+ mat[3] * mat[5] * mat[14]
+		- mat[3] * mat[13] * mat[6];
+
+	inv.mat[3] = -mat[1]  * mat[6] * mat[11]
+		+ mat[1]  * mat[10] * mat[7]
+		+ mat[2]  * mat[5] * mat[11]
+		- mat[2]  * mat[9] * mat[7]
+		- mat[3] * mat[5] * mat[10]
+		+ mat[3] * mat[9] * mat[6];
+
+	inv.mat[4] = -mat[4]  * mat[10] * mat[15]
+		+ mat[4]  * mat[14] * mat[11]
+		+ mat[6]  * mat[8] * mat[15]
+		- mat[6]  * mat[12] * mat[11]
+		- mat[7] * mat[8] * mat[14]
+		+ mat[7] * mat[12] * mat[10];
+
+	inv.mat[5] = mat[0]  * mat[10] * mat[15]
+		- mat[0]  * mat[14] * mat[11]
+		- mat[2]  * mat[8] * mat[15]
+		+ mat[2]  * mat[12] * mat[11]
+		+ mat[3] * mat[8] * mat[14]
+		- mat[3] * mat[12] * mat[10];
 
 	inv.mat[6] = -mat[0]  * mat[6] * mat[15]
-		+ mat[0]  * mat[7] * mat[14]
-		+ mat[4]  * mat[2] * mat[15]
-		- mat[4]  * mat[3] * mat[14]
-		- mat[12] * mat[2] * mat[7]
-		+ mat[12] * mat[3] * mat[6];
+		+ mat[0]  * mat[14] * mat[7]
+		+ mat[2]  * mat[4] * mat[15]
+		- mat[2]  * mat[12] * mat[7]
+		- mat[3] * mat[4] * mat[14]
+		+ mat[3] * mat[12] * mat[6];
+
+	inv.mat[7] = mat[0]  * mat[6] * mat[11]
+		- mat[0]  * mat[10] * mat[7]
+		- mat[2]  * mat[4] * mat[11]
+		+ mat[2]  * mat[8] * mat[7]
+		+ mat[3] * mat[4] * mat[10]
+		- mat[3] * mat[8] * mat[6];
+
+	inv.mat[8] = mat[4]  * mat[9] * mat[15]
+		- mat[4]  * mat[13] * mat[11]
+		- mat[5]  * mat[8] * mat[15]
+		+ mat[5]  * mat[12] * mat[11]
+		+ mat[7] * mat[8] * mat[13]
+		- mat[7] * mat[12] * mat[9];
+
+	inv.mat[9] = -mat[0]  * mat[9] * mat[15]
+		+ mat[0]  * mat[13] * mat[11]
+		+ mat[1]  * mat[8] * mat[15]
+		- mat[1]  * mat[12] * mat[11]
+		- mat[3] * mat[8] * mat[13]
+		+ mat[3] * mat[12] * mat[9];
 
 	inv.mat[10] = mat[0]  * mat[5] * mat[15]
-		- mat[0]  * mat[7] * mat[13]
-		- mat[4]  * mat[1] * mat[15]
-		+ mat[4]  * mat[3] * mat[13]
-		+ mat[12] * mat[1] * mat[7]
-		- mat[12] * mat[3] * mat[5];
+		- mat[0]  * mat[13] * mat[7]
+		- mat[1]  * mat[4] * mat[15]
+		+ mat[1]  * mat[12] * mat[7]
+		+ mat[3] * mat[4] * mat[13]
+		- mat[3] * mat[12] * mat[5];
 
-	inv.mat[14] = -mat[0]  * mat[5] * mat[14]
-		+ mat[0]  * mat[6] * mat[13]
-		+ mat[4]  * mat[1] * mat[14]
-		- mat[4]  * mat[2] * mat[13]
-		- mat[12] * mat[1] * mat[6]
-		+ mat[12] * mat[2] * mat[5];
+	inv.mat[11] = -mat[0]  * mat[5] * mat[11]
+		+ mat[0]  * mat[9] * mat[7]
+		+ mat[1]  * mat[4] * mat[11]
+		- mat[1]  * mat[8] * mat[7]
+		- mat[3] * mat[4] * mat[9]
+		+ mat[3] * mat[8] * mat[5];
 
-	inv.mat[3] = -mat[1] * mat[6] * mat[11]
-		+ mat[1] * mat[7] * mat[10]
-		+ mat[5] * mat[2] * mat[11]
-		- mat[5] * mat[3] * mat[10]
-		- mat[9] * mat[2] * mat[7]
-		+ mat[9] * mat[3] * mat[6];
+	inv.mat[12] = -mat[4] * mat[9] * mat[14]
+		+ mat[4] * mat[13] * mat[10]
+		+ mat[5] * mat[8] * mat[14]
+		- mat[5] * mat[12] * mat[10]
+		- mat[6] * mat[8] * mat[13]
+		+ mat[6] * mat[12] * mat[9];
 
-	inv.mat[7] = mat[0] * mat[6] * mat[11]
-		- mat[0] * mat[7] * mat[10]
-		- mat[4] * mat[2] * mat[11]
-		+ mat[4] * mat[3] * mat[10]
-		+ mat[8] * mat[2] * mat[7]
-		- mat[8] * mat[3] * mat[6];
+	inv.mat[13] = mat[0] * mat[9] * mat[14]
+		- mat[0] * mat[13] * mat[10]
+		- mat[1] * mat[8] * mat[14]
+		+ mat[1] * mat[12] * mat[10]
+		+ mat[2] * mat[8] * mat[13]
+		- mat[2] * mat[12] * mat[9];
 
-	inv.mat[11] = -mat[0] * mat[5] * mat[11]
-		+ mat[0] * mat[7] * mat[9]
-		+ mat[4] * mat[1] * mat[11]
-		- mat[4] * mat[3] * mat[9]
-		- mat[8] * mat[1] * mat[7]
-		+ mat[8] * mat[3] * mat[5];
+	inv.mat[14] = -mat[0] * mat[5] * mat[14]
+		+ mat[0] * mat[13] * mat[6]
+		+ mat[1] * mat[4] * mat[14]
+		- mat[1] * mat[12] * mat[6]
+		- mat[2] * mat[4] * mat[13]
+		+ mat[2] * mat[12] * mat[5];
 
 	inv.mat[15] = mat[0] * mat[5] * mat[10]
-		- mat[0] * mat[6] * mat[9]
-		- mat[4] * mat[1] * mat[10]
-		+ mat[4] * mat[2] * mat[9]
-		+ mat[8] * mat[1] * mat[6]
-		- mat[8] * mat[2] * mat[5];
+		- mat[0] * mat[9] * mat[6]
+		- mat[1] * mat[4] * mat[10]
+		+ mat[1] * mat[8] * mat[6]
+		+ mat[2] * mat[4] * mat[9]
+		- mat[2] * mat[8] * mat[5];
 
-	det = mat[0] * inv.mat[0] + mat[1] * inv.mat[4]
-		+ mat[2] * inv.mat[8] + mat[3] * inv.mat[12];
+	det = mat[0] * inv.mat[0] + mat[4] * inv.mat[1]
+		+ mat[8] * inv.mat[2] + mat[12] * inv.mat[3];
 	assert(det != 0);
 	det = 1.0 / det;
 
