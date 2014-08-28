@@ -1,38 +1,39 @@
+#include <iostream>
+#include "linalg/util.h"
 #include "linalg/ray.h"
 #include "linalg/vector.h"
 #include "geometry/sphere.h"
 
 Sphere::Sphere(const Point &center, float radius) : center(center), radius(radius){}
 bool Sphere::intersect(Ray &ray){
-	Vector l = center - ray.o;
-	float l_sqr = l.dot(l);
-	//s is l projected along the ray direction to the sphere
-	float s = l.dot(ray.d);
-	//Gonna need radius^2 a lot, so pre-compute it
-	float r_sqr = radius * radius;
-
-	//If s < 0 and ray origin is out of the sphere then the sphere is behind the ray
-	if (s < 0 && l_sqr > r_sqr){
+	//Compute quadratic sphere coefficients
+	Vector ray_orig{ray.o};
+	float a = ray.d.length_sqr();
+	float b = 2 * ray.d.dot(ray_orig);
+	float c = ray_orig.length_sqr() - radius * radius;
+	//Solve quadratic equation for t values
+	//If no solutions exist the ray doesn't intersect the sphere
+	float t[2];
+	if (!solve_quadratic(a, b, c, t[0], t[1])){
+		std::cout << "no solutions\n";
 		return false;
 	}
-
-	//m is the final piece of the triangle spanned by l & s
-	//if the distance is further than the radius we definitely don't hit
-	float m_sqr = l_sqr - s * s;
-	if (m_sqr > r_sqr){
+	//Early out, if t[0] (min) is > max or t[1] (max) is < min then both
+	//our hits are outside of the region we're testing
+	if (t[0] > ray.max_t || t[1] < ray.min_t){
+		std::cout << "not in range\n";
 		return false;
 	}
-
-	//Definitely have a hit, find out where by completing the triangle
-	//spanned by m & r, then use l_sqr and r_sqr to determine if we're hitting
-	//the sphere from the outside or if the ray originated inside and we're exiting
-	float q = std::sqrt(r_sqr - m_sqr);
-	float t = l_sqr > r_sqr ? s - q : s + q;
-	//If this is the closest object hit by the ray so far, count the hit
-	if (t < ray.max_t){
-		ray.max_t = t;
-		return true;
+	//Find the t value that is within the region we care about, or return if neither is
+	float t_hit = t[0];
+	if (t_hit < ray.min_t){
+		t_hit = t[1];
+		if (t_hit > ray.max_t){
+			std::cout << "not in range\n";
+			return false;
+		}
 	}
-	return false;
+	ray.max_t = t_hit;
+	return true;
 }
 

@@ -40,7 +40,7 @@ inline float log_2(float x){
  */
 inline bool solve_quadratic(float a, float b, float c, float &t0, float &t1){
 	float discrim = b * b - 4 * a * c;
-	if (discrim < 0){
+	if (discrim <= 0){
 		return false;
 	}
 	discrim = std::sqrt(discrim);
