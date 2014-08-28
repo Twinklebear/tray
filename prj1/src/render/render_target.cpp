@@ -6,6 +6,8 @@
 #include "linalg/util.h"
 #include "render/render_target.h"
 
+Color::Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+
 RenderTarget::RenderTarget(size_t width, size_t height) : width(width), height(height),
 	color(width * height), depth(width * height, std::numeric_limits<float>::max())
 {}
