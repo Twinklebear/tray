@@ -35,6 +35,7 @@ public:
 	 * Get the geometry for the node, or null if it has none associated with it
 	 */
 	const Geometry* get_geometry() const;
+	Geometry* get_geometry();
 	const Transform& get_transform() const;
 	Transform& get_transform();
 	const std::string& get_name() const;

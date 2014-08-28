@@ -16,6 +16,9 @@ std::vector<std::shared_ptr<Node>>& Node::get_children(){
 const Geometry* Node::get_geometry() const {
 	return geometry;
 }
+Geometry* Node::get_geometry(){
+	return geometry;
+}
 const Transform& Node::get_transform() const {
 	return transform;
 }
