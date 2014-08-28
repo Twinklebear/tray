@@ -13,10 +13,20 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	endif()
 endif()
 
+# If we're building the live previewer find SDL2
+if (BUILD_PREVIEWER)
+	add_definitions(-DBUILD_PREVIEWER)
+	# Use our modified FindSDL2 modules for windows/etc
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CS6620_Prj1_SOURCE_DIR}/cmake")
+	find_package(SDL2 REQUIRED)
+	find_package(OpenGL REQUIRED)
+	include_directories(${SDL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+endif()
+
 # Use the math libs M_PI & etc
 add_definitions(-D_USE_MATH_DEFINES)
-set(CS6620_Prj1_INSTALL_DIR "${CS6620-Prj1_SOURCE_DIR}/bin")
-set(tinyxml2_SRC "${CS6620-Prj1_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
+set(CS6620_Prj1_INSTALL_DIR "${CS6620_Prj1_SOURCE_DIR}/bin")
+set(tinyxml2_SRC "${CS6620_Prj1_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
 include_directories(tinyxml2 include)
 add_subdirectory(src)
 

@@ -31,6 +31,7 @@ int main(int argc, char **argv){
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
+
 	for (size_t y = 0; y < target.get_height(); ++y){
 		for (size_t x = 0; x < target.get_width(); ++x){
 			Ray ray = camera.generate_ray(x + 0.5, y + 0.5);
@@ -44,7 +45,6 @@ int main(int argc, char **argv){
 
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");
-
 	return 0;
 }
 bool intersect_children(Node &node, Ray &ray){
