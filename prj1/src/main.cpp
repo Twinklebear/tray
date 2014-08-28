@@ -8,21 +8,59 @@
 #include "geometry/sphere.h"
 #include "geometry/geometry_cache.h"
 
-int main(int argc, char **argv){
-	if (flag(argv, argv + argc, "-f")){
-		std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
-		std::cout << "scene file: " << scene_file << std::endl;
-		load_scene(scene_file);
-	}
-	Camera cam{Transform::look_at(Point{0, 0, 0}, Point{0, 20, 0}, Vector{0, 0, 1}),
-		std::array<float, 4>{-2, 2, -2, 2}, 45, 4, 4};
-	Ray r = cam.generate_ray(0, 0);
-	std::cout << "Ray through (0, 0) = " << r << std::endl;
+/*
+ * Run intersection tests on all the children of the node
+ * returns true if any child was hit
+ */
+bool intersect_children(Node &node, Ray &ray);
 
-	GeometryCache cache;
-	cache.add("sphere", std::unique_ptr<Geometry>{new Sphere{Point{0, 0, 0}, 1}});
-	cache.get("sphere")->intersect(r);
+int main(int argc, char **argv){
+	if (!flag(argv, argv + argc, "-f")){
+		std::cerr << "Error: No scene file passed\n";
+		return 1;
+	}
+	if (!flag(argv, argv + argc, "-o")){
+		std::cerr << "Error: No output filename passed\n";
+		return 1;
+	}
+	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
+	std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
+	std::cout << "scene file: " << scene_file << ", output: " << out_file << std::endl;
+	Scene scene = load_scene(scene_file);
+
+	Node &root = scene.get_root();
+	RenderTarget &target = scene.get_render_target();
+	Camera &camera = scene.get_camera();
+	for (size_t y = 0; y < target.get_height(); ++y){
+		for (size_t x = 0; x < target.get_width(); ++x){
+			Ray ray = camera.generate_ray(x + 0.5, y + 0.5);
+			if (intersect_children(root, ray)){
+				std::cout << "Got a hit!\n";
+				target.write_pixel(x, y, Color{255, 255, 255});
+				target.write_depth(x, y, ray.max_t);
+			}
+		}
+	}
+
+	target.save_image(out_file + ".ppm");
+	target.save_depth(out_file + ".pgm");
 
 	return 0;
+}
+bool intersect_children(Node &node, Ray &ray){
+	bool hit = false;
+	//Transform the ray into this nodes space
+	Ray node_space = ray;
+	node.get_transform().inverse()(ray, node_space);
+	std::cout << "Testing node: " << node.get_name()
+		<< " node_space ray: " << node_space << std::endl;
+	for (auto &c : node.get_children()){
+		hit = intersect_children(*c, node_space);
+	}
+	//Now test this node
+	if (node.get_geometry()){
+		hit = node.get_geometry()->intersect(node_space) || hit;
+	}
+	return hit;
 }
 
