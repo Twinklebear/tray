@@ -55,7 +55,7 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 			depth_norm[i] = 0;
 		}
 		else {
-			depth_norm[i] = static_cast<uint8_t>((zmax - depth[i]) / (zmax - zmin) * 255);
+			depth_norm[i] = static_cast<uint8_t>((depth[i] - zmin) / (zmax - zmin) * 255);
 			depth_norm[i] = clamp(depth_norm[i], uint8_t{0}, uint8_t{255});
 		}
 	}
