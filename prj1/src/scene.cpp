@@ -21,4 +21,3 @@ Node& Scene::get_root(){
 	return root;
 }
 
-
