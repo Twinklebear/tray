@@ -3,6 +3,7 @@
 #include <string>
 #include <array>
 #include <tinyxml2.h>
+#include "linalg/util.h"
 #include "linalg/vector.h"
 #include "linalg/point.h"
 #include "linalg/transform.h"
@@ -91,10 +92,12 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 			c->ToElement()->QueryIntAttribute("value", &h);
 		}
 	}
-	//Not quite sure what to pick for img_screen so we just do +/- w/20
-	//and +/- h/20
-	float screen_x = w / 20.f;
-	float screen_y = h / 20.f;
+	//Compute x & y dimens of the screen
+	float screen_x = 2 * std::tan(radians(fov) / 2.f);
+	float screen_y = screen_x * w / static_cast<float>(h);
+	//We want the screen centered along (0, 0) so we do +/- screen_x/y / 2
+	screen_x /= 2;
+	screen_y /= 2;
 	return Camera{Transform::look_at(pos, target, up),
 		std::array<float, 4>{-screen_x, screen_x, -screen_y, screen_y},
 		fov, w, h};
