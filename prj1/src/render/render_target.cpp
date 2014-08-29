@@ -43,6 +43,9 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 	float zmin = std::numeric_limits<float>::max();
 	float zmax = std::numeric_limits<float>::min();
 	for (const float &f : depth){
+		if (f == std::numeric_limits<float>::max()){
+			continue;
+		}
 		if (f < zmin){
 			zmin = f;
 		}
@@ -51,11 +54,11 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 		}
 	}
 	for (size_t i = 0; i < depth.size(); ++i){
-		if (depth[i] > zmax){
+		if (depth[i] == std::numeric_limits<float>::max()){
 			depth_norm[i] = 0;
 		}
 		else {
-			depth_norm[i] = static_cast<uint8_t>((depth[i] - zmin) / (zmax - zmin) * 255);
+			depth_norm[i] = static_cast<uint8_t>((zmax - depth[i]) / (zmax - zmin) * 255);
 			depth_norm[i] = clamp(depth_norm[i], uint8_t{0}, uint8_t{255});
 		}
 	}

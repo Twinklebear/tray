@@ -52,7 +52,7 @@ bool intersect_children(Node &node, Ray &ray){
 	Ray node_space = ray;
 	node.get_transform().inverse()(ray, node_space);
 	for (auto &c : node.get_children()){
-		hit = intersect_children(*c, node_space);
+		hit = intersect_children(*c, node_space) || hit;
 	}
 	//Now test this node
 	if (node.get_geometry()){
