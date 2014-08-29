@@ -41,7 +41,7 @@ public:
 	/*
 	 * Get the perspective projection matrix
 	 */
-	static Transform perspective(float fov, float near, float far);
+	static Transform perspective(float fov, float aspect, float near, float far);
 	/*
 	 * Get the orthographic projection matrix
 	 */
