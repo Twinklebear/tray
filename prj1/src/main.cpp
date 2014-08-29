@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 
 	for (size_t y = 0; y < target.get_height(); ++y){
 		for (size_t x = 0; x < target.get_width(); ++x){
-			//std::cout << "Pixel at " << x << ", " << y << std::endl;
+			std::cout << "Pixel at " << x << ", " << y << std::endl;
 			Ray ray = camera.generate_ray(x + 0.5, y + 0.5);
 			if (intersect_children(root, ray)){
 				target.write_pixel(x, y, Color{255, 255, 255});
@@ -59,7 +59,6 @@ bool intersect_children(Node &node, Ray &ray){
 	if (node.get_geometry()){
 		hit = node.get_geometry()->intersect(node_space) || hit;
 	}
-	ray.min_t = node_space.min_t;
 	ray.max_t = node_space.max_t;
 	return hit;
 }

@@ -31,7 +31,7 @@ Ray Camera::generate_ray(float x, float y) const {
 	//Take the raster space position -> camera space
 	Point px_pos{x, y, 0};
 	raster_cam(px_pos, px_pos);
-	//std::cout << "Firing through pixel at " << px_pos << std::endl;
+	std::cout << "Firing through pixel at " << px_pos << std::endl;
 	//Shoot ray from origin (camera pos) through the point
 	Ray ray{Point{0, 0, 0}, Vector{px_pos}};
 	//Transform the ray to world space so it can be cast through the scene
