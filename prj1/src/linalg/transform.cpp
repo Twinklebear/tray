@@ -197,11 +197,11 @@ void Transform::operator()(const Matrix4 &in, Matrix4 &out) const {
 	out = mat * in;
 }
 Transform Transform::operator*(const Transform &t) const {
-	return Transform{mat * t.mat, inv * t.inv};
+	return Transform{mat * t.mat, t.inv * inv};
 }
 Transform& Transform::operator*=(const Transform &t){
-	mat *= t.mat;
-	inv *= t.inv;
+	mat = mat * t.mat;
+	inv = t.inv * inv;
 	return *this;
 }
 void Transform::print(std::ostream &os) const {
