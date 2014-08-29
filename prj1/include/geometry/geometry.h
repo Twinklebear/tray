@@ -12,6 +12,10 @@ public:
 	/*
 	 * Test a ray for intersection with the geometry.
 	 * The ray should have been previously transformed into object space
+	 * TODO: For now we only need a true/false hit information but when
+	 * we need actual shading geometry information we should build
+	 * some differential geometry representing the surface @ the hit
+	 * and return it to do shading calculations
 	 */
 	virtual bool intersect(Ray &r) = 0;
 };
