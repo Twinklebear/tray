@@ -1,6 +1,5 @@
 #include <array>
 #include <vector>
-#include <iostream>
 #include "samplers/sampler.h"
 
 int x_start, x_end, y_start, y_end, x, y;
@@ -38,9 +37,6 @@ std::vector<Sampler> Sampler::get_subsamplers(int count){
 	y_dim /= n_rows;
 	for (int i = 0; i < n_cols; ++i){
 		for (int j = 0; j < n_rows; ++j){
-			std::cout << "generating sampler to sample region from: { "
-				<< i * x_dim + x_start << ", " << j * y_dim + y_start << " } to { "
-				<< (i + 1) * x_dim + x_start << ", " << (j + 1) * y_dim + y_start << " }\n";
 			samplers.emplace_back(i * x_dim + x_start, (i + 1) * x_dim + x_start,
 				j * y_dim + y_start, (j + 1) * y_dim + y_start);
 		}
