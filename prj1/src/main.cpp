@@ -53,7 +53,6 @@ int main(int argc, char **argv){
 	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
 	std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
-	std::cout << "scene file: " << scene_file << ", output: " << out_file << std::endl;
 	Scene scene = load_scene(scene_file);
 	Driver driver{scene, n_threads};
 
