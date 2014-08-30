@@ -42,6 +42,12 @@ int main(int argc, char **argv){
 	driver.render();
 	while (!driver.done()){
 		std::this_thread::yield();
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed = end - start;
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 32){
+			std::cout << "Cancelling" << std::endl;
+			driver.cancel();
+		}
 	}
 	auto end = std::chrono::high_resolution_clock::now();
 	auto elapsed = end - start;

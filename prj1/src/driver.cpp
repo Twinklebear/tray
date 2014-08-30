@@ -33,8 +33,9 @@ void Worker::render(){
 		++check_cancel;
 		if (check_cancel >= 32){
 			check_cancel = 0;
-			if (status.load(std::memory_order_acquire) == STATUS::CANCELED){
-				break;
+			int canceled = STATUS::CANCELED;
+			if (status.compare_exchange_strong(canceled, STATUS::DONE, std::memory_order_acq_rel)){
+				return;
 			}
 		}
 	}
@@ -79,7 +80,7 @@ bool Driver::done(){
 	bool all_done = true;
 	for (auto &w : workers){
 		int status = w.status.load(std::memory_order_acquire);
-		if (status == STATUS::DONE || status == STATUS::CANCELED){
+		if (status == STATUS::DONE){
 			w.thread.join();
 			w.status.store(STATUS::JOINED, std::memory_order_release);
 		}
@@ -92,9 +93,12 @@ bool Driver::done(){
 void Driver::cancel(){
 	//Inform all the threads they should quit
 	for (auto &w : workers){
-		int status = w.status.load(std::memory_order_acquire);
-		if (status != STATUS::JOINED){
-			w.status.store(STATUS::CANCELED, std::memory_order_release);
+		int status = STATUS::WORKING;
+		if (w.status.compare_exchange_strong(status, STATUS::CANCELED, std::memory_order_acq_rel)){
+			w.thread.join();
+			w.status.store(STATUS::JOINED, std::memory_order_release);
+		}
+		else if (status == STATUS::DONE){
 			w.thread.join();
 			w.status.store(STATUS::JOINED, std::memory_order_release);
 		}
