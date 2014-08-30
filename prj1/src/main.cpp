@@ -1,14 +1,12 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <thread>
 #include <tinyxml2.h>
 #include "args.h"
 #include "load_scene.h"
 #include "render/render_target.h"
-#include "render/camera.h"
-#include "geometry/sphere.h"
-#include "geometry/geometry_cache.h"
-#include "samplers/sampler.h"
+#include "driver.h"
 
 /*
  * Run intersection tests on all the children of the node
@@ -37,22 +35,18 @@ int main(int argc, char **argv){
 	std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
 	std::cout << "scene file: " << scene_file << ", output: " << out_file << std::endl;
 	Scene scene = load_scene(scene_file);
-
-	Node &root = scene.get_root();
-	RenderTarget &target = scene.get_render_target();
-	Camera &camera = scene.get_camera();
-	Sampler sampler{0, target.get_width(), 0, target.get_height()};
-	std::vector<Sampler> samplers = sampler.get_subsamplers(n_threads);
+	Driver driver{scene, n_threads};
+	driver.render();
 
 	auto start = std::chrono::high_resolution_clock::now();
-	for (auto &samp : samplers){
-		while (samp.has_samples()){
-			std::array<float, 2> s = samp.get_sample();
-			Ray ray = camera.generate_ray(s[0], s[1]);
-			if (intersect_children(root, ray)){
-				target.write_pixel(s[0], s[1], Color{255, 255, 255});
-				target.write_depth(s[0], s[1], ray.max_t);
-			}
+	//While the driver is rendering defer priority to the worker threads
+	while (!driver.done()){
+		std::this_thread::yield();
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed = end - start;
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 50){
+			std::cout << "cancelling\n";
+			driver.cancel();
 		}
 	}
 	auto end = std::chrono::high_resolution_clock::now();
@@ -61,23 +55,9 @@ int main(int argc, char **argv){
 		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
 		<< "ms\n";
 
+	RenderTarget &target = scene.get_render_target();
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");
 	return 0;
-}
-bool intersect_children(Node &node, Ray &ray){
-	bool hit = false;
-	//Transform the ray into this nodes space
-	Ray node_space = ray;
-	node.get_transform().inverse()(ray, node_space);
-	for (auto &c : node.get_children()){
-		hit = intersect_children(*c, node_space) || hit;
-	}
-	//Now test this node
-	if (node.get_geometry()){
-		hit = node.get_geometry()->intersect(node_space) || hit;
-	}
-	ray.max_t = node_space.max_t;
-	return hit;
 }
 

@@ -4,7 +4,7 @@ add_subdirectory(geometry)
 add_subdirectory(samplers)
 set(RAY_LIBS linalg render geometry samplers)
 
-add_executable(proj1 main.cpp args.cpp scene.cpp load_scene.cpp ${tinyxml2_SRC})
+add_executable(proj1 main.cpp driver.cpp args.cpp scene.cpp load_scene.cpp ${tinyxml2_SRC})
 
 # Need to link libm on Unix
 if (NOT WIN32)

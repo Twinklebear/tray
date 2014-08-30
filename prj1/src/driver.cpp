@@ -1,0 +1,102 @@
+#include <vector>
+#include <thread>
+#include <atomic>
+#include "scene.h"
+#include "samplers/sampler.h"
+#include "render/render_target.h"
+#include "render/camera.h"
+#include "geometry/geometry.h"
+#include "linalg/ray.h"
+#include "linalg/transform.h"
+#include "driver.h"
+
+Worker::Worker(const Sampler &sampler, Scene &scene)
+	: sampler(sampler), scene(scene), status(STATUS::NOT_STARTED)
+{}
+Worker::Worker(Worker &&w) : sampler(w.sampler), scene(w.scene),
+	thread(std::move(w.thread)), status(w.status.load(std::memory_order_acq_rel))
+{}
+void Worker::render(){
+	status.store(STATUS::WORKING, std::memory_order_acq_rel);
+	Node &root = scene.get_root();
+	RenderTarget &target = scene.get_render_target();
+	Camera &camera = scene.get_camera();
+	//Counter so we can check if we've been canceled, check after 32 pixels
+	int check_cancel = 0;
+	while (sampler.has_samples()){
+		std::array<float, 2> s = sampler.get_sample();
+		Ray ray = camera.generate_ray(s[0], s[1]);
+		if (intersect_nodes(root, ray)){
+			target.write_pixel(s[0], s[1], Color{255, 255, 255});
+			target.write_depth(s[0], s[1], ray.max_t);
+		}
+		++check_cancel;
+		if (check_cancel >= 32){
+			if (status.load(std::memory_order_acq_rel) == STATUS::CANCELED){
+				break;
+			}
+		}
+	}
+	status.store(STATUS::DONE, std::memory_order_acq_rel);
+}
+bool Worker::intersect_nodes(Node &node, Ray &ray){
+	bool hit = false;
+	//Transform the ray into this nodes space
+	Ray node_space = ray;
+	node.get_transform().inverse()(ray, node_space);
+	for (auto &c : node.get_children()){
+		hit = intersect_nodes(*c, node_space) || hit;
+	}
+	//Now test this node
+	if (node.get_geometry()){
+		hit = node.get_geometry()->intersect(node_space) || hit;
+	}
+	ray.max_t = node_space.max_t;
+	return hit;
+}
+Driver::Driver(Scene &scene, int nworkers){
+	RenderTarget &t = scene.get_render_target();
+	Sampler sampler{0, t.get_width(), 0, t.get_height()};
+	std::vector<Sampler> samplers = sampler.get_subsamplers(nworkers);
+	for (int i = 0; i < nworkers; ++i){
+		workers.emplace_back(Worker{samplers[i], scene});
+	}
+}
+Driver::~Driver(){
+	//Tell all the threads to cancel
+	cancel();
+}
+void Driver::render(){
+	//Run through and launch each thread
+	for (auto &w : workers){
+		w.thread = std::thread(&Worker::render, std::ref(w));
+	}
+}
+bool Driver::done(){
+	//Check which workers have finished and join them, if all are done
+	//report that we're done
+	bool all_done = true;
+	for (auto &w : workers){
+		int status = w.status.load(std::memory_order_acq_rel);
+		if (status == STATUS::DONE || status == STATUS::CANCELED){
+			w.thread.join();
+			w.status.store(STATUS::JOINED, std::memory_order_acq_rel);
+		}
+		else if (status != STATUS::JOINED){
+			all_done = false;
+		}
+	}
+	return all_done;
+}
+void Driver::cancel(){
+	//Inform all the threads they should quit
+	for (auto &w : workers){
+		int status = w.status.load(std::memory_order_acq_rel);
+		if (status != STATUS::JOINED){
+			w.status.store(STATUS::CANCELED, std::memory_order_acq_rel);
+			w.thread.join();
+			w.status.store(STATUS::JOINED, std::memory_order_acq_rel);
+		}
+	}
+}
+
