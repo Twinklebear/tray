@@ -19,6 +19,6 @@ if (BUILD_PREVIEWER)
 	set(LIBS ${LIBS} ${SDL2_LIBRARY} ${OPENGL_LIBRARIES})
 endif()
 
-target_link_libraries(proj1 ${LIBS})
+target_link_libraries(proj1 ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
 install(TARGETS proj1 DESTINATION ${CS6620_Prj1_INSTALL_DIR})
 

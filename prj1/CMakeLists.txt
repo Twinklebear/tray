@@ -24,6 +24,8 @@ if (BUILD_PREVIEWER)
 	include_directories(${SDL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 endif()
 
+find_package(Threads)
+
 # Use the math libs M_PI & etc
 add_definitions(-D_USE_MATH_DEFINES)
 set(CS6620_Prj1_INSTALL_DIR "${CS6620_Prj1_SOURCE_DIR}/bin")
