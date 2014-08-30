@@ -8,6 +8,7 @@
 #include "render/camera.h"
 #include "geometry/sphere.h"
 #include "geometry/geometry_cache.h"
+#include "samplers/sampler.h"
 
 /*
  * Run intersection tests on all the children of the node
@@ -40,25 +41,17 @@ int main(int argc, char **argv){
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
-
-	//Compute the number of columns and rows to partition the image into so
-	//we can assign disjoint portions of it to each thread
-	//Should warn if the cols & rows don't evenly divide the space,
-	//eg if rect dimensions aren't integers
-	int n_cols = std::ceil(std::sqrt(n_threads));
-	int n_rows = std::ceil(n_threads / static_cast<float>(n_cols));
-	std::cout << "cols: " << n_cols << " rows: " << n_rows
-		<< "\nEach rect is " << target.get_width() / static_cast<float>(n_cols)
-		<< " x " << target.get_height() / static_cast<float>(n_rows)
-		<< std::endl;
+	Sampler sampler{0, target.get_width(), 0, target.get_height()};
+	std::vector<Sampler> samplers = sampler.get_subsamplers(n_threads);
 
 	auto start = std::chrono::high_resolution_clock::now();
-	for (size_t y = 0; y < target.get_height(); ++y){
-		for (size_t x = 0; x < target.get_width(); ++x){
-			Ray ray = camera.generate_ray(x + 0.5, y + 0.5);
+	for (auto &samp : samplers){
+		while (samp.has_samples()){
+			std::array<float, 2> s = samp.get_sample();
+			Ray ray = camera.generate_ray(s[0], s[1]);
 			if (intersect_children(root, ray)){
-				target.write_pixel(x, y, Color{255, 255, 255});
-				target.write_depth(x, y, ray.max_t);
+				target.write_pixel(s[0], s[1], Color{255, 255, 255});
+				target.write_depth(s[0], s[1], ray.max_t);
 			}
 		}
 	}

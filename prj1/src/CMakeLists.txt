@@ -1,7 +1,8 @@
 add_subdirectory(linalg)
 add_subdirectory(render)
 add_subdirectory(geometry)
-set(RAY_LIBS linalg render geometry)
+add_subdirectory(samplers)
+set(RAY_LIBS linalg render geometry samplers)
 
 add_executable(proj1 main.cpp args.cpp scene.cpp load_scene.cpp ${tinyxml2_SRC})
 
