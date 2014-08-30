@@ -8,6 +8,20 @@
 #include "render/render_target.h"
 #include "driver.h"
 
+const static std::string USAGE =
+"Usage for prj1:\n\
+----------------------------\n\
+-f <file>   - Specify the scene file to render\n\
+-o <prefix> - Specify the prefix name for the output files\n\
+              color is written to <prefix>.ppm and depth to\n\
+              <prefix>.pgm\n\
+-n <num>    - Optional: specify the number of threads to render with,\n\
+              this number will be rounded up to the nearest even number.\n\
+              A warning will be printed if we can't evenly partition the\n\
+              image into <num> rectangles for rendering. Default is 1.\n\
+-h          - Show this help information\n\
+----------------------------\n";
+
 /*
  * Run intersection tests on all the children of the node
  * returns true if any child was hit
@@ -15,12 +29,18 @@
 bool intersect_children(Node &node, Ray &ray);
 
 int main(int argc, char **argv){
+	if (flag(argv, argv + argc, "-h")){
+		std::cout << USAGE;
+		return 0;
+	}
 	if (!flag(argv, argv + argc, "-f")){
-		std::cerr << "Error: No scene file passed\n";
+		std::cerr << "Error: No scene file passed\n"
+			<< USAGE;
 		return 1;
 	}
 	if (!flag(argv, argv + argc, "-o")){
-		std::cerr << "Error: No output filename passed\n";
+		std::cerr << "Error: No output filename passed\n"
+			<< USAGE;
 		return 1;
 	}
 	int n_threads = 1;
