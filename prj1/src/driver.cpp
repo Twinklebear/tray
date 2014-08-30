@@ -14,10 +14,10 @@ Worker::Worker(const Sampler &sampler, Scene &scene)
 	: sampler(sampler), scene(scene), status(STATUS::NOT_STARTED)
 {}
 Worker::Worker(Worker &&w) : sampler(w.sampler), scene(w.scene),
-	thread(std::move(w.thread)), status(w.status.load(std::memory_order_acq_rel))
+	thread(std::move(w.thread)), status(w.status.load(std::memory_order_consume))
 {}
 void Worker::render(){
-	status.store(STATUS::WORKING, std::memory_order_acq_rel);
+	status.store(STATUS::WORKING, std::memory_order_release);
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
@@ -32,12 +32,12 @@ void Worker::render(){
 		}
 		++check_cancel;
 		if (check_cancel >= 32){
-			if (status.load(std::memory_order_acq_rel) == STATUS::CANCELED){
+			if (status.load(std::memory_order_consume) == STATUS::CANCELED){
 				break;
 			}
 		}
 	}
-	status.store(STATUS::DONE, std::memory_order_acq_rel);
+	status.store(STATUS::DONE, std::memory_order_release);
 }
 bool Worker::intersect_nodes(Node &node, Ray &ray){
 	bool hit = false;
@@ -77,10 +77,10 @@ bool Driver::done(){
 	//report that we're done
 	bool all_done = true;
 	for (auto &w : workers){
-		int status = w.status.load(std::memory_order_acq_rel);
+		int status = w.status.load(std::memory_order_consume);
 		if (status == STATUS::DONE || status == STATUS::CANCELED){
 			w.thread.join();
-			w.status.store(STATUS::JOINED, std::memory_order_acq_rel);
+			w.status.store(STATUS::JOINED, std::memory_order_release);
 		}
 		else if (status != STATUS::JOINED){
 			all_done = false;
@@ -91,11 +91,11 @@ bool Driver::done(){
 void Driver::cancel(){
 	//Inform all the threads they should quit
 	for (auto &w : workers){
-		int status = w.status.load(std::memory_order_acq_rel);
+		int status = w.status.load(std::memory_order_consume);
 		if (status != STATUS::JOINED){
-			w.status.store(STATUS::CANCELED, std::memory_order_acq_rel);
+			w.status.store(STATUS::CANCELED, std::memory_order_release);
 			w.thread.join();
-			w.status.store(STATUS::JOINED, std::memory_order_acq_rel);
+			w.status.store(STATUS::JOINED, std::memory_order_release);
 		}
 	}
 }

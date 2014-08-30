@@ -42,12 +42,6 @@ int main(int argc, char **argv){
 	//While the driver is rendering defer priority to the worker threads
 	while (!driver.done()){
 		std::this_thread::yield();
-		auto end = std::chrono::high_resolution_clock::now();
-		auto elapsed = end - start;
-		if (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() > 50){
-			std::cout << "cancelling\n";
-			driver.cancel();
-		}
 	}
 	auto end = std::chrono::high_resolution_clock::now();
 	auto elapsed = end - start;
