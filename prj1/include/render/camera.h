@@ -7,15 +7,10 @@
 #include "linalg/transform.h"
 
 class Camera {
-	//TODO: How many of these do I really need to keep around?
 	//Transform to go from camera to world space, eg. camera look at matrix
 	Transform cam_world;
 	//Transforms from raster to camera space
 	Transform raster_cam;
-	//Transforms between raster and screen space
-	Transform raster_screen, screen_raster;
-	//Transforms from camera to screen space
-	Transform cam_screen;
 
 public:
 	/*
