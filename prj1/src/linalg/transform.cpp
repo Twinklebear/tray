@@ -114,7 +114,7 @@ Transform Transform::look_at(const Point &pos, const Point &center, const Vector
 	}
 	return Transform(m.inverse(), m);
 }
-Transform Transform::perspective(float fov, float aspect, float near, float far){
+Transform Transform::perspective(float fov, float near, float far){
 	Matrix4 proj_div{{
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -122,7 +122,7 @@ Transform Transform::perspective(float fov, float aspect, float near, float far)
 		0, 0, 1, 0
 	}};
 	float inv_tan = 1 / std::tan(radians(fov) / 2.f);
-	return scale(inv_tan / aspect, inv_tan, 1) * Transform{proj_div};
+	return scale(inv_tan, inv_tan, 1) * Transform{proj_div};
 }
 Transform Transform::orthographic(float near, float far){
 	return scale(1, 1, 1 / (far - near)) * translate(Vector{0, 0, -near});

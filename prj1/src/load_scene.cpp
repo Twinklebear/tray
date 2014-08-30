@@ -93,11 +93,18 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 		}
 	}
 	//Compute x & y dimens of the screen
-	//We want the screen centered along (0, 0) so we find +/- screen_x/y / 2
-	float screen_x = std::tan(radians(fov));
-	float screen_y = screen_x * w / static_cast<float>(h);
+	float aspect_ratio = static_cast<float>(w) / h;
+	float screen[2];
+	if (aspect_ratio > 1){
+		screen[0] = aspect_ratio;
+		screen[1] = 1;
+	}
+	else {
+		screen[0] = 1;
+		screen[1] = 1 / aspect_ratio;
+	}
 	return Camera{Transform::look_at(pos, target, up),
-		std::array<float, 4>{-screen_x, screen_x, -screen_y, screen_y},
+		std::array<float, 4>{-screen[0], screen[0], -screen[1], screen[1]},
 		fov, w, h};
 }
 void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){

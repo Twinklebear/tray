@@ -7,7 +7,7 @@
 #include "render/camera.h"
 
 Camera::Camera(const Transform &cam_world, std::array<float, 4> img_screen, float fov, int xres, int yres)
-	: cam_world(cam_world), cam_screen(Transform::perspective(fov, static_cast<float>(xres) / yres, 1, 1000))
+	: cam_world(cam_world), cam_screen(Transform::perspective(fov, 1, 1000))
 {
 	std::cout << "img_screen: ";
 	for (float f : img_screen){
