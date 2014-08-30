@@ -92,7 +92,9 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 			c->ToElement()->QueryIntAttribute("value", &h);
 		}
 	}
-	//Compute x & y dimens of the screen
+	//Compute x & y dimensions of image plane in screen space, in this
+	//space the image size is normalized so that the shorter axis has
+	//a half length of 1, while the longer has a half length of aspect ratio
 	float aspect_ratio = static_cast<float>(w) / h;
 	float screen[2];
 	if (aspect_ratio > 1){
