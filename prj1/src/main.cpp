@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 #include <tinyxml2.h>
 #include "args.h"
 #include "load_scene.h"
@@ -51,6 +52,7 @@ int main(int argc, char **argv){
 		<< " x " << target.get_height() / static_cast<float>(n_rows)
 		<< std::endl;
 
+	auto start = std::chrono::high_resolution_clock::now();
 	for (size_t y = 0; y < target.get_height(); ++y){
 		for (size_t x = 0; x < target.get_width(); ++x){
 			Ray ray = camera.generate_ray(x + 0.5, y + 0.5);
@@ -60,6 +62,11 @@ int main(int argc, char **argv){
 			}
 		}
 	}
+	auto end = std::chrono::high_resolution_clock::now();
+	auto elapsed = end - start;
+	std::cout << "Rendering took: "
+		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
+		<< "ms\n";
 
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");
