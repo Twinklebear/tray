@@ -4,13 +4,12 @@
 #include "linalg/vector.h"
 #include "geometry/sphere.h"
 
-Sphere::Sphere(const Point &center, float radius) : center(center), radius(radius){}
 bool Sphere::intersect(Ray &ray){
 	//Compute quadratic sphere coefficients
 	Vector ray_orig{ray.o};
 	float a = ray.d.length_sqr();
 	float b = 2 * ray.d.dot(ray_orig);
-	float c = ray_orig.length_sqr() - radius * radius;
+	float c = ray_orig.length_sqr() - 1;
 	//Solve quadratic equation for t values
 	//If no solutions exist the ray doesn't intersect the sphere
 	float t[2];

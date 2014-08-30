@@ -16,6 +16,7 @@ endif()
 
 # If we're building the live previewer find SDL2
 if (BUILD_PREVIEWER)
+	message(ERROR "Live previewer is not implemented yet")
 	add_definitions(-DBUILD_PREVIEWER)
 	# Use our modified FindSDL2 modules for windows/etc
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CS6620_Prj1_SOURCE_DIR}/cmake")

@@ -4,12 +4,10 @@
 #include "linalg/point.h"
 #include "geometry.h"
 
+/*
+ * A simple unit sphere centered at the origin
+ */
 class Sphere : public Geometry {
-	Point center;
-	float radius;
-
-public:
-	Sphere(const Point &center, float radius);
 	bool intersect(Ray &r) override;
 };
 

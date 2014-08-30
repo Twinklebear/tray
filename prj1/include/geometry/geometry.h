@@ -20,6 +20,10 @@ public:
 	virtual bool intersect(Ray &r) = 0;
 };
 
+/*
+ * A scene node, based off of Cem's Node in the demo code but with
+ * some modifications
+ */
 class Node {
 	std::vector<std::shared_ptr<Node>> children;
 	//Non-owning reference to some geometry in the cache

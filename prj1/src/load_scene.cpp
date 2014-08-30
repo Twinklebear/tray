@@ -121,12 +121,12 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			Geometry *geom = nullptr;
 			if (t){
 				std::string type = t;
-				std::cout << "type: " << type << std::endl;
+				std::cout << "Geometry type: " << type << std::endl;
 				//Check if the geometry is in our cache, if not load it
 				auto &gcache = scene.get_geom_cache();
 				if (!gcache.get(type)){
 					if (type == "sphere"){
-						gcache.add(type, std::unique_ptr<Geometry>(new Sphere(Point{0, 0, 0}, 1)));
+						gcache.add(type, std::unique_ptr<Geometry>(new Sphere{}));
 					}
 				}
 				geom = gcache.get(type);
