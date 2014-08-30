@@ -36,10 +36,10 @@ int main(int argc, char **argv){
 	std::cout << "scene file: " << scene_file << ", output: " << out_file << std::endl;
 	Scene scene = load_scene(scene_file);
 	Driver driver{scene, n_threads};
-	driver.render();
 
 	auto start = std::chrono::high_resolution_clock::now();
 	//While the driver is rendering defer priority to the worker threads
+	driver.render();
 	while (!driver.done()){
 		std::this_thread::yield();
 	}
