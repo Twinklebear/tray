@@ -12,10 +12,9 @@ namespace util {
 	 */
 	GLint load_shader(GLenum type, const std::string &text);
 	/*
-	 * Build a shader program from the list of shaders passed
-	 * the tuples should be { type, shader text }
+	 * Build a shader program from the vertex and fragment shaders passed
 	 */
-	GLint load_program(const std::vector<std::tuple<GLenum, std::string>> &shaders);
+	GLint load_program(const std::string &vertex_src, const std::string &fragment_src);
 	/*
 	 * Check for an OpenGL error and log it along with the message passed
 	 * if an error occured. Will return true if an error occured & was logged

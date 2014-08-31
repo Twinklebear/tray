@@ -42,18 +42,17 @@ GLint util::load_shader(GLenum type, const std::string &text){
 	}
 	return shader;
 }
-GLint util::load_program(const std::vector<std::tuple<GLenum, std::string>> &shaders){
+GLint util::load_program(const std::string &vertex_src, const std::string &fragment_src){
 	std::vector<GLuint> glshaders;
-	for (const std::tuple<GLenum, std::string> &s : shaders){
-		GLint h = load_shader(std::get<0>(s), std::get<1>(s));
-		if (h == -1){
-			std::cerr << "load_program: A required shader failed to compile, aborting\n";
-			for (GLuint g : glshaders){
-				glDeleteShader(g);
-			}
+	{
+		GLint v = load_shader(GL_VERTEX_SHADER, vertex_src);
+		GLint f = load_shader(GL_FRAGMENT_SHADER, fragment_src);
+		if (v == -1 || f == -1){
+			std::cerr << "A required shader failed to compile, aborting\n";
 			return -1;
 		}
-		glshaders.push_back(h);
+		glshaders.push_back(v);
+		glshaders.push_back(f);
 	}
 	GLuint program = glCreateProgram();
 	for (GLuint s : glshaders){
