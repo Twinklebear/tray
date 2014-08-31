@@ -1,12 +1,14 @@
 #include <iostream>
 #include <string>
 #include <chrono>
-#include <thread>
-#include <tinyxml2.h>
 #include "args.h"
 #include "load_scene.h"
 #include "render/render_target.h"
 #include "driver.h"
+
+#ifdef BUILD_PREVIEWER
+#include "previewer.h"
+#endif
 
 const static std::string USAGE =
 "Usage for prj1:\n\
@@ -19,14 +21,12 @@ const static std::string USAGE =
               this number will be rounded up to the nearest even number.\n\
               A warning will be printed if we can't evenly partition the\n\
               image into <num> rectangles for rendering. Default is 1.\n\
--h          - Show this help information\n\
-----------------------------\n";
-
-/*
- * Run intersection tests on all the children of the node
- * returns true if any child was hit
- */
-bool intersect_children(Node &node, Ray &ray);
+-h          - Show this help information\n"
+#ifdef BUILD_PREVIEWER
++ std::string{"-p          - Show a live preview of the image as it's rendered.\n\
+              Rendering performance is not measured in this mode\n"}
+#endif
++ std::string{"----------------------------\n"};
 
 int main(int argc, char **argv){
 	if (flag(argv, argv + argc, "-h")){
@@ -56,18 +56,33 @@ int main(int argc, char **argv){
 	Scene scene = load_scene(scene_file);
 	Driver driver{scene, n_threads};
 
-	auto start = std::chrono::high_resolution_clock::now();
-	//While the driver is rendering defer priority to the worker threads
-	driver.render();
-	while (!driver.done()){
-		std::this_thread::yield();
+#ifdef BUILD_PREVIEWER
+	if (flag(argv, argv + argc, "-p")){
+		//The user might abort before rendering completes or we could encounter
+		//an SDL/OpenGL error, so don't save the images if the render doesn't complete
+		if (render_with_preview(driver)){
+			RenderTarget &target = scene.get_render_target();
+			target.save_image(out_file + ".ppm");
+			target.save_depth(out_file + ".pgm");
+		}
+		return 0;
 	}
-	auto end = std::chrono::high_resolution_clock::now();
-	auto elapsed = end - start;
-	std::cout << "Rendering took: "
-		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-		<< "ms\n";
-
+	else {
+#endif
+		auto start = std::chrono::high_resolution_clock::now();
+		//While the driver is rendering defer priority to the worker threads
+		driver.render();
+		while (!driver.done()){
+			std::this_thread::yield();
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed = end - start;
+		std::cout << "Rendering took: "
+			<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
+			<< "ms\n";
+#ifdef BUILD_PREVIEWER
+	}
+#endif
 	RenderTarget &target = scene.get_render_target();
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");

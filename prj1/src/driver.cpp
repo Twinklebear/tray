@@ -56,7 +56,7 @@ bool Worker::intersect_nodes(Node &node, Ray &ray){
 	ray.max_t = node_space.max_t;
 	return hit;
 }
-Driver::Driver(Scene &scene, int nworkers){
+Driver::Driver(Scene &scene, int nworkers) : scene(scene){
 	RenderTarget &t = scene.get_render_target();
 	Sampler sampler{0, t.get_width(), 0, t.get_height()};
 	std::vector<Sampler> samplers = sampler.get_subsamplers(nworkers);
@@ -104,4 +104,8 @@ void Driver::cancel(){
 		}
 	}
 }
+const Scene& Driver::get_scene() const {
+	return scene;
+}
+
 

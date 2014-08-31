@@ -16,7 +16,7 @@ endif()
 
 # If we're buidling the previewer we need SDL2 and OpenGL
 if (BUILD_PREVIEWER)
-	set(LIBS ${LIBS} ${SDL2_LIBRARY} ${OPENGL_LIBRARIES})
+	set(LIBS ${LIBS} previewer ${SDL2_LIBRARY} ${OPENGL_LIBRARIES})
 endif()
 
 target_link_libraries(proj1 ${LIBS} ${CMAKE_THREAD_LIBS_INIT})

@@ -26,6 +26,7 @@ public:
 	GeometryCache& get_geom_cache();
 	Camera& get_camera();
 	RenderTarget& get_render_target();
+	const RenderTarget& get_render_target() const;
 	Node& get_root();
 };
 

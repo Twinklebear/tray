@@ -17,6 +17,9 @@ Camera& Scene::get_camera(){
 RenderTarget& Scene::get_render_target(){
 	return render_target;
 }
+const RenderTarget& Scene::get_render_target() const {
+	return render_target;
+}
 Node& Scene::get_root(){
 	return root;
 }

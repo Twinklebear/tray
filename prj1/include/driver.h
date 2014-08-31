@@ -46,6 +46,7 @@ public:
 class Driver {
 	//The worker threads rendering the scene
 	std::vector<Worker> workers;
+	Scene &scene;
 
 public:
 	/*
@@ -59,6 +60,10 @@ public:
 	 * Abort all threads and cancel rendering
 	 */
 	void cancel();
+	/*
+	 * Get the scene being rendered
+	 */
+	const Scene& get_scene() const;
 };
 
 #endif
