@@ -6,7 +6,7 @@
 #include "driver.h"
 #include "util.h"
 
-const std::string VERTEX_SHADER =
+const static std::string VERTEX_SHADER =
 "#version 330 core\n\
 const vec2 verts[4] = vec2[4](\n\
 	vec2(-1, -1), vec2(1, -1), vec2(-1, 1), vec2(1, 1)\n\
@@ -20,7 +20,7 @@ void main(void){\n\
 	fuv = uvs[gl_VertexID];\n\
 	gl_Position = vec4(verts[gl_VertexID], 0, 1);\n\
 }\n";
-const std::string FRAGMENT_SHADER =
+const static std::string FRAGMENT_SHADER =
 "#version 330 core\n\
 uniform sampler2D tex;\n\
 in vec2 fuv;\n\
@@ -65,8 +65,7 @@ bool render_with_preview(Driver &driver){
 		NULL, GL_TRUE);
 #endif
 
-	GLint program = util::load_program(std::vector<std::tuple<GLenum, std::string>>{
-		std::make_tuple(GL_VERTEX_SHADER, VERTEX_SHADER),
+	GLint program = util::load_program({std::make_tuple(GL_VERTEX_SHADER, VERTEX_SHADER),
 		std::make_tuple(GL_FRAGMENT_SHADER, FRAGMENT_SHADER)});
 	if (program == -1){
 		std::cerr << "GLSL shader failed to compile, aborting\n";
