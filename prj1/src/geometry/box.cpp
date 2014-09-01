@@ -16,7 +16,7 @@ bool Box::intersect(Ray &r){
 	Vector p{-r.o};
 	//Check which slab we're probably hitting by finding which half vector
 	//p has the greatest length along
-	for (int i = 0; i < axes.size(); ++i){
+	for (size_t i = 0; i < axes.size(); ++i){
 		float e = axes[i].dot(p);
 		float f = axes[i].dot(r.d);
 		if (std::abs(f) > 1e-5){
