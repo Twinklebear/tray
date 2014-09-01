@@ -11,6 +11,7 @@
 #include "render/render_target.h"
 #include "geometry/sphere.h"
 #include "geometry/box.h"
+#include "geometry/plane.h"
 #include "load_scene.h"
 #include "scene.h"
 
@@ -132,6 +133,9 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 					}
 					else if (type == "box"){
 						gcache.add(type, std::unique_ptr<Geometry>(new Box{}));
+					}
+					else if (type == "plane"){
+						gcache.add(type, std::unique_ptr<Geometry>(new Plane{}));
 					}
 				}
 				geom = gcache.get(type);
