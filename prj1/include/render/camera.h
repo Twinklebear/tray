@@ -16,10 +16,9 @@ public:
 	/*
 	 * Create the camera at some position in the world. Default is looking down
 	 * the z axis but this can be changed with the cam_world transformation
-	 * img_screen = { xmin, xmax, ymin, ymax } of the image dimensions in screen space
 	 * xres & yres correspond to the render target resolution
 	 */
-	Camera(const Transform &cam_world, std::array<float, 4> img_screen, float fov, int xres, int yres);
+	Camera(const Transform &cam_world, float fov, int xres, int yres);
 	/*
 	 * Generate a ray to sample the pixel at x,y. Pixel coordinates should be
 	 * in raster space
