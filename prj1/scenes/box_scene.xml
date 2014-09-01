@@ -1,0 +1,26 @@
+<xml>
+  <scene>
+    <object type="box" name="box1">
+	  <scale value="6.0"/>
+	  <rotate angle="45" y="1"/>
+      <translate x="0" y="50" z="-8"/>
+    </object>
+    <object type="sphere" name="sphere2">
+      <scale value="5.0"/>
+      <translate x="0" y="50" z="5.1"/>
+      <object type="sphere" name="sphere3">
+        <scale value="0.2"/>
+        <translate x="0" y="0" z="1.2"/>
+      </object>
+    </object>
+  </scene>
+  <camera>
+    <position x="0" y="0" z="0"/>
+    <target x="0" y="20" z="0"/>
+    <up x="0" y="0" z="1"/>
+    <fov value="40"/>
+    <width value="800"/>
+    <height value="600"/>
+  </camera>
+</xml>
+

@@ -10,6 +10,7 @@
 #include "render/camera.h"
 #include "render/render_target.h"
 #include "geometry/sphere.h"
+#include "geometry/box.h"
 #include "load_scene.h"
 #include "scene.h"
 
@@ -34,8 +35,9 @@ void read_vector(tinyxml2::XMLElement *elem, Vector &v);
 void read_point(tinyxml2::XMLElement *elem, Point &p);
 /*
  * Read the value float attribute of the XMLElement and return it
+ * optionally passing the attribute name to read from. Default is value
  */
-void read_float(tinyxml2::XMLElement *elem, float &f);
+void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib = "value");
 
 Scene load_scene(const std::string &file){
 	using namespace tinyxml2;
@@ -128,6 +130,9 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 					if (type == "sphere"){
 						gcache.add(type, std::unique_ptr<Geometry>(new Sphere{}));
 					}
+					else if (type == "box"){
+						gcache.add(type, std::unique_ptr<Geometry>(new Box{}));
+					}
 				}
 				geom = gcache.get(type);
 			}
@@ -154,6 +159,15 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			auto &transform = node.get_transform();
 			transform = Transform::translate(v) * transform;
 		}
+		else if (c->Value() == std::string{"rotate"}){
+			Vector v;
+			float d = 0;
+			read_vector(c->ToElement(), v);
+			read_float(c->ToElement(), d, "angle");
+			std::cout << "Rotation of " << d << " deg about " << v << " applied\n";
+			auto &transform = node.get_transform();
+			transform = Transform::rotate(v, d) * transform;
+		}
 	}
 }
 void read_vector(tinyxml2::XMLElement *elem, Vector &v){
@@ -166,7 +180,7 @@ void read_point(tinyxml2::XMLElement *elem, Point &p){
 	elem->QueryFloatAttribute("y", &p.y);
 	elem->QueryFloatAttribute("z", &p.z);
 }
-void read_float(tinyxml2::XMLElement *elem, float &f){
-	elem->QueryFloatAttribute("value", &f);
+void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib){
+	elem->QueryFloatAttribute(attrib.c_str(), &f);
 }
 

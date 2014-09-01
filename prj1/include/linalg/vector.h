@@ -78,6 +78,9 @@ struct Vector {
 	inline Vector& operator/=(float s){
 		return *this *= 1 / s;
 	}
+	inline Vector operator-(){
+		return Vector{-x, -y, -z};
+	}
 };
 inline Vector operator+(const Vector &a, const Vector &b){
 	return Vector{a.x + b.x, a.y + b.y,  a.z + b.z};
@@ -182,6 +185,9 @@ struct Normal {
 	}
 	inline Normal& operator/=(float s){
 		return *this *= 1 / s;
+	}
+	inline Normal operator-(){
+		return Normal{-x, -y, -z};
 	}
 };
 inline Normal operator+(const Normal &a, const Normal &b){

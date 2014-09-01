@@ -63,6 +63,9 @@ struct Point {
 		z /= s;
 		return *this;
 	}
+	inline Point operator-(){
+		return Point{-x, -y, -z};
+	}
 };
 inline Point operator+(const Point &p, const Vector &v){
 	return Point{p.x + v.x, p.y + v.y, p.z + v.z};

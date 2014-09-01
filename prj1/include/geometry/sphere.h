@@ -8,6 +8,7 @@
  * A simple unit sphere centered at the origin
  */
 class Sphere : public Geometry {
+public:
 	bool intersect(Ray &r) override;
 };
 
