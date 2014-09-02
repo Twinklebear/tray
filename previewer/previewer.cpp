@@ -104,6 +104,8 @@ bool render_with_preview(Driver &driver){
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
+	std::cout << "Viewer Commands: press d to view the depth buffer and c to view the color buffer\n";
+
 	//Run the driver so it renders while we update the texture with the
 	//new output from it
 	driver.render();
