@@ -102,16 +102,20 @@ Transform Transform::rotate(const Vector &axis, float deg){
 }
 Transform Transform::look_at(const Point &pos, const Point &center, const Vector &up){
 	Matrix4 m;
-	Vector dir = (center - pos).normalized();
-	Vector left = up.normalized().cross(dir).normalized();
-	//The up vector may not be quite correct so find the exact one
-	Vector new_up = dir.cross(left);
+	//GLM's look at matrix calculation
+	Vector u = up.normalized();
+	Vector f = (center - pos).normalized();
+	Vector s = f.cross(u).normalized();
+	u = s.cross(f);
 	for (int i = 0; i < 3; ++i){
-		m[i][0] = left[i];
-		m[i][1] = new_up[i];
-		m[i][2] = dir[i];
-		m[i][3] = pos[i];
+		m[i][0] = s[i];
+		m[i][1] = u[i];
+		m[i][2] = -f[i];
 	}
+	Vector eye{pos};
+	m[3][0] = -s.dot(eye);
+	m[3][1] = -u.dot(eye);
+	m[3][2] = f.dot(eye);
 	return Transform(m.inverse(), m);
 }
 Transform Transform::perspective(float fov, float near, float far){

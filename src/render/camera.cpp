@@ -20,9 +20,10 @@ Camera::Camera(const Transform &cam_world, float fov, int xres, int yres) : cam_
 		screen[0] = 1;
 		screen[1] = 1 / aspect_ratio;
 	}
+	std::cout << cam_world << std::endl;
 	Transform screen_raster = Transform::scale(static_cast<float>(xres), static_cast<float>(yres), 1)
-		* Transform::scale(1.f / (2 * screen[0]), -1.f / (2 * screen[1]), 1)
-		* Transform::translate(Vector{screen[0], -screen[1], 0});
+		* Transform::scale(1.f / (2 * screen[0]), 1.f / (2 * screen[1]), 1)
+		* Transform::translate(Vector{screen[0], screen[1], 0});
 	Transform raster_screen = screen_raster.inverse();
 	Transform cam_screen = Transform::perspective(fov, 1, 1000);
 	raster_cam = cam_screen.inverse() * raster_screen;
