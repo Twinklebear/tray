@@ -4,7 +4,7 @@ add_subdirectory(geometry)
 add_subdirectory(samplers)
 set(RAY_LIBS linalg render geometry samplers)
 
-add_executable(proj1 main.cpp driver.cpp args.cpp scene.cpp load_scene.cpp ${tinyxml2_SRC})
+add_executable(ray_tracer main.cpp driver.cpp args.cpp scene.cpp load_scene.cpp ${tinyxml2_SRC})
 
 # Need to link libm on Unix
 if (NOT WIN32)
@@ -19,6 +19,6 @@ if (BUILD_PREVIEWER)
 	set(LIBS ${LIBS} previewer ${SDL2_LIBRARY} ${OPENGL_LIBRARIES})
 endif()
 
-target_link_libraries(proj1 ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
-install(TARGETS proj1 DESTINATION ${CS6620_Prj1_INSTALL_DIR})
+target_link_libraries(ray_tracer ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
+install(TARGETS ray_tracer DESTINATION ${CS6620_INSTALL_DIR})
 

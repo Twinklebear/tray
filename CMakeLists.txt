@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(CS6620_Prj1)
+project(CS6620)
 
 # Bump up warning levels appropriately for each compiler
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
@@ -16,15 +16,15 @@ endif()
 
 # Use the math libs M_PI & etc
 add_definitions(-D_USE_MATH_DEFINES)
-set(CS6620_Prj1_INSTALL_DIR "${CS6620_Prj1_SOURCE_DIR}/bin")
-set(tinyxml2_SRC "${CS6620_Prj1_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
+set(CS6620_INSTALL_DIR "${CS6620_SOURCE_DIR}/bin")
+set(tinyxml2_SRC "${CS6620_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
 include_directories(tinyxml2 include)
 
 # If we're building the live previewer find SDL2
 if (BUILD_PREVIEWER)
 	add_definitions(-DBUILD_PREVIEWER)
 	# Use our modified FindSDL2 modules for windows/etc
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CS6620_Prj1_SOURCE_DIR}/cmake")
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CS6620_SOURCE_DIR}/cmake")
 	find_package(SDL2 REQUIRED)
 	find_package(OpenGL REQUIRED)
 	include_directories(${SDL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} previewer)
