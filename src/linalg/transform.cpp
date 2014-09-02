@@ -103,6 +103,7 @@ Transform Transform::rotate(const Vector &axis, float deg){
 Transform Transform::look_at(const Point &pos, const Point &center, const Vector &up){
 	Matrix4 m;
 	//GLM's look at matrix calculation
+	//TODO: This is wrong
 	Vector u = up.normalized();
 	Vector f = (center - pos).normalized();
 	Vector s = f.cross(u).normalized();

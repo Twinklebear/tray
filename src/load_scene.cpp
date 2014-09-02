@@ -95,7 +95,16 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 			c->ToElement()->QueryIntAttribute("value", &h);
 		}
 	}
-	return Camera{Transform::look_at(pos, target, up), fov, w, h};
+	//reverse engineered prj2 look at matrix (ish)
+	Transform t = Transform::translate(Vector{0, 0, 10})
+	   * Transform::rotate_x(-100);
+	t = Transform{Matrix4{{
+		1, 0, 0, 0,
+		0, -0.11961, 0.9805, 0,
+		0, -0.9805, -0.19611, 10,
+		0, 0, 0, 1}}
+	};
+	return Camera{t, fov, w, h};
 }
 void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 	using namespace tinyxml2;
