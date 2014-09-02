@@ -42,12 +42,12 @@ public:
 	size_t get_height() const;
 	const std::vector<Color>& get_colorbuf() const;
 	const std::vector<float>& get_depthbuf() const;
-
-private:
 	/*
 	 * Generate a normalized luminosity image of the depth buffer
 	 */
 	std::vector<uint8_t> generate_depth_img() const;
+
+private:
 	/*
 	 * Save color data as a PPM image to the file, data should be
 	 * RGB8 data and have width * height elements

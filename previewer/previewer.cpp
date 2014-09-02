@@ -74,15 +74,30 @@ bool render_with_preview(Driver &driver){
 		return false;
 	}
 	glUseProgram(program);
+	GLint tex_unif = glGetUniformLocation(program, "tex");
 
-	GLuint tex;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
+	GLuint color;
+	glGenTextures(1, &color);
+	glBindTexture(GL_TEXTURE_2D, color);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, target.get_width(), target.get_height(), 0, GL_RGB,
 		GL_UNSIGNED_BYTE, NULL);
 	//Disable linear filtering so the image is only as nice as the ray tracer renders it
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glActiveTexture(GL_TEXTURE1);
+	GLuint depth;
+	glGenTextures(1, &depth);
+	glBindTexture(GL_TEXTURE_2D, depth);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, target.get_width(), target.get_height(), 0, GL_RED,
+		GL_UNSIGNED_BYTE, NULL);
+	//Disable linear filtering so the image is only as nice as the ray tracer renders it
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//Set swizzle to give only the red channel so we see the depth map properly
+	GLint swizzle[] = {GL_RED, GL_RED, GL_RED, GL_RED};
+	glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
+
 
 	//A dummy vao, required for core profile but we don't really need it
 	GLuint vao;
@@ -93,6 +108,7 @@ bool render_with_preview(Driver &driver){
 	//new output from it
 	driver.render();
 	bool quit = false;
+	int shown_tex = 0;
 	while (!quit){
 		SDL_Event e;
 		while (SDL_PollEvent(&e)){
@@ -100,21 +116,44 @@ bool render_with_preview(Driver &driver){
 				driver.cancel();
 				quit = true;
 			}
+			else if (e.type == SDL_KEYDOWN){
+				switch (e.key.keysym.sym){
+					case SDLK_d:
+						shown_tex = 1;
+						glUniform1i(tex_unif, shown_tex);
+						break;
+					case SDLK_c:
+						shown_tex = 0;
+						glUniform1i(tex_unif, shown_tex);
+						break;
+					default:
+						break;
+				}
+			}
 		}
 		//Let the driver do some work
 		SDL_Delay(16);
 		//Update the texture with new data.
 		//We could do better and only update blocks of updated pixels, but this is more
 		//work than I want to put into this
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
-			GL_UNSIGNED_BYTE, target.get_colorbuf().data());
+		if (shown_tex == 0){
+			glActiveTexture(GL_TEXTURE0);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
+				GL_UNSIGNED_BYTE, target.get_colorbuf().data());
+		}
+		else {
+			glActiveTexture(GL_TEXTURE1);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RED,
+				GL_UNSIGNED_BYTE, target.generate_depth_img().data());
+		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		SDL_GL_SwapWindow(win);
 	}
 	glDeleteProgram(program);
-	glDeleteTextures(1, &tex);
+	glDeleteTextures(1, &color);
+	glDeleteTextures(1, &depth);
 	glDeleteVertexArrays(1, &vao);
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow(win);
