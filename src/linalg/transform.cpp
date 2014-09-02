@@ -102,22 +102,20 @@ Transform Transform::rotate(const Vector &axis, float deg){
 }
 Transform Transform::look_at(const Point &pos, const Point &center, const Vector &up){
 	Matrix4 m;
-	//GLM's look at matrix calculation
-	//TODO: This is wrong
-	Vector u = up.normalized();
-	Vector f = (center - pos).normalized();
-	Vector s = f.cross(u).normalized();
-	u = s.cross(f);
+	Vector dir = (center - pos).normalized();
+	Vector right = dir.cross(up).normalized();
+	Vector u = dir.cross(right).normalized();
 	for (int i = 0; i < 3; ++i){
-		m[i][0] = s[i];
-		m[i][1] = u[i];
-		m[i][2] = -f[i];
+		//Col 0 maps x -> right
+		m.at(i, 0) = right[i];
+		//Col 1 maps y -> u
+		m.at(i, 1) = u[i];
+		//Col 2 maps z -> dir
+		m.at(i, 2) = dir[i];
+		//Col 3 is the position
+		m.at(i, 3) = pos[i];
 	}
-	Vector eye{pos};
-	m[3][0] = -s.dot(eye);
-	m[3][1] = -u.dot(eye);
-	m[3][2] = f.dot(eye);
-	return Transform(m.inverse(), m);
+	return Transform(m);
 }
 Transform Transform::perspective(float fov, float near, float far){
 	Matrix4 proj_div{{

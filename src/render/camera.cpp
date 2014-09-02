@@ -26,7 +26,6 @@ Camera::Camera(const Transform &cam_world, float fov, int xres, int yres) : cam_
 	Transform raster_screen = screen_raster.inverse();
 	Transform cam_screen = Transform::perspective(fov, 1, 1000);
 	raster_cam = cam_screen.inverse() * raster_screen;
-	std::cout << "cam world: " << cam_world << std::endl;
 }
 Ray Camera::generate_ray(float x, float y) const {
 	//Take the raster space position -> camera space
