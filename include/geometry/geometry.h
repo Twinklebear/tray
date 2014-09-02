@@ -6,6 +6,7 @@
 #include <memory>
 #include "linalg/ray.h"
 #include "linalg/transform.h"
+#include "cache.h"
 
 class Geometry {
 public:
@@ -19,6 +20,8 @@ public:
 	 */
 	virtual bool intersect(Ray &r) = 0;
 };
+
+typedef Cache<Geometry> GeometryCache;
 
 /*
  * A scene node, based off of Cem's Node in the demo code but with

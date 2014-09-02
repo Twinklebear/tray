@@ -1,6 +1,5 @@
 #include <string>
 #include "geometry/geometry.h"
-#include "geometry/geometry_cache.h"
 #include "render/render_target.h"
 #include "render/camera.h"
 #include "scene.h"
