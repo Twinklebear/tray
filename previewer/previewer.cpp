@@ -95,7 +95,7 @@ bool render_with_preview(Driver &driver){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	//Set swizzle to give only the red channel so we see the depth map properly
-	GLint swizzle[] = {GL_RED, GL_RED, GL_RED, GL_RED};
+	GLint swizzle[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
 	glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
 
 
