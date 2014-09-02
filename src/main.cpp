@@ -38,11 +38,22 @@ int main(int argc, char **argv){
 			<< USAGE;
 		return 1;
 	}
+	//if we built the previewer it's valid to not specify a file output but
+	//we need some way to output
+#ifdef BUILD_PREVIEWER
+	if (!flag(argv, argv + argc, "-o") && !flag(argv, argv + argc, "-p")){
+		std::cerr << "Error: No output medium specified\n"
+			<< USAGE;
+		return 1;
+	}
+#else
 	if (!flag(argv, argv + argc, "-o")){
 		std::cerr << "Error: No output filename passed\n"
 			<< USAGE;
 		return 1;
 	}
+#endif
+
 	int n_threads = 1;
 	if (flag(argv, argv + argc, "-n")){
 		n_threads = get_param<int>(argv, argv + argc, "-n");
@@ -52,7 +63,6 @@ int main(int argc, char **argv){
 		}
 	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
-	std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
 	Scene scene = load_scene(scene_file);
 	Driver driver{scene, n_threads};
 
@@ -60,7 +70,9 @@ int main(int argc, char **argv){
 	if (flag(argv, argv + argc, "-p")){
 		//The user might abort before rendering completes or we could encounter
 		//an SDL/OpenGL error, so don't save the images if the render doesn't complete
-		if (render_with_preview(driver)){
+		//Also need to validate that file output was turned on if we're running the previewer
+		if (render_with_preview(driver) && flag(argv, argv + argc, "-o")){
+			std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
 			RenderTarget &target = scene.get_render_target();
 			target.save_image(out_file + ".ppm");
 			target.save_depth(out_file + ".pgm");
@@ -83,6 +95,8 @@ int main(int argc, char **argv){
 #ifdef BUILD_PREVIEWER
 	}
 #endif
+
+	std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
 	RenderTarget &target = scene.get_render_target();
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");
