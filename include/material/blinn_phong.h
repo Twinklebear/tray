@@ -17,7 +17,7 @@ public:
 	/*
 	 * Apply the BlinnPhong material shadin
 	 */
-	Point shade(const Ray &r) const override;
+	Point shade(const Ray &ray) const override;
 };
 
 #endif

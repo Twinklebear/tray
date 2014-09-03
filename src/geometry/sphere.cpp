@@ -4,7 +4,7 @@
 #include "linalg/vector.h"
 #include "geometry/sphere.h"
 
-bool Sphere::intersect(Ray &ray){
+bool Sphere::intersect(Ray &ray, HitInfo &hitinfo){
 	//Compute quadratic sphere coefficients
 	Vector ray_orig{ray.o};
 	float a = ray.d.length_sqr();
@@ -30,6 +30,9 @@ bool Sphere::intersect(Ray &ray){
 		}
 	}
 	ray.max_t = t_hit;
+	hitinfo.point = ray(t_hit);
+	//For a unit sphere the normal is the same as the point hit
+	hitinfo.normal = Normal{hitinfo.point};
 	return true;
 }
 

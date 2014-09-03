@@ -7,18 +7,22 @@
 #include "linalg/ray.h"
 #include "linalg/transform.h"
 #include "cache.h"
+#include "hitinfo.h"
 
 class Geometry {
 public:
 	/*
 	 * Test a ray for intersection with the geometry.
 	 * The ray should have been previously transformed into object space
-	 * TODO: For now we only need a true/false hit information but when
-	 * we need actual shading geometry information we should build
-	 * some differential geometry representing the surface @ the hit
-	 * and return it to do shading calculations
+	 * If the hit on this object is nearer than any previous ones seen by
+	 * the ray the ray's max_t value will be updated and the hitinfo struct
+	 * will be filled with information about the hit. Data stored in
+	 * hitinfo will be returned in object space, and the node must be set
+	 * outside since the geometry doesn't know which node it's attached too or
+	 * its transformation, etc.
+	 * If no hit occurs the ray and hitinfo are left unmodified
 	 */
-	virtual bool intersect(Ray &r) = 0;
+	virtual bool intersect(Ray &ray, HitInfo &hitinfo) = 0;
 };
 
 typedef Cache<Geometry> GeometryCache;
@@ -31,7 +35,7 @@ class Node {
 	std::vector<std::shared_ptr<Node>> children;
 	//Non-owning reference to some geometry in the cache
 	Geometry *geometry;
-	Transform transform;
+	Transform transform, inv_transform;
 	std::string name;
 
 public:
@@ -47,8 +51,13 @@ public:
 	 */
 	const Geometry* get_geometry() const;
 	Geometry* get_geometry();
+	/*
+	 * Get the transform of the inverse of the node's transform
+	 */
 	const Transform& get_transform() const;
 	Transform& get_transform();
+	const Transform& get_inv_transform() const;
+	Transform& get_inv_transform();
 	const std::string& get_name() const;
 };
 

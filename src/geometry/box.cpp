@@ -5,7 +5,7 @@
 #include "linalg/ray.h"
 #include "geometry/box.h"
 
-bool Box::intersect(Ray &r){
+bool Box::intersect(Ray &ray, HitInfo &hitinfo){
 	//The box half-vectors
 	static const std::array<Vector, 3> axes{ Vector{1, 0, 0},
 		Vector{0, 1, 0}, Vector{0, 0, 1}
@@ -13,12 +13,12 @@ bool Box::intersect(Ray &r){
 	float t_min = std::numeric_limits<float>::min();
 	float t_max = std::numeric_limits<float>::max();
 	//The vector from the ray origin to the box's center (0, 0, 0)
-	Vector p{-r.o};
+	Vector p{-ray.o};
 	//Check which slab we're probably hitting by finding which half vector
 	//p has the greatest length along
 	for (size_t i = 0; i < axes.size(); ++i){
 		float e = axes[i].dot(p);
-		float f = axes[i].dot(r.d);
+		float f = axes[i].dot(ray.d);
 		if (std::abs(f) > 1e-5){
 			float t1 = (e + 1) / f;
 			float t2 = (e - 1) / f;
@@ -40,12 +40,12 @@ bool Box::intersect(Ray &r){
 		}
 	}
 	//We've hit the box, now check that it's in the range the ray is looking for
-	if (t_min >= r.min_t && t_min <= r.max_t){
-		r.max_t = t_min;
+	if (t_min >= ray.min_t && t_min <= ray.max_t){
+		ray.max_t = t_min;
 		return true;
 	}
-	else if (t_max >= r.min_t && t_max <= r.max_t){
-		r.max_t = t_max;
+	else if (t_max >= ray.min_t && t_max <= ray.max_t){
+		ray.max_t = t_max;
 		return true;
 	}
 	return false;

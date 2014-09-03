@@ -5,7 +5,7 @@
 #include "geometry/geometry.h"
 
 Node::Node(Geometry *geom, const Transform &t, const std::string &name)
-	: geometry(geom), transform(t), name(name)
+	: geometry(geom), transform(t), inv_transform(t.inverse()), name(name)
 {}
 const std::vector<std::shared_ptr<Node>>& Node::get_children() const {
 	return children;
@@ -24,6 +24,12 @@ const Transform& Node::get_transform() const {
 }
 Transform& Node::get_transform(){
 	return transform;
+}
+const Transform& Node::get_inv_transform() const {
+	return inv_transform;
+}
+Transform& Node::get_inv_transform(){
+	return inv_transform;
 }
 const std::string& Node::get_name() const {
 	return name;

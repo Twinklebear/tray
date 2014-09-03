@@ -9,7 +9,7 @@
  */
 class Plane : public Geometry {
 public:
-	bool intersect(Ray &r) override;
+	bool intersect(Ray &ray, HitInfo &hitinfo) override;
 };
 
 #endif
