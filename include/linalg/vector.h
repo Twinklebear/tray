@@ -133,6 +133,7 @@ struct Normal {
 	inline Normal(float x = 0) : x(x), y(x), z(x) {}
 	inline Normal(float x, float y, float z) : x(x), y(y), z(z) {}
 	inline explicit Normal(const Vector &v) : x(v.x), y(v.y), z(v.z) {}
+	inline explicit Normal(const Point &p);
 	inline float dot(const Vector &v) const {
 		return x * v.x + y * v.y + z * v.z;
 	}

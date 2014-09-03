@@ -36,7 +36,7 @@ public:
 	/*
 	 * Run intersecton tests on a node and its children and report back the results
 	 */
-	static bool intersect_nodes(Node &node, Ray &ray);
+	static bool intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo);
 };
 
 /*

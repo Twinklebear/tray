@@ -139,14 +139,22 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			v *= f;
 			std::cout << "Scaling of " << v << " applied\n";
 			auto &transform = node.get_transform();
-			transform = Transform::scale(v.x, v.y, v.z) * transform;
+			auto &inv_transform = node.get_inv_transform();
+			Transform t = Transform::scale(v.x, v.y, v.z);
+			transform = t * transform;
+			inv_transform = inv_transform * t.inverse();
+
 		}
 		else if (c->Value() == std::string{"translate"}){
 			Vector v;
 			read_vector(c->ToElement(), v);
 			std::cout << "Translation of " << v << " applied\n";
 			auto &transform = node.get_transform();
-			transform = Transform::translate(v) * transform;
+			auto &inv_transform = node.get_inv_transform();
+			Transform t = Transform::translate(v);
+			transform = t * transform;
+			inv_transform = inv_transform * t.inverse();
+
 		}
 		else if (c->Value() == std::string{"rotate"}){
 			Vector v;
@@ -155,7 +163,10 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			read_float(c->ToElement(), d, "angle");
 			std::cout << "Rotation of " << d << " deg about " << v << " applied\n";
 			auto &transform = node.get_transform();
-			transform = Transform::rotate(v, d) * transform;
+			auto &inv_transform = node.get_inv_transform();
+			Transform t = Transform::rotate(v, d);
+			transform = t * transform;
+			inv_transform = inv_transform * t.inverse();
 		}
 	}
 }

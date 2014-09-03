@@ -100,6 +100,7 @@ inline std::ostream& operator<<(std::ostream &os, const Point &p){
 }
 
 Vector::Vector(const Point &p) : x(p.x), y(p.y), z(p.z){}
+Normal::Normal(const Point &p) : x(p.x), y(p.y), z(p.z){}
 
 #endif
 

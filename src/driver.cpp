@@ -26,8 +26,11 @@ void Worker::render(){
 	while (sampler.has_samples()){
 		std::array<float, 2> s = sampler.get_sample();
 		Ray ray = camera.generate_ray(s[0], s[1]);
-		if (intersect_nodes(root, ray)){
-			target.write_pixel(s[0], s[1], Color{255, 255, 255});
+		HitInfo hitinfo;
+		if (intersect_nodes(root, ray, hitinfo)){
+			Normal n = (hitinfo.normal.normalized() + Normal{1}) / 2;
+			Color col_normal{n.x * 255, n.y * 255, n.z * 255};
+			target.write_pixel(s[0], s[1], col_normal);
 			target.write_depth(s[0], s[1], ray.max_t);
 		}
 		++check_cancel;
@@ -41,19 +44,24 @@ void Worker::render(){
 	}
 	status.store(STATUS::DONE, std::memory_order_release);
 }
-bool Worker::intersect_nodes(Node &node, Ray &ray){
+bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	bool hit = false;
 	//Transform the ray into this nodes space
 	Ray node_space = ray;
-	node.get_transform().inverse()(ray, node_space);
-	for (auto &c : node.get_children()){
-		hit = intersect_nodes(*c, node_space) || hit;
-	}
-	//Now test this node
+	auto &inv_transform = node.get_inv_transform();
+	inv_transform(ray, node_space);
+	//Test this node then its children
 	if (node.get_geometry()){
-		hit = node.get_geometry()->intersect(node_space) || hit;
+		hit = node.get_geometry()->intersect(node_space, hitinfo);
 	}
-	ray.max_t = node_space.max_t;
+	for (auto &c : node.get_children()){
+		hit = intersect_nodes(*c, node_space, hitinfo) || hit;
+	}
+	if (hit){
+		inv_transform(hitinfo.point, hitinfo.point);
+		inv_transform(hitinfo.normal, hitinfo.normal);
+		ray.max_t = node_space.max_t;
+	}
 	return hit;
 }
 Driver::Driver(Scene &scene, int nworkers) : scene(scene){
