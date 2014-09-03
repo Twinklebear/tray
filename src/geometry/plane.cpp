@@ -19,6 +19,12 @@ bool Plane::intersect(Ray &ray, HitInfo &hitinfo){
 	//It's in the range for the ray so now check if it's in range
 	//for the finite plane
 	Point hit = ray(t);
-	return hit.x >= -1 && hit.x <= 1 && hit.y >= -1 && hit.y <= 1;
+	if (hit.x >= -1 && hit.x <= 1 && hit.y >= -1 && hit.y <= 1){
+		ray.max_t = t;
+		hitinfo.point = hit;
+		hitinfo.normal = Normal{0, 0, 1};
+		return true;
+	}
+	return false;
 }
 

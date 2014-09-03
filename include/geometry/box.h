@@ -9,6 +9,12 @@
 class Box : public Geometry {
 public:
 	bool intersect(Ray &ray, HitInfo &hitinfo) override;
+
+private:
+	/*
+	 * Compute the box normal at the point on the surface and return it
+	 */
+	Normal normal_at(const Point &p);
 };
 
 #endif

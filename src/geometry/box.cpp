@@ -1,6 +1,7 @@
 #include <cmath>
 #include <limits>
 #include <array>
+#include "linalg/util.h"
 #include "linalg/vector.h"
 #include "linalg/ray.h"
 #include "geometry/box.h"
@@ -42,12 +43,37 @@ bool Box::intersect(Ray &ray, HitInfo &hitinfo){
 	//We've hit the box, now check that it's in the range the ray is looking for
 	if (t_min >= ray.min_t && t_min <= ray.max_t){
 		ray.max_t = t_min;
+		hitinfo.point = ray(t_min);
+		hitinfo.normal = normal_at(hitinfo.point);
 		return true;
 	}
 	else if (t_max >= ray.min_t && t_max <= ray.max_t){
 		ray.max_t = t_max;
+		hitinfo.point = ray(t_max);
+		hitinfo.normal = normal_at(hitinfo.point);
 		return true;
 	}
 	return false;
+}
+Normal Box::normal_at(const Point &p){
+	float x = std::abs(p.x);
+	float y = std::abs(p.y);
+	float z = std::abs(p.z);
+	if (x > y){
+		if (x > z){
+			return Normal{1, 0, 0} * sign(x);
+		}
+		else {
+			return Normal{0, 0, 1} * sign(z);
+		}
+	}
+	else {
+		if (y > z){
+			return Normal{0, 1, 0} * sign(y);
+		}
+		else {
+			return Normal{0, 0, 1} * sign(z);
+		}
+	}
 }
 

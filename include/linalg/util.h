@@ -11,11 +11,11 @@
 /*
  * Some basic math/geometric utility functions
  */
-inline float lerp(float t, float a, float b){
+constexpr inline float lerp(float t, float a, float b){
 	return (1.f - t) * a + t * b;
 }
 template<typename T>
-inline T clamp(T x, T l, T h){
+constexpr inline T clamp(T x, T l, T h){
 	return x < l ? l : x > h ? h : x;
 }
 //Version of mod that handles negatives cleaner, % is undefined in this case
@@ -24,15 +24,19 @@ inline int mod(int a, int m){
 	a -= n * m;
 	return a < 0 ? a + m : a;
 }
-inline float radians(float deg){
+constexpr inline float radians(float deg){
 	return M_PI / 180.f * deg;
 }
-inline float degrees(float rad){
+constexpr inline float degrees(float rad){
 	return 180.f / M_PI * rad;
 }
 inline float log_2(float x){
 	static float inv_log2 = 1.f / std::log(2);
 	return std::log(x) * inv_log2;
+}
+template<typename T>
+constexpr int sign(T x){
+	return (T{0} < x) - (x < T{0});
 }
 /*
  * Solve a quadratic equation a*t^2 + b*2 + c = 0 and return real roots
