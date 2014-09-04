@@ -237,7 +237,7 @@ std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
 std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	using namespace tinyxml2;
 	Colorf diff{1, 1, 1}, spec{1, 1, 1};
-	float gloss = 1, spec_val = 1;
+	float gloss = 1;
 	XMLElement *e = elem->FirstChildElement("diffuse");
 	if (e){
 		read_color(elem->FirstChildElement("diffuse"), diff);
@@ -245,14 +245,13 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	e = elem->FirstChildElement("specular");
 	if (e){
 		read_color(elem->FirstChildElement("specular"), spec);
-		read_float(elem->FirstChildElement("specular"), spec_val);
 	}
 	e = elem->FirstChildElement("glossiness");
 	if (e){
 		read_float(elem->FirstChildElement("glossiness"), gloss);
 	}
 	std::cout << "Blinn material diff: " << diff << ", spec: " << spec
-		<< ", spec_val(?): " << spec_val << ", gloss: " << gloss << std::endl;
+		<< ", gloss: " << gloss << std::endl;
 	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss}};
 }
 Geometry* get_geometry(const std::string &type, Scene &scene){
@@ -283,6 +282,9 @@ void read_color(tinyxml2::XMLElement *elem, Colorf &c){
 	elem->QueryFloatAttribute("r", &c.r);
 	elem->QueryFloatAttribute("g", &c.g);
 	elem->QueryFloatAttribute("b", &c.b);
+	float s = 1;
+	read_float(elem, s);
+	c *= s;
 }
 void read_point(tinyxml2::XMLElement *elem, Point &p){
 	elem->QueryFloatAttribute("x", &p.x);
