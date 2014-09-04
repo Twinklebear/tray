@@ -73,6 +73,10 @@ int main(int argc, char **argv){
 		//Also need to validate that file output was turned on if we're running the previewer
 		if (render_with_preview(driver) && flag(argv, argv + argc, "-o")){
 			std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
+			if (out_file.empty()){
+				std::cerr << "Error: No output filename specified\n";
+				return 1;
+			}
 			RenderTarget &target = scene.get_render_target();
 			target.save_image(out_file + ".ppm");
 			target.save_depth(out_file + ".pgm");
@@ -97,6 +101,10 @@ int main(int argc, char **argv){
 #endif
 
 	std::string out_file = get_param<std::string>(argv, argv + argc, "-o");
+	if (out_file.empty()){
+		std::cerr << "Error: No output filename specified\n";
+		return 1;
+	}
 	RenderTarget &target = scene.get_render_target();
 	target.save_image(out_file + ".ppm");
 	target.save_depth(out_file + ".pgm");
