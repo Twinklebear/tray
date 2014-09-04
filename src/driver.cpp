@@ -29,7 +29,7 @@ void Worker::render(){
 		HitInfo hitinfo;
 		if (intersect_nodes(root, ray, hitinfo)){
 			Normal n = (hitinfo.normal.normalized() + Normal{1}) / 2;
-			Color col_normal{n.x * 255, n.y * 255, n.z * 255};
+			Colorf col_normal{n.x, n.y, n.z};
 			target.write_pixel(s[0], s[1], col_normal);
 			target.write_depth(s[0], s[1], ray.max_t);
 		}

@@ -6,12 +6,10 @@
 #include "linalg/util.h"
 #include "render/render_target.h"
 
-Color::Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
-
 RenderTarget::RenderTarget(size_t width, size_t height) : width(width), height(height),
 	color(width * height), depth(width * height, std::numeric_limits<float>::max())
 {}
-void RenderTarget::write_pixel(size_t x, size_t y, const Color &c){
+void RenderTarget::write_pixel(size_t x, size_t y, const Color24 &c){
 	color[y * width + x] = c;
 }
 void RenderTarget::write_depth(size_t x, size_t y, float d){
@@ -30,7 +28,7 @@ size_t RenderTarget::get_width() const {
 size_t RenderTarget::get_height() const {
 	return height;
 }
-const std::vector<Color>& RenderTarget::get_colorbuf() const { 
+const std::vector<Color24>& RenderTarget::get_colorbuf() const { 
 	return color;
 }
 const std::vector<float>& RenderTarget::get_depthbuf() const {

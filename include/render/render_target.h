@@ -3,15 +3,7 @@
 
 #include <string>
 #include <vector>
-
-//Since we fwrite this struct directly and PPM only takes RGB (24 bits)
-//we can't allow any padding to be added onto the end
-#pragma pack(1)
-struct Color {
-	uint8_t r, g, b;
-
-	Color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0);
-};
+#include "color.h"
 
 /*
  * The render target where pixel data is stored for the rendered scene
@@ -19,7 +11,7 @@ struct Color {
  */
 class RenderTarget {
 	size_t width, height;
-	std::vector<Color> color;
+	std::vector<Color24> color;
 	std::vector<float> depth;
 
 public:
@@ -30,7 +22,7 @@ public:
 	/*
 	 * Write a color value to the image at pixel(x, y)
 	 */
-	void write_pixel(size_t x, size_t y, const Color &c);
+	void write_pixel(size_t x, size_t y, const Color24 &c);
 	/*
 	 * Write a depth value to the depth buffer at pixel(x, y)
 	 */
@@ -40,7 +32,7 @@ public:
 	bool save_depth(const std::string &file) const;
 	size_t get_width() const;
 	size_t get_height() const;
-	const std::vector<Color>& get_colorbuf() const;
+	const std::vector<Color24>& get_colorbuf() const;
 	const std::vector<float>& get_depthbuf() const;
 	/*
 	 * Generate a normalized luminosity image of the depth buffer

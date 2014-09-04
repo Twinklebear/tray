@@ -76,7 +76,7 @@ struct Vector {
 		return *this;
 	}
 	inline Vector& operator/=(float s){
-		return *this *= 1 / s;
+		return *this *= 1.f / s;
 	}
 	inline Vector operator-(){
 		return Vector{-x, -y, -z};
