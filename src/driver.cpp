@@ -36,6 +36,7 @@ void Worker::render(){
 			else {
 				color = Colorf{0.4, 0.4, 0.4};
 			}
+			color.normalize();
 			target.write_pixel(s[0], s[1], color);
 			target.write_depth(s[0], s[1], ray.max_t);
 		}

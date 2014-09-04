@@ -16,21 +16,18 @@ Colorf& Colorf::operator+=(const Colorf &c){
 	r += c.r;
 	b += c.b;
 	g += c.g;
-	normalize();
 	return *this;
 }
 Colorf& Colorf::operator-=(const Colorf &c){
 	r -= c.r;
 	b -= c.b;
 	g -= c.g;
-	normalize();
 	return *this;
 }
 Colorf& Colorf::operator*=(float s){
 	r *= s;
 	b *= s;
 	g *= s;
-	normalize();
 	return *this;
 }
 Colorf& Colorf::operator/=(float s){
@@ -42,22 +39,18 @@ Colorf::operator Color24() const {
 }
 Colorf operator+(const Colorf &a, const Colorf &b){
 	Colorf c = Colorf(a.r + b.r, a.g + b.g, a.b + b.b);
-	c.normalize();
 	return c;
 }
 Colorf operator-(const Colorf &a, const Colorf &b){
 	Colorf c = Colorf(a.r - b.r, a.g - b.g, a.b - b.b);
-	c.normalize();
 	return c;
 }
 Colorf operator*(const Colorf &a, float s){
 	Colorf c = Colorf(a.r * s, a.g * s, a.b * s);
-	c.normalize();
 	return c;
 }
 Colorf operator*(float s, const Colorf &a){
 	Colorf c = Colorf(a.r * s, a.g * s, a.b * s);
-	c.normalize();
 	return c;
 }
 Colorf operator/(const Colorf &c, float s){

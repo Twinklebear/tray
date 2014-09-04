@@ -231,6 +231,7 @@ void load_materials(tinyxml2::XMLElement *elem, Scene &scene){
 std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
 	read_color(elem->FirstChildElement("color"), color);
+	color.normalize();
 	std::cout << "FlatMaterial color: " << color << std::endl;
 	return std::unique_ptr<Material>{new FlatMaterial{color}};
 }
@@ -250,6 +251,8 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	if (e){
 		read_float(elem->FirstChildElement("glossiness"), gloss);
 	}
+	diff.normalize();
+	spec.normalize();
 	std::cout << "Blinn material diff: " << diff << ", spec: " << spec
 		<< ", gloss: " << gloss << std::endl;
 	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss}};
