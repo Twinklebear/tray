@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <string>
 #include "linalg/ray.h"
@@ -6,7 +7,11 @@
 
 Node::Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name)
 	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name)
-{}
+{
+	if (material != nullptr){
+		std::cout << "i have a material, my name is: " << name << std::endl;
+	}
+}
 const std::vector<std::shared_ptr<Node>>& Node::get_children() const {
 	return children;
 }

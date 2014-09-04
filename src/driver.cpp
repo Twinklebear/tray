@@ -28,9 +28,15 @@ void Worker::render(){
 		Ray ray = camera.generate_ray(s[0], s[1]);
 		HitInfo hitinfo;
 		if (intersect_nodes(root, ray, hitinfo)){
-			Normal n = (hitinfo.normal.normalized() + Normal{1}) / 2;
-			Colorf col_normal{n.x, n.y, n.z};
-			target.write_pixel(s[0], s[1], col_normal);
+			Colorf color;
+			const Material *mat = hitinfo.node->get_material();
+			if (mat){
+				color = mat->shade(ray, hitinfo);
+			}
+			else {
+				color = Colorf{0.4, 0.4, 0.4};
+			}
+			target.write_pixel(s[0], s[1], color);
 			target.write_depth(s[0], s[1], ray.max_t);
 		}
 		++check_cancel;
@@ -53,6 +59,9 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	//Test this node then its children
 	if (node.get_geometry()){
 		hit = node.get_geometry()->intersect(node_space, hitinfo);
+		if (hit){
+			hitinfo.node = &node;
+		}
 	}
 	for (auto &c : node.get_children()){
 		hit = intersect_nodes(*c, node_space, hitinfo) || hit;
