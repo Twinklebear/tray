@@ -12,6 +12,8 @@
 #include "geometry/sphere.h"
 #include "geometry/box.h"
 #include "geometry/plane.h"
+#include "material/blinn_phong.h"
+#include "material/flat_material.h"
 #include "load_scene.h"
 #include "scene.h"
 
@@ -27,9 +29,38 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h);
  */
 void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene);
 /*
+ * Load all the material information into the material cache. elem should
+ * be the first material XML element in the file
+ * We do this in a pre-pass to avoid having to store the material
+ * names on the nodes and do a post-load pass to set up the node
+ * materials like is done in Cem's loading code, due to how the XML
+ * file is layed out with materials coming after objects
+ */
+void load_materials(tinyxml2::XMLElement *elem, Scene &scene);
+/*
+ * Load the FlatMaterial properites and return the material
+ * elem should be root of the flat material being loaded
+ */
+std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem);
+/*
+ * Load the BlinnPhong material properties and return the material
+ * elem should be the root of the blinn material being loaded
+ */
+std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem);
+/*
+ * Get the geometry for the type, either return it from the cache
+ * or load the geometry into the cache and return it
+ * Returns nullptr if no valid geometry can be loaded
+ */
+Geometry* get_geometry(const std::string &type, Scene &scene);
+/*
  * Read the x,y,z attributes of the XMLElement and return it
  */
 void read_vector(tinyxml2::XMLElement *elem, Vector &v);
+/*
+ * Read the r,g,b attributes of the XMLElement and return it
+ */
+void read_color(tinyxml2::XMLElement *elem, Colorf &c);
 /*
  * Read the x,y,z attributes of the XMLElement and return it
  */
@@ -67,6 +98,12 @@ Scene load_scene(const std::string &file){
 	Camera camera = load_camera(cam, w, h);
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h)};
 	Scene scene{std::move(camera), std::move(render_target)};
+	
+	//Run a pre-pass to load the materials so they're available when loading the objects
+	XMLElement *mats = scene_node->FirstChildElement("material");
+	if (mats){
+		load_materials(mats, scene);
+	}
 	load_node(scene_node, scene.get_root(), scene);
 	return scene;
 }
@@ -110,24 +147,18 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			if (t){
 				std::string type = t;
 				std::cout << "Geometry type: " << type << std::endl;
-				//Check if the geometry is in our cache, if not load it
-				auto &gcache = scene.get_geom_cache();
-				if (!gcache.get(type)){
-					if (type == "sphere"){
-						gcache.add(type, std::unique_ptr<Geometry>(new Sphere{}));
-					}
-					else if (type == "box"){
-						gcache.add(type, std::unique_ptr<Geometry>(new Box{}));
-					}
-					else if (type == "plane"){
-						gcache.add(type, std::unique_ptr<Geometry>(new Plane{}));
-					}
-				}
-				geom = gcache.get(type);
+				geom = get_geometry(type, scene);
+			}
+			const char *m = e->Attribute("material");
+			Material *mat = nullptr;
+			if (m){
+				std::string mat_name = m;
+				std::cout << "Material name: " << mat_name << std::endl;
+				mat = scene.get_mat_cache().get(mat_name);
 			}
 			//Push the new child on and assign its geometry, the transform will
 			//be setup in further iterations when we read the scale/translate elements
-			children.push_back(std::make_shared<Node>(geom, Transform{}, name));
+			children.push_back(std::make_shared<Node>(geom, mat, Transform{}, name));
 			load_node(e, *children.back(), scene);
 		}
 		else if (c->Value() == std::string{"scale"}){
@@ -170,10 +201,74 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 		}
 	}
 }
+void load_materials(tinyxml2::XMLElement *elem, Scene &scene){
+	using namespace tinyxml2;
+	auto &cache = scene.get_mat_cache();
+	for (XMLNode *n = elem; n; n = n->NextSibling()){
+		if (n->Value() == std::string{"material"}){
+			XMLElement *m = n->ToElement();
+			std::string name = m->Attribute("name");
+			std::cout << "loading material: " << name << std::endl;
+			std::unique_ptr<Material> material;
+			if (m->Attribute("type") == std::string{"blinn"}){
+				material = load_blinnphong(m);
+			}
+			else if (m->Attribute("type") == std::string{"flat"}){
+				material = load_flatmat(m);
+			}
+			cache.add(name, std::move(material));
+		}
+		else {
+			//The materials are all passed in a block, so once
+			//we hit something not a material we're done loading
+			return;
+		}
+	}
+}
+std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
+	Colorf color{1, 1, 1};
+	read_color(elem->FirstChildElement("color"), color);
+	std::cout << "FlatMaterial color: " << color << std::endl;
+	return std::unique_ptr<Material>{new FlatMaterial{color}};
+}
+std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
+	Colorf diff{1, 1, 1}, spec{1, 1, 1};
+	float gloss = 1;
+	read_color(elem->FirstChildElement("diffuse"), diff);
+	read_color(elem->FirstChildElement("specular"), spec);
+	read_float(elem->FirstChildElement("glossiness"), gloss);
+	std::cout << "Blinn material diff: " << diff << ", spec: " << spec
+		<< ", gloss: " << gloss << std::endl;
+	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss}};
+}
+Geometry* get_geometry(const std::string &type, Scene &scene){
+	//Check if the geometry is in our cache, if not load it
+	auto &cache = scene.get_geom_cache();
+	if (!cache.get(type)){
+		if (type == "sphere"){
+			cache.add(type, std::unique_ptr<Geometry>(new Sphere{}));
+		}
+		else if (type == "box"){
+			cache.add(type, std::unique_ptr<Geometry>(new Box{}));
+		}
+		else if (type == "plane"){
+			cache.add(type, std::unique_ptr<Geometry>(new Plane{}));
+		}
+		else {
+			return nullptr;
+		}
+	}
+	return cache.get(type);
+}
 void read_vector(tinyxml2::XMLElement *elem, Vector &v){
 	elem->QueryFloatAttribute("x", &v.x);
 	elem->QueryFloatAttribute("y", &v.y);
 	elem->QueryFloatAttribute("z", &v.z);
+}
+void read_color(tinyxml2::XMLElement *elem, Colorf &c){
+	elem->QueryFloatAttribute("r", &c.r);
+	elem->QueryFloatAttribute("g", &c.g);
+	elem->QueryFloatAttribute("b", &c.b);
 }
 void read_point(tinyxml2::XMLElement *elem, Point &p){
 	elem->QueryFloatAttribute("x", &p.x);

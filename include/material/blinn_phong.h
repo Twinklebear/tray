@@ -1,11 +1,10 @@
 #ifndef BLINN_PHONG_H
 #define BLINN_PHONG_H
 
-#include "linalg/point.h"
 #include "material.h"
 
 class BlinnPhong : public Material {
-	Point diffuse, specular;
+	Colorf diffuse, specular;
 	float gloss;
 
 public:
@@ -13,11 +12,11 @@ public:
 	 * Create a Blinn-Phong material with the desired color, specular
 	 * and glossiness
 	 */
-	BlinnPhong(const Point &diffuse, const Point &specular, float gloss);
+	BlinnPhong(const Colorf &diffuse, const Colorf &specular, float gloss);
 	/*
-	 * Apply the BlinnPhong material shadin
+	 * Apply the BlinnPhong material shading model to the point
 	 */
-	Point shade(const Ray &ray) const override;
+	Colorf shade(const Ray &r, const HitInfo &hitinfo) const override;
 };
 
 #endif

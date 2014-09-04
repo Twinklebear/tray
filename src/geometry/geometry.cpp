@@ -4,8 +4,8 @@
 #include "linalg/transform.h"
 #include "geometry/geometry.h"
 
-Node::Node(Geometry *geom, const Transform &t, const std::string &name)
-	: geometry(geom), transform(t), inv_transform(t.inverse()), name(name)
+Node::Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name)
+	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name)
 {}
 const std::vector<std::shared_ptr<Node>>& Node::get_children() const {
 	return children;
@@ -18,6 +18,12 @@ const Geometry* Node::get_geometry() const {
 }
 Geometry* Node::get_geometry(){
 	return geometry;
+}
+const Material* Node::get_material() const {
+	return material;
+}
+Material* Node::get_material(){
+	return material;
 }
 const Transform& Node::get_transform() const {
 	return transform;

@@ -1,10 +1,10 @@
 #include "material/blinn_phong.h"
 
-BlinnPhong::BlinnPhong(const Point &diffuse, const Point &specular, float gloss)
+BlinnPhong::BlinnPhong(const Colorf &diffuse, const Colorf &specular, float gloss)
 	: diffuse(diffuse), specular(specular), gloss(gloss)
 {}
-Point BlinnPhong::shade(const Ray &ray) const {
-	//Just for debugging
+Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo) const {
+	//TODO: BlinnPhong
 	return diffuse;
 }
 

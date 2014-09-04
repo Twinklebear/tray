@@ -6,6 +6,7 @@
 #include <memory>
 #include "linalg/ray.h"
 #include "linalg/transform.h"
+#include "material/material.h"
 #include "cache.h"
 #include "hitinfo.h"
 
@@ -35,6 +36,8 @@ class Node {
 	std::vector<std::shared_ptr<Node>> children;
 	//Non-owning reference to some geometry in the cache
 	Geometry *geometry;
+	//Non-owning reference to some material in the cache
+	Material *material;
 	Transform transform, inv_transform;
 	std::string name;
 
@@ -43,7 +46,7 @@ public:
 	 * Create a node in the scene graph, placing some named geometry in
 	 * the scene
 	 */
-	Node(Geometry *geom, const Transform &t, const std::string &name);
+	Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name);
 	const std::vector<std::shared_ptr<Node>>& get_children() const;
 	std::vector<std::shared_ptr<Node>>& get_children();
 	/*
@@ -51,6 +54,11 @@ public:
 	 */
 	const Geometry* get_geometry() const;
 	Geometry* get_geometry();
+	/*
+	 * Get the material for the node, or null if it has none associated with it
+	 */
+	const Material* get_material() const;
+	Material* get_material();
 	/*
 	 * Get the transform of the inverse of the node's transform
 	 */

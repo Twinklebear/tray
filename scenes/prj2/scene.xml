@@ -26,6 +26,9 @@
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
       <glossiness value="10"/>
     </material>
+	<material type="flat" name="mtl3">
+	  <color r="1" g="1" b="0.5"/>
+    </material>
 
     <!-- Lights -->
     <light type="ambient" name="ambientLight">
