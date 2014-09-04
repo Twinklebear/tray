@@ -12,6 +12,8 @@ class Cache {
 	std::unordered_map<std::string, std::unique_ptr<T>> cache;
 
 public:
+	using iter = typename std::unordered_map<std::string, std::unique_ptr<T>>::iterator;
+	using citer = typename std::unordered_map<std::string, std::unique_ptr<T>>::const_iterator;
 	/*
 	 * Add some geometry to the cache
 	 */
@@ -35,6 +37,18 @@ public:
 			return fnd->second.get();
 		}
 		return nullptr;
+	}
+	iter begin(){
+		return cache.begin();
+	}
+	citer cbegin() const {
+		return cache.cbegin();
+	}
+	iter end(){
+		return cache.end();
+	}
+	citer cend(){
+		return cache.cend();
 	}
 };
 
