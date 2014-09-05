@@ -1,9 +1,6 @@
 <xml>
   <scene>
     <!-- Objects -->
-	<object name="light_pos" type="sphere" material="dbg">
-      <translate x="0" y="0" z="22"/>
-	</object>
     <object name="box">
       <translate x="0" y="0" z="12"/>
       <object type="sphere" name="WallBottom" material="wall">
@@ -38,9 +35,6 @@
     </object>
  
     <!-- Materials -->
-	<material type="flat" name="dbg">
-		<color r="1" g="1" b="0"/>
-	</material>
     <material type="blinn" name="wall">
       <diffuse  value="0.7" r="1" g="1" b="1"/>
       <specular value="0"/>
