@@ -81,22 +81,23 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 	Vector up;
 	float fov;
 	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
-		if (c->Value() == std::string{"position"}){
+		std::string val = c->Value();
+		if (val == "position"){
 			read_point(c->ToElement(), pos);
 		}
-		else if (c->Value() == std::string{"target"}){
+		else if (val == "target"){
 			read_point(c->ToElement(), target);
 		}
-		else if (c->Value() == std::string{"up"}){
+		else if (val == "up"){
 			read_vector(c->ToElement(), up);
 		}
-		else if (c->Value() == std::string{"fov"}){
+		else if (val == "fov"){
 			read_float(c->ToElement(), fov);
 		}
-		else if (c->Value() == std::string{"width"}){
+		else if (val == "width"){
 			c->ToElement()->QueryIntAttribute("value", &w);
 		}
-		else if (c->Value() == std::string{"height"}){
+		else if (val == "height"){
 			c->ToElement()->QueryIntAttribute("value", &h);
 		}
 	}
