@@ -35,6 +35,7 @@ struct Colorf {
 };
 Colorf operator+(const Colorf &a, const Colorf &b);
 Colorf operator-(const Colorf &a, const Colorf &b);
+Colorf operator*(const Colorf &a, const Colorf &b);
 Colorf operator*(const Colorf &a, float s);
 Colorf operator*(float s, const Colorf &a);
 Colorf operator/(const Colorf &c, float s);

@@ -38,20 +38,19 @@ Colorf::operator Color24() const {
 		static_cast<uint8_t>(b * 255));
 }
 Colorf operator+(const Colorf &a, const Colorf &b){
-	Colorf c = Colorf(a.r + b.r, a.g + b.g, a.b + b.b);
-	return c;
+	return Colorf{a.r + b.r, a.g + b.g, a.b + b.b};
 }
 Colorf operator-(const Colorf &a, const Colorf &b){
-	Colorf c = Colorf(a.r - b.r, a.g - b.g, a.b - b.b);
-	return c;
+	return Colorf{a.r - b.r, a.g - b.g, a.b - b.b};
+}
+Colorf operator*(const Colorf &a, const Colorf &b){
+	return Colorf{a.r * b.r, a.g * b.g, a.b * b.b};
 }
 Colorf operator*(const Colorf &a, float s){
-	Colorf c = Colorf(a.r * s, a.g * s, a.b * s);
-	return c;
+	return Colorf{a.r * s, a.g * s, a.b * s};
 }
 Colorf operator*(float s, const Colorf &a){
-	Colorf c = Colorf(a.r * s, a.g * s, a.b * s);
-	return c;
+	return Colorf{a.r * s, a.g * s, a.b * s};
 }
 Colorf operator/(const Colorf &c, float s){
 	float inv_s = 1.f / s;
