@@ -69,7 +69,7 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	}
 	if (hit){
 		inv_transform(hitinfo.point, hitinfo.point);
-		inv_transform(hitinfo.normal, hitinfo.normal);
+		node.get_transform()(hitinfo.normal, hitinfo.normal);
 		ray.max_t = node_space.max_t;
 	}
 	return hit;

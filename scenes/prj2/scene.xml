@@ -13,8 +13,8 @@
         <scale value="0.2"/>
         <translate x="0" y="0" z="1.2"/>
       </object>
-	</object>
-
+    </object>
+ 
     <!-- Materials -->
     <material type="blinn" name="mtl1">
       <diffuse  r="0.8" g="0.2" b="0.2"/>
@@ -26,25 +26,21 @@
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
       <glossiness value="10"/>
     </material>
-
+ 
     <!-- Lights -->
-	<!--
     <light type="ambient" name="ambientLight">
       <intensity value="0.1"/>
     </light>
-	-->
     <light type="direct" name="directionalLight">
       <intensity value="0.5"/>
       <direction x="1" y="0.5" z="-1"/>
     </light>
-	<!--
     <light type="point" name="pointLight">
       <intensity value="0.5"/>
       <position x="140" y="40" z="70"/>
     </light>
--->
   </scene>
-
+ 
   <camera>
     <position x="0" y="0" z="10"/>
     <target x="0" y="50" z="0"/>
