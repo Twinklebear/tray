@@ -14,10 +14,6 @@
         <translate x="0" y="0" z="1.2"/>
       </object>
 	</object>
-	<object type="sphere" name="delete_me" material="mtl3">
-		<scale value="4"/>
-		<translate x="-10" y="50" z="10"/>
-    </object>
 
     <!-- Materials -->
     <material type="blinn" name="mtl1">
@@ -30,22 +26,23 @@
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
       <glossiness value="10"/>
     </material>
-	<material type="flat" name="mtl3">
-	  <color r="1" g="1" b="0.5"/>
-    </material>
 
     <!-- Lights -->
+	<!--
     <light type="ambient" name="ambientLight">
       <intensity value="0.1"/>
     </light>
+	-->
     <light type="direct" name="directionalLight">
       <intensity value="0.5"/>
       <direction x="1" y="0.5" z="-1"/>
     </light>
+	<!--
     <light type="point" name="pointLight">
       <intensity value="0.5"/>
       <position x="140" y="40" z="70"/>
     </light>
+-->
   </scene>
 
   <camera>
