@@ -125,8 +125,8 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 				std::cout << "Material name: " << mat_name << std::endl;
 				mat = scene.get_mat_cache().get(mat_name);
 			}
-			if (mat){
-				std::cout << "found and applied material" << std::endl;
+			if (!mat){
+				std::cerr << "Warning: material " << m << " could not be found\n";
 			}
 			//Push the new child on and assign its geometry, the transform will
 			//be setup in further iterations when we read the scale/translate elements
