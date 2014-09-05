@@ -41,13 +41,13 @@ public:
 	iter begin(){
 		return cache.begin();
 	}
-	citer cbegin() const {
-		return cache.cbegin();
+	citer begin() const {
+		return cache.begin();
 	}
 	iter end(){
 		return cache.end();
 	}
-	citer cend(){
+	citer end() const {
 		return cache.cend();
 	}
 };

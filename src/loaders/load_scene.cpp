@@ -13,6 +13,7 @@
 #include "geometry/box.h"
 #include "geometry/plane.h"
 #include "loaders/load_material.h"
+#include "loaders/load_light.h"
 #include "loaders/load_scene.h"
 #include "scene.h"
 
@@ -66,6 +67,10 @@ Scene load_scene(const std::string &file){
 	XMLElement *mats = scene_node->FirstChildElement("material");
 	if (mats){
 		load_materials(mats, scene.get_mat_cache());
+	}
+	XMLElement *lights = scene_node->FirstChildElement("light");
+	if (lights){
+		load_lights(lights, scene.get_light_cache());
 	}
 	load_node(scene_node, scene.get_root(), scene);
 	return scene;

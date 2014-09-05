@@ -16,6 +16,5 @@ public:
 	bool is_ambient() const override;
 };
 
-
 #endif
 

@@ -1,3 +1,5 @@
+#include <memory>
+#include <string>
 #include <tinyxml2.h>
 #include "material/blinn_phong.h"
 #include "material/flat_material.h"
@@ -23,10 +25,11 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache){
 			std::string name = m->Attribute("name");
 			std::cout << "loading material: " << name << std::endl;
 			std::unique_ptr<Material> material;
-			if (m->Attribute("type") == std::string{"blinn"}){
+			std::string type = m->Attribute("type");
+			if (type == "blinn"){
 				material = load_blinnphong(m);
 			}
-			else if (m->Attribute("type") == std::string{"flat"}){
+			else if (type == "flat"){
 				material = load_flatmat(m);
 			}
 			cache.add(name, std::move(material));
