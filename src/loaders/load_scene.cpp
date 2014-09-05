@@ -12,9 +12,8 @@
 #include "geometry/sphere.h"
 #include "geometry/box.h"
 #include "geometry/plane.h"
-#include "material/blinn_phong.h"
-#include "material/flat_material.h"
-#include "load_scene.h"
+#include "loaders/load_material.h"
+#include "loaders/load_scene.h"
 #include "scene.h"
 
 /*
@@ -29,47 +28,11 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h);
  */
 void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene);
 /*
- * Load all the material information into the material cache. elem should
- * be the first material XML element in the file
- * We do this in a pre-pass to avoid having to store the material
- * names on the nodes and do a post-load pass to set up the node
- * materials like is done in Cem's loading code, due to how the XML
- * file is layed out with materials coming after objects
- */
-void load_materials(tinyxml2::XMLElement *elem, Scene &scene);
-/*
- * Load the FlatMaterial properites and return the material
- * elem should be root of the flat material being loaded
- */
-std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem);
-/*
- * Load the BlinnPhong material properties and return the material
- * elem should be the root of the blinn material being loaded
- */
-std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem);
-/*
  * Get the geometry for the type, either return it from the cache
  * or load the geometry into the cache and return it
  * Returns nullptr if no valid geometry can be loaded
  */
 Geometry* get_geometry(const std::string &type, Scene &scene);
-/*
- * Read the x,y,z attributes of the XMLElement and return it
- */
-void read_vector(tinyxml2::XMLElement *elem, Vector &v);
-/*
- * Read the r,g,b attributes of the XMLElement and return it
- */
-void read_color(tinyxml2::XMLElement *elem, Colorf &c);
-/*
- * Read the x,y,z attributes of the XMLElement and return it
- */
-void read_point(tinyxml2::XMLElement *elem, Point &p);
-/*
- * Read the value float attribute of the XMLElement and return it
- * optionally passing the attribute name to read from. Default is value
- */
-void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib = "value");
 
 Scene load_scene(const std::string &file){
 	using namespace tinyxml2;
@@ -102,7 +65,7 @@ Scene load_scene(const std::string &file){
 	//Run a pre-pass to load the materials so they're available when loading the objects
 	XMLElement *mats = scene_node->FirstChildElement("material");
 	if (mats){
-		load_materials(mats, scene);
+		load_materials(mats, scene.get_mat_cache());
 	}
 	load_node(scene_node, scene.get_root(), scene);
 	return scene;
@@ -203,59 +166,6 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			inv_transform = inv_transform * t.inverse();
 		}
 	}
-}
-void load_materials(tinyxml2::XMLElement *elem, Scene &scene){
-	using namespace tinyxml2;
-	auto &cache = scene.get_mat_cache();
-	for (XMLNode *n = elem; n; n = n->NextSibling()){
-		if (n->Value() == std::string{"material"}){
-			XMLElement *m = n->ToElement();
-			std::string name = m->Attribute("name");
-			std::cout << "loading material: " << name << std::endl;
-			std::unique_ptr<Material> material;
-			if (m->Attribute("type") == std::string{"blinn"}){
-				material = load_blinnphong(m);
-			}
-			else if (m->Attribute("type") == std::string{"flat"}){
-				material = load_flatmat(m);
-			}
-			cache.add(name, std::move(material));
-		}
-		else {
-			//The materials are all passed in a block, so once
-			//we hit something not a material we're done loading
-			return;
-		}
-	}
-}
-std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
-	Colorf color{1, 1, 1};
-	read_color(elem->FirstChildElement("color"), color);
-	color.normalize();
-	std::cout << "FlatMaterial color: " << color << std::endl;
-	return std::unique_ptr<Material>{new FlatMaterial{color}};
-}
-std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
-	using namespace tinyxml2;
-	Colorf diff{1, 1, 1}, spec{1, 1, 1};
-	float gloss = 1;
-	XMLElement *e = elem->FirstChildElement("diffuse");
-	if (e){
-		read_color(elem->FirstChildElement("diffuse"), diff);
-	}
-	e = elem->FirstChildElement("specular");
-	if (e){
-		read_color(elem->FirstChildElement("specular"), spec);
-	}
-	e = elem->FirstChildElement("glossiness");
-	if (e){
-		read_float(elem->FirstChildElement("glossiness"), gloss);
-	}
-	diff.normalize();
-	spec.normalize();
-	std::cout << "Blinn material diff: " << diff << ", spec: " << spec
-		<< ", gloss: " << gloss << std::endl;
-	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss}};
 }
 Geometry* get_geometry(const std::string &type, Scene &scene){
 	//Check if the geometry is in our cache, if not load it
