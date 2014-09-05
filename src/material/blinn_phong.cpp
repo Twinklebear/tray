@@ -13,7 +13,7 @@ Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const LightCache 
 			illum += diffuse * light->illuminate(hitinfo.point);
 		}
 		else {
-			Vector l = -(light->direction(hitinfo.point)).normalized();
+			Vector l = -light->direction(hitinfo.point);
 			Vector v = -r.d.normalized();
 			Vector h = (l + v).normalized();
 			//Normal may not be normalized due to translation into world space

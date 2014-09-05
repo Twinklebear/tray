@@ -9,7 +9,7 @@
       <scale value="6"/>
       <translate y="11" z="6.5"/>
     </object>
-
+ 
     <!-- Materials -->
     <material type="blinn" name="ground">
       <diffuse  r="1" g="1" b="1"/>
@@ -20,7 +20,7 @@
       <specular r="1.0" g="1.0" b="1.0" value="0.9"/>
       <glossiness value="20"/>
     </material>
-
+ 
     <!-- Lights -->
     <light type="ambient" name="ambientLight">
       <intensity value="0.1"/>
@@ -34,7 +34,7 @@
       <position x="2" y="21" z="16"/>
     </light>
   </scene>
-
+ 
   <camera>
     <position x="0" y="-60" z="12"/>
     <target x="0" y="10" z="0"/>

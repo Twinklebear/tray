@@ -3,7 +3,7 @@
 #include "lights/direct_light.h"
 
 DirectLight::DirectLight(const Colorf &color, const Vector &dir)
-	: color(color), dir(dir)
+	: color(color), dir(dir.normalized())
 {}
 Colorf DirectLight::illuminate(const Point &p) const {
 	return color;
