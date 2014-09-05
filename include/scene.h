@@ -4,6 +4,7 @@
 #include <string>
 #include "geometry/geometry.h"
 #include "material/material.h"
+#include "lights/light.h"
 #include "render/render_target.h"
 #include "render/camera.h"
 
@@ -13,6 +14,7 @@
 class Scene {
 	GeometryCache geom_cache;
 	MaterialCache mat_cache;
+	LightCache light_cache;
 	Camera camera;
 	RenderTarget render_target;
 	Node root;
@@ -26,6 +28,7 @@ public:
 	Scene(const Camera &camera, const RenderTarget &target);
 	GeometryCache& get_geom_cache();
 	MaterialCache& get_mat_cache();
+	LightCache& get_light_cache();
 	Camera& get_camera();
 	RenderTarget& get_render_target();
 	const RenderTarget& get_render_target() const;

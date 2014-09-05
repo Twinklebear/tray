@@ -31,7 +31,7 @@ void Worker::render(){
 			Colorf color;
 			const Material *mat = hitinfo.node->get_material();
 			if (mat){
-				color = mat->shade(ray, hitinfo);
+				color = mat->shade(ray, hitinfo, scene.get_light_cache());
 			}
 			else {
 				color = Colorf{0.4, 0.4, 0.4};

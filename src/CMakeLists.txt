@@ -3,9 +3,11 @@ add_subdirectory(render)
 add_subdirectory(geometry)
 add_subdirectory(samplers)
 add_subdirectory(material)
-set(RAY_LIBS linalg render geometry samplers material)
+add_subdirectory(loaders)
+add_subdirectory(lights)
+set(RAY_LIBS loaders lights linalg render geometry samplers material)
 
-add_executable(ray_tracer main.cpp driver.cpp args.cpp scene.cpp load_scene.cpp ${tinyxml2_SRC})
+add_executable(ray_tracer main.cpp driver.cpp args.cpp scene.cpp ${tinyxml2_SRC})
 
 # Need to link libm on Unix
 if (NOT WIN32)

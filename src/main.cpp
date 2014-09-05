@@ -2,7 +2,7 @@
 #include <string>
 #include <chrono>
 #include "args.h"
-#include "load_scene.h"
+#include "loaders/load_scene.h"
 #include "render/render_target.h"
 #include "driver.h"
 

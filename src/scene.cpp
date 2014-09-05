@@ -1,5 +1,7 @@
 #include <string>
 #include "geometry/geometry.h"
+#include "material/material.h"
+#include "lights/light.h"
 #include "render/render_target.h"
 #include "render/camera.h"
 #include "scene.h"
@@ -12,6 +14,9 @@ GeometryCache& Scene::get_geom_cache(){
 }
 MaterialCache& Scene::get_mat_cache(){
 	return mat_cache;
+}
+LightCache& Scene::get_light_cache(){
+	return light_cache;
 }
 Camera& Scene::get_camera(){
 	return camera;

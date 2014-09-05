@@ -16,7 +16,7 @@ public:
 	/*
 	 * Apply the BlinnPhong material shading model to the point
 	 */
-	Colorf shade(const Ray &r, const HitInfo &hitinfo) const override;
+	Colorf shade(const Ray &r, const HitInfo &hitinfo, const LightCache &lights) const override;
 };
 
 #endif
