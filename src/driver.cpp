@@ -21,7 +21,7 @@ void Worker::render(){
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
-	//Counter so we can check if we've been canceled, check after 32 pixels
+	//Counter so we can check if we've been canceled, check after every 32 pixels rendered
 	int check_cancel = 0;
 	while (true){
 		Sampler sampler = queue.get_block();
