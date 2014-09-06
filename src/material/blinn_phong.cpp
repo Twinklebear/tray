@@ -20,7 +20,8 @@ Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const LightCache 
 			Normal n = hitinfo.normal.normalized();
 			float dif = std::max(l.dot(n), 0.f);
 			float spec = std::pow(std::max(n.dot(h), 0.f), gloss);
-			illum += (diffuse * dif + specular * spec) * light->illuminate(hitinfo.point);
+			illum += diffuse * dif * light->illuminate(hitinfo.point)
+				+ specular * spec * light->illuminate(hitinfo.point);
 		}
 	}
 	illum.normalize();
