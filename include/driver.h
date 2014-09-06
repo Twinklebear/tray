@@ -53,8 +53,9 @@ class Driver {
 public:
 	/*
 	 * Create a driver to render the scene with some number of worker threads
+	 * to work on the scene partitioned into the desired number of blocks
 	 */
-	Driver(Scene &scene, int workers);
+	Driver(Scene &scene, int workers, int blocks);
 	~Driver();
 	void render();
 	bool done();

@@ -21,6 +21,8 @@ const static std::string USAGE =
               this number will be rounded up to the nearest even number.\n\
               A warning will be printed if we can't evenly partition the\n\
               image into <num> rectangles for rendering. Default is 1.\n\
+-b <num>    - Optional: specify the desired number of blocks to partition\n\
+              the scene into for the threads to work on. Default is 1.\n\
 -h          - Show this help information\n"
 #ifdef BUILD_PREVIEWER
 + std::string{"-p          - Show a live preview of the image as it's rendered.\n\
@@ -57,14 +59,14 @@ int main(int argc, char **argv){
 	int n_threads = 1;
 	if (flag(argv, argv + argc, "-n")){
 		n_threads = get_param<int>(argv, argv + argc, "-n");
-		if (n_threads > 1 && n_threads % 2 != 0){
-			std::cerr << "Warning: num threads not even, increasing thread count by 1\n";
-			++n_threads;
-		}
+	}
+	int n_blocks = 1;
+	if (flag(argv, argv + argc, "-b")){
+		n_blocks = get_param<int>(argv, argv + argc, "-b");
 	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
 	Scene scene = load_scene(scene_file);
-	Driver driver{scene, n_threads};
+	Driver driver{scene, n_threads, n_blocks};
 
 #ifdef BUILD_PREVIEWER
 	if (flag(argv, argv + argc, "-p")){

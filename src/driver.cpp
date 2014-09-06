@@ -81,9 +81,9 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	}
 	return hit;
 }
-Driver::Driver(Scene &scene, int nworkers) : scene(scene),
+Driver::Driver(Scene &scene, int nworkers, int blocks) : scene(scene),
 	queue(Sampler{0, scene.get_render_target().get_width(),
-		0, scene.get_render_target().get_height()}, nworkers * 2)
+		0, scene.get_render_target().get_height()}, blocks)
 {
 	for (int i = 0; i < nworkers; ++i){
 		workers.emplace_back(Worker{scene, queue});
