@@ -8,6 +8,7 @@
 #include "geometry/geometry.h"
 #include "linalg/ray.h"
 #include "samplers/sampler.h"
+#include "block_queue.h"
 
 //Status of a worker thread
 enum STATUS { NOT_STARTED, WORKING, DONE, CANCELED, JOINED };
@@ -16,9 +17,8 @@ enum STATUS { NOT_STARTED, WORKING, DONE, CANCELED, JOINED };
  * A worker thread that renders some subsection of the scene
  */
 class Worker {
-	//Sampler that returns the locations of the image to render
-	Sampler sampler;
 	Scene &scene;
+	BlockQueue &queue;
 
 public:
 	//The thread the worker is on
@@ -30,7 +30,7 @@ public:
 	 * Create the worker to get samplers from the sampler
 	 * and use them to render the scene
 	 */
-	Worker(const Sampler &sampler, Scene &scene);
+	Worker(Scene &scene, BlockQueue &queue);
 	Worker(Worker &&w);
 	void render();
 	/*
@@ -47,6 +47,8 @@ class Driver {
 	//The worker threads rendering the scene
 	std::vector<Worker> workers;
 	Scene &scene;
+	//Queue of blocks of pixels to be worked on
+	BlockQueue queue;
 
 public:
 	/*

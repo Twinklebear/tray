@@ -10,10 +10,10 @@
 #include "linalg/transform.h"
 #include "driver.h"
 
-Worker::Worker(const Sampler &sampler, Scene &scene)
-	: sampler(sampler), scene(scene), status(STATUS::NOT_STARTED)
+Worker::Worker(Scene &scene, BlockQueue &queue)
+	: scene(scene), queue(queue), status(STATUS::NOT_STARTED)
 {}
-Worker::Worker(Worker &&w) : sampler(w.sampler), scene(w.scene),
+Worker::Worker(Worker &&w) : scene(w.scene), queue(w.queue),
 	thread(std::move(w.thread)), status(w.status.load(std::memory_order_acquire))
 {}
 void Worker::render(){
@@ -23,29 +23,35 @@ void Worker::render(){
 	Camera &camera = scene.get_camera();
 	//Counter so we can check if we've been canceled, check after 32 pixels
 	int check_cancel = 0;
-	while (sampler.has_samples()){
-		std::array<float, 2> s = sampler.get_sample();
-		Ray ray = camera.generate_ray(s[0], s[1]);
-		HitInfo hitinfo;
-		if (intersect_nodes(root, ray, hitinfo)){
-			Colorf color;
-			const Material *mat = hitinfo.node->get_material();
-			if (mat){
-				color = mat->shade(ray, hitinfo, scene.get_light_cache());
-			}
-			else {
-				color = Colorf{0.4, 0.4, 0.4};
-			}
-			color.normalize();
-			target.write_pixel(s[0], s[1], color);
-			target.write_depth(s[0], s[1], ray.max_t);
+	while (true){
+		Sampler sampler = queue.get_block();
+		if (!sampler.has_samples()){
+			break;
 		}
-		++check_cancel;
-		if (check_cancel >= 32){
-			check_cancel = 0;
-			int canceled = STATUS::CANCELED;
-			if (status.compare_exchange_strong(canceled, STATUS::DONE, std::memory_order_acq_rel)){
-				return;
+		while (sampler.has_samples()){
+			std::array<float, 2> s = sampler.get_sample();
+			Ray ray = camera.generate_ray(s[0], s[1]);
+			HitInfo hitinfo;
+			if (intersect_nodes(root, ray, hitinfo)){
+				Colorf color;
+				const Material *mat = hitinfo.node->get_material();
+				if (mat){
+					color = mat->shade(ray, hitinfo, scene.get_light_cache());
+				}
+				else {
+					color = Colorf{0.4, 0.4, 0.4};
+				}
+				color.normalize();
+				target.write_pixel(s[0], s[1], color);
+				target.write_depth(s[0], s[1], ray.max_t);
+			}
+			++check_cancel;
+			if (check_cancel >= 32){
+				check_cancel = 0;
+				int canceled = STATUS::CANCELED;
+				if (status.compare_exchange_strong(canceled, STATUS::DONE, std::memory_order_acq_rel)){
+					return;
+				}
 			}
 		}
 	}
@@ -75,12 +81,12 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	}
 	return hit;
 }
-Driver::Driver(Scene &scene, int nworkers) : scene(scene){
-	RenderTarget &t = scene.get_render_target();
-	Sampler sampler{0, t.get_width(), 0, t.get_height()};
-	std::vector<Sampler> samplers = sampler.get_subsamplers(nworkers);
+Driver::Driver(Scene &scene, int nworkers) : scene(scene),
+	queue(Sampler{0, scene.get_render_target().get_width(),
+		0, scene.get_render_target().get_height()}, nworkers * 2)
+{
 	for (int i = 0; i < nworkers; ++i){
-		workers.emplace_back(Worker{samplers[i], scene});
+		workers.emplace_back(Worker{scene, queue});
 	}
 }
 Driver::~Driver(){

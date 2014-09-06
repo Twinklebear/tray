@@ -34,7 +34,7 @@ public:
 	 * Note: compile with C++11 for move ctors, otherwise returning
 	 * a vector is slow
 	 */
-	std::vector<Sampler> get_subsamplers(int count);
+	std::vector<Sampler> get_subsamplers(int count) const;
 };
 
 #endif
