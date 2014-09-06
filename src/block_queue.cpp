@@ -18,6 +18,11 @@ Sampler BlockQueue::get_block(){
 		return Sampler{0, 0, 0, 0};
 	}
 	int s = sampler_idx.fetch_add(1, std::memory_order_acq_rel);
-	return samplers[s];
+	//Potential race condition if we would have gotten the last block but some other
+	//thread beat us from the cmp_exg to the fetch_add, so we need to double check
+	if (s < samplers.size()){
+		return samplers[s];
+	}
+	return Sampler{0, 0, 0, 0};
 }
 
