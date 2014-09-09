@@ -37,8 +37,7 @@ void Worker::render(){
 				Colorf color;
 				const Material *mat = hitinfo.node->get_material();
 				if (mat){
-					//TODO: Build the list of lights that affect the object
-					std::vector<Light*> lights = visible_lights(ray(ray.max_t));
+					std::vector<Light*> lights = visible_lights(hitinfo.point);
 					color = mat->shade(ray, hitinfo, lights);
 				}
 				else {
