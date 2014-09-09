@@ -88,12 +88,22 @@ std::vector<Light*> Worker::visible_lights(const Point &p){
 	std::vector<Light*> lights;
 	HitInfo info;
 	for (const auto &l : scene.get_light_cache()){
+		if (l.second->type() == LIGHT::AMBIENT){
+			lights.push_back(l.second.get());
+			continue;
+		}
 		Ray r{p, -l.second->direction(p)};
 		//Scoot the ray along the direction a tiny bit to avoid self intersection
 		r.o += 0.01 * r.d;
-		//Need to check that the intersected item isn't behind point lights
-		if (l.second->type() == LIGHT::AMBIENT || !intersect_nodes(scene.get_root(), r, info)){
+		bool hit = intersect_nodes(scene.get_root(), r, info);
+		if (l.second->type() == LIGHT::DIRECT && !hit){
 			lights.push_back(l.second.get());
+		}
+		else if (l.second->type() == LIGHT::POINT){
+			//Check that the intersected item isn't behind point lights
+			if (!hit || (r(r.max_t) - r.o).length_sqr() > l.second->direction(r.o).length_sqr()){
+				lights.push_back(l.second.get());
+			}
 		}
 	}
 	return lights;

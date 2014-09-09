@@ -23,7 +23,8 @@ public:
 	 */
 	virtual Colorf illuminate(const Point &p) const = 0;
 	/*
-	 * Get the direction the light is coming to the point from
+	 * Get the direction the light is coming to the point from,
+	 * will not necessarily be normalized
 	 */
 	virtual Vector direction(const Point &p) const = 0;
 	virtual LIGHT type() const = 0;

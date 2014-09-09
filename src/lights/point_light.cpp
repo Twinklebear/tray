@@ -9,7 +9,7 @@ Colorf PointLight::illuminate(const Point &p) const {
 	return color;
 }
 Vector PointLight::direction(const Point &p) const {
-	return (p - position).normalized();
+	return p - position;
 }
 LIGHT PointLight::type() const {
 	return LIGHT::POINT;
