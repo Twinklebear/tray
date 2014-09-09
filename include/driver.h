@@ -37,6 +37,10 @@ public:
 	 * Run intersecton tests on a node and its children and report back the results
 	 */
 	static bool intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo);
+	/*
+	 * Get the list of lights visible from some point in the scene
+	 */
+	std::vector<Light*> visible_lights(const Point &p);
 };
 
 /*

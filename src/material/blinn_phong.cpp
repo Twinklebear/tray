@@ -5,11 +5,10 @@
 BlinnPhong::BlinnPhong(const Colorf &diffuse, const Colorf &specular, float gloss)
 	: diffuse(diffuse), specular(specular), gloss(gloss)
 {}
-Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const LightCache &lights) const {
+Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const {
 	Colorf illum;
-	for (const auto &lit : lights){
-		const auto &light = lit.second;
-		if (light->is_ambient()){
+	for (auto light : lights){
+		if (light->type() == LIGHT::AMBIENT){
 			illum += diffuse * light->illuminate(hitinfo.point);
 		}
 		else {

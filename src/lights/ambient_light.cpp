@@ -8,7 +8,7 @@ Colorf AmbientLight::illuminate(const Point &p) const {
 Vector AmbientLight::direction(const Point &p) const {
 	return Vector{};
 }
-bool AmbientLight::is_ambient() const {
-	return true;
+LIGHT AmbientLight::type() const {
+	return LIGHT::AMBIENT;
 }
 

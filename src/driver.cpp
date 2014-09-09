@@ -1,4 +1,5 @@
 #include <vector>
+#include <algorithm>
 #include <thread>
 #include <atomic>
 #include "scene.h"
@@ -36,7 +37,9 @@ void Worker::render(){
 				Colorf color;
 				const Material *mat = hitinfo.node->get_material();
 				if (mat){
-					color = mat->shade(ray, hitinfo, scene.get_light_cache());
+					//TODO: Build the list of lights that affect the object
+					std::vector<Light*> lights = visible_lights(ray(ray.max_t));
+					color = mat->shade(ray, hitinfo, lights);
 				}
 				else {
 					color = Colorf{0.4, 0.4, 0.4};
@@ -81,6 +84,21 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	}
 	return hit;
 }
+std::vector<Light*> Worker::visible_lights(const Point &p){
+	std::vector<Light*> lights;
+	HitInfo info;
+	for (const auto &l : scene.get_light_cache()){
+		Ray r{p, -l.second->direction(p)};
+		//Scoot the ray along the direction a tiny bit to avoid self intersection
+		r.o += 0.01 * r.d;
+		//Need to check that the intersected item isn't behind point lights
+		if (l.second->type() == LIGHT::AMBIENT || !intersect_nodes(scene.get_root(), r, info)){
+			lights.push_back(l.second.get());
+		}
+	}
+	return lights;
+}
+
 Driver::Driver(Scene &scene, int nworkers, int blocks) : scene(scene),
 	queue(Sampler{0, scene.get_render_target().get_width(),
 		0, scene.get_render_target().get_height()}, blocks)

@@ -13,7 +13,7 @@ public:
 	AmbientLight(const Colorf &color);
 	Colorf illuminate(const Point &p) const override;
 	Vector direction(const Point &p) const override;
-	bool is_ambient() const override;
+	LIGHT type() const override;
 };
 
 #endif

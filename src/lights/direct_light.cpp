@@ -11,8 +11,7 @@ Colorf DirectLight::illuminate(const Point &p) const {
 Vector DirectLight::direction(const Point &p) const {
 	return dir;
 }
-bool DirectLight::is_ambient() const {
-	return false;
+LIGHT DirectLight::type() const {
+	return LIGHT::DIRECT;
 }
-
 

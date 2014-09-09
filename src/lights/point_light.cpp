@@ -11,7 +11,7 @@ Colorf PointLight::illuminate(const Point &p) const {
 Vector PointLight::direction(const Point &p) const {
 	return (p - position).normalized();
 }
-bool PointLight::is_ambient() const {
-	return false;
+LIGHT PointLight::type() const {
+	return LIGHT::POINT;
 }
 

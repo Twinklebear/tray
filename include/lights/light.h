@@ -7,9 +7,16 @@
 #include "render/color.h"
 
 /*
+ * Light types
+ */
+enum class LIGHT { AMBIENT, DIRECT, POINT };
+
+/*
  * Basic interface for lights
  */
 class Light {
+	LIGHT ltype;
+
 public:
 	/*
 	 * Get the illumination from this light at the point p
@@ -19,7 +26,7 @@ public:
 	 * Get the direction the light is coming to the point from
 	 */
 	virtual Vector direction(const Point &p) const = 0;
-	virtual bool is_ambient() const = 0;
+	virtual LIGHT type() const = 0;
 };
 
 typedef Cache<Light> LightCache;

@@ -15,7 +15,7 @@ public:
 	/*
 	 * "Shade" the object, just returns the color set
 	 */
-	Colorf shade(const Ray &r, const HitInfo &hitinfo, const LightCache &lights) const override;
+	Colorf shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const override;
 };
 
 #endif
