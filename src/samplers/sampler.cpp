@@ -21,6 +21,12 @@ std::array<float, 2> Sampler::get_sample(){
 bool Sampler::has_samples(){
 	return y != y_end;
 }
+int Sampler::width() const {
+	return x_end - x_start;
+}
+int Sampler::height() const {
+	return y_end - y_start;
+}
 std::vector<Sampler> Sampler::get_subsamplers(int count) const {
 	int x_dim = x_end - x_start;
 	int y_dim = y_end - y_start;

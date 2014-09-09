@@ -29,6 +29,11 @@ public:
 	 */
 	bool has_samples();
 	/*
+	 * Get the width and height of the sampler
+	 */
+	int width() const;
+	int height() const;
+	/*
 	 * Get subsamplers that divide the space to be sampled
 	 * into count disjoint subsections
 	 * Note: compile with C++11 for move ctors, otherwise returning
