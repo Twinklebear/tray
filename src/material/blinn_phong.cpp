@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cmath>
 #include "lights/light.h"
 #include "material/blinn_phong.h"
