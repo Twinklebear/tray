@@ -34,6 +34,10 @@ public:
 	Worker(Worker &&w);
 	void render();
 	/*
+	 * Find the color coming back along some ray
+	 */
+	Colorf shade_ray(Ray &ray, Node &node);
+	/*
 	 * Run intersecton tests on a node and its children and report back the results
 	 */
 	static bool intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo);

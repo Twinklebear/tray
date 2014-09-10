@@ -32,21 +32,11 @@ void Worker::render(){
 		while (sampler.has_samples()){
 			std::array<float, 2> s = sampler.get_sample();
 			Ray ray = camera.generate_ray(s[0], s[1]);
-			HitInfo hitinfo;
-			if (intersect_nodes(root, ray, hitinfo)){
-				Colorf color;
-				const Material *mat = hitinfo.node->get_material();
-				if (mat){
-					std::vector<Light*> lights = visible_lights(hitinfo.point);
-					color = mat->shade(ray, hitinfo, lights);
-				}
-				else {
-					color = Colorf{0.4, 0.4, 0.4};
-				}
-				color.normalize();
-				target.write_pixel(s[0], s[1], color);
-				target.write_depth(s[0], s[1], ray.max_t);
-			}
+			Colorf color = shade_ray(ray, scene.get_root());
+			color.normalize();
+			target.write_pixel(s[0], s[1], color);
+			target.write_depth(s[0], s[1], ray.max_t);
+
 			++check_cancel;
 			if (check_cancel >= 32){
 				check_cancel = 0;
@@ -58,6 +48,21 @@ void Worker::render(){
 		}
 	}
 	status.store(STATUS::DONE, std::memory_order_release);
+}
+Colorf Worker::shade_ray(Ray &ray, Node &node){
+	Colorf color;
+	HitInfo hitinfo;
+	if (intersect_nodes(node, ray, hitinfo)){
+		const Material *mat = hitinfo.node->get_material();
+		if (mat){
+			std::vector<Light*> lights = visible_lights(hitinfo.point);
+			color = mat->shade(ray, hitinfo, lights);
+		}
+		else {
+			color = Colorf{0.4, 0.4, 0.4};
+		}
+	}
+	return color;
 }
 bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	bool hit = false;
