@@ -50,24 +50,43 @@ std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
 }
 std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	using namespace tinyxml2;
-	Colorf diff{1, 1, 1}, spec{1, 1, 1};
-	float gloss = 1;
+	Colorf diff{1, 1, 1}, spec{1, 1, 1}, refl{0, 0, 0},
+		refrc{0, 0, 0}, absorp{0, 0, 0};
+	float gloss = 1, refr_index = -1;
 	XMLElement *e = elem->FirstChildElement("diffuse");
 	if (e){
-		read_color(elem->FirstChildElement("diffuse"), diff);
+		read_color(e, diff);
 	}
 	e = elem->FirstChildElement("specular");
 	if (e){
-		read_color(elem->FirstChildElement("specular"), spec);
+		read_color(e, spec);
 	}
 	e = elem->FirstChildElement("glossiness");
 	if (e){
-		read_float(elem->FirstChildElement("glossiness"), gloss);
+		read_float(e, gloss);
+	}
+	e = elem->FirstChildElement("reflection");
+	if (e){
+		read_color(e, refl);
+	}
+	e = elem->FirstChildElement("refraction");
+	if (e){
+		read_color(e, refrc);
+		read_float(e, refr_index, "index");
+	}
+	e = elem->FirstChildElement("absorption");
+	if (e){
+		read_color(e, absorp);
 	}
 	diff.normalize();
 	spec.normalize();
 	std::cout << "Blinn material diff: " << diff << ", spec: " << spec
-		<< ", gloss: " << gloss << std::endl;
-	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss}};
+		<< ", gloss: " << gloss 
+		<< ", relfection: " << refl
+		<< ", refraction: " << refrc
+		<< ", absorption: " << absorp
+		<< ", refractive index: " << refr_index << std::endl;
+	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss,
+		refl, refrc, absorp, refr_index}};
 }
 

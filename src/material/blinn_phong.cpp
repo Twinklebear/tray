@@ -2,8 +2,11 @@
 #include "lights/light.h"
 #include "material/blinn_phong.h"
 
-BlinnPhong::BlinnPhong(const Colorf &diffuse, const Colorf &specular, float gloss)
-	: diffuse(diffuse), specular(specular), gloss(gloss)
+
+BlinnPhong::BlinnPhong(const Colorf &diffuse, const Colorf &specular, float gloss, const Colorf &reflection,
+	const Colorf &refraction, const Colorf &absorption, float refr_index)
+	: diffuse(diffuse), specular(specular), reflection(reflection), refraction(refraction),
+		absorption(absorption), gloss(gloss), refr_index(refr_index)
 {}
 Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const {
 	Colorf illum;
@@ -28,5 +31,11 @@ Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const std::vector
 	}
 	illum.normalize();
 	return illum;
+}
+bool BlinnPhong::is_reflective() const {
+	return reflection.r > 0 || reflection.g > 0 || reflection.b > 0;
+}
+Colorf BlinnPhong::reflective() const {
+	return reflection;
 }
 

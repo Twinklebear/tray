@@ -12,9 +12,17 @@ class Material {
 public:
 	/*
 	 * Apply the material shading properties to the hit object
-	 *
 	 */
 	virtual Colorf shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const = 0;
+	/*
+	 * Check if the material is reflective
+	 */
+	virtual bool is_reflective() const = 0;
+	/*
+	 * Get the reflective color of the object, is 0 if the
+	 * object is not reflective
+	 */
+	virtual Colorf reflective() const = 0;
 };
 
 typedef Cache<Material> MaterialCache;
