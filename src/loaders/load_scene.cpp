@@ -11,6 +11,7 @@
 #include "render/render_target.h"
 #include "geometry/sphere.h"
 #include "geometry/plane.h"
+#include "geometry/dbg_tri.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
 #include "loaders/load_scene.h"
@@ -181,6 +182,9 @@ Geometry* get_geometry(const std::string &type, Scene &scene){
 		}
 		else if (type == "plane"){
 			cache.add(type, std::unique_ptr<Geometry>(new Plane{}));
+		}
+		else if (type == "dbg_tri"){
+			cache.add(type, std::unique_ptr<Geometry>(new DebugTri{}));
 		}
 		else {
 			return nullptr;

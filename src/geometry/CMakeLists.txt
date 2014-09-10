@@ -1,2 +1,2 @@
-add_library(geometry geometry.cpp sphere.cpp plane.cpp hitinfo.cpp)
+add_library(geometry geometry.cpp sphere.cpp plane.cpp dbg_tri.cpp hitinfo.cpp)
 
