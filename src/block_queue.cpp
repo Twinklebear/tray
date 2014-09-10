@@ -1,7 +1,5 @@
-#include <iostream>
 #include <atomic>
 #include <vector>
-#include <deque>
 #include <algorithm>
 #include "samplers/sampler.h"
 #include "block_queue.h"
