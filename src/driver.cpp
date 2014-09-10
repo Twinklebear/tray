@@ -108,9 +108,9 @@ std::vector<Light*> Worker::visible_lights(const Point &p){
 	return lights;
 }
 
-Driver::Driver(Scene &scene, int nworkers, int blocks) : scene(scene),
+Driver::Driver(Scene &scene, int nworkers, int bwidth, int bheight) : scene(scene),
 	queue(Sampler{0, scene.get_render_target().get_width(),
-		0, scene.get_render_target().get_height()}, blocks)
+		0, scene.get_render_target().get_height()}, bwidth, bheight)
 {
 	for (int i = 0; i < nworkers; ++i){
 		workers.emplace_back(Worker{scene, queue});

@@ -21,8 +21,12 @@ const static std::string USAGE =
               this number will be rounded up to the nearest even number.\n\
               A warning will be printed if we can't evenly partition the\n\
               image into <num> rectangles for rendering. Default is 1.\n\
--b <num>    - Optional: specify the desired number of blocks to partition\n\
-              the scene into for the threads to work on. Default is 1.\n\
+-bw <num>   - Optional: specify the desired width of blocks to partition\n\
+              the scene into for the threads to work on, should evenly divide\n\
+              the image width. Default is image width.\n\
+-bh <num>   - Optional: specify the desired height of blocks to partition\n\
+              the scene into for the threads to work on, should evenly divide\n\
+              the image height. Default is image height.\n\
 -h          - Show this help information\n"
 #ifdef BUILD_PREVIEWER
 + std::string{"-p          - Show a live preview of the image as it's rendered.\n\
@@ -60,13 +64,22 @@ int main(int argc, char **argv){
 	if (flag(argv, argv + argc, "-n")){
 		n_threads = get_param<int>(argv, argv + argc, "-n");
 	}
-	int n_blocks = 1;
-	if (flag(argv, argv + argc, "-b")){
-		n_blocks = get_param<int>(argv, argv + argc, "-b");
+	int bw = -1, bh = -1;
+	if (flag(argv, argv + argc, "-bw")){
+		bw = get_param<int>(argv, argv + argc, "-bw");
+	}
+	if (flag(argv, argv + argc, "-bh")){
+		bh = get_param<int>(argv, argv + argc, "-bh");
 	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
 	Scene scene = load_scene(scene_file);
-	Driver driver{scene, n_threads, n_blocks};
+	if (bw == -1){
+		bw = scene.get_render_target().get_width();
+	}
+	if (bh == -1){
+		bh = scene.get_render_target().get_height();
+	}
+	Driver driver{scene, n_threads, bw, bh};
 
 #ifdef BUILD_PREVIEWER
 	if (flag(argv, argv + argc, "-p")){

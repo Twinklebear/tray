@@ -18,7 +18,7 @@ public:
 	 * Create a queue of work blocks by subsampling the sampler
 	 * into blocks subsamplers
 	 */
-	BlockQueue(const Sampler &sampler, int blocks);
+	BlockQueue(const Sampler &sampler, int bwidth, int bheight);
 	/*
 	 * Return the next block to be worked on, returns
 	 * a sampler without samples when all samplers have

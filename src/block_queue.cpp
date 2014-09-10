@@ -4,8 +4,8 @@
 #include "samplers/sampler.h"
 #include "block_queue.h"
 
-BlockQueue::BlockQueue(const Sampler &sampler, int blocks)
-	: samplers(sampler.get_subsamplers(blocks)), sampler_idx(0)
+BlockQueue::BlockQueue(const Sampler &sampler, int bwidth, int bheight)
+	: samplers(sampler.get_subsamplers(bwidth, bheight)), sampler_idx(0)
 {
 	//I wonder if it'd be possible to do this in-place? Maybe more complicated
 	//that I want to get into though

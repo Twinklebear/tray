@@ -35,11 +35,10 @@ public:
 	int height() const;
 	/*
 	 * Get subsamplers that divide the space to be sampled
-	 * into count disjoint subsections
-	 * Note: compile with C++11 for move ctors, otherwise returning
-	 * a vector is slow
+	 * into count disjoint subsections where each samples a w x h
+	 * section of the original sampler
 	 */
-	std::vector<Sampler> get_subsamplers(int count) const;
+	std::vector<Sampler> get_subsamplers(int w, int h) const;
 };
 
 #endif
