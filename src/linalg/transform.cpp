@@ -4,6 +4,7 @@
 #include "linalg/point.h"
 #include "linalg/ray.h"
 #include "linalg/matrix4.h"
+#include "geometry/bbox.h"
 #include "linalg/transform.h"
 
 Transform::Transform(){}
@@ -198,6 +199,32 @@ Matrix4 Transform::operator()(const Matrix4 &m) const {
 }
 void Transform::operator()(const Matrix4 &in, Matrix4 &out) const {
 	out = mat * in;
+}
+BBox Transform::operator()(const BBox &b) const {
+	BBox c;
+	(*this)(b, c);
+	return c;
+}
+void Transform::operator()(const BBox &in, BBox &out) const {
+	//Implementation of Arvo (1990) AABB transformation
+	for (int i = 0; i < 3; ++i){
+		out.min[i] = mat[i][3];
+		out.max[i] = mat[i][3];
+	}
+	for (int i = 0; i < 3; ++i){
+		for (int j = 0; j < 3; ++j){
+			float x = mat[i][j] * in.min[j];
+			float y = mat[i][j] * in.max[j];
+			if (x < y){
+				out.min[i] += x;
+				out.max[i] += y;
+			}
+			else {
+				out.min[i] += y;
+				out.max[i] += x;
+			}
+		}
+	}
 }
 Transform Transform::operator*(const Transform &t) const {
 	return Transform{mat * t.mat, t.inv * inv};
