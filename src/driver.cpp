@@ -55,8 +55,14 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 	if (intersect_nodes(node, ray, hitinfo)){
 		const Material *mat = hitinfo.node->get_material();
 		if (mat){
+			//TODO: Param for max ray depth
+			if (mat->is_reflective() && ray.depth < 4){
+				++ray.depth;
+				//Reflect and cast ray
+				//color = shade_ray(
+			}
 			std::vector<Light*> lights = visible_lights(hitinfo.point);
-			color = mat->shade(ray, hitinfo, lights);
+			color += mat->shade(ray, hitinfo, lights);
 		}
 		else {
 			color = Colorf{0.4, 0.4, 0.4};
