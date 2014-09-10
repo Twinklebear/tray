@@ -8,10 +8,11 @@
 #include "scene.h"
 
 /*
- * Load a scene as described by the XML document and return it
+ * Load a scene as described by the XML document and return it and
+ * set its max ray recursion depth to the desired value
  * Based off of Cem's load scene utility but migrated to TinyXML-2
  */
-Scene load_scene(const std::string &file);
+Scene load_scene(const std::string &file, int depth);
 /*
  * Read the x,y,z attributes of the XMLElement and return it
  */

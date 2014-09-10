@@ -21,21 +21,21 @@
  * Load the camera information from the element and return it
  * also passes back x & y image resolution through xres & yres
  */
-Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h);
+static Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h);
 /*
  * Load object nodes in the XMLElement as children of the
  * passed node. Any geometry needed will be loaded from
  * the scene's geometry cache or added if it's missing
  */
-void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene);
+static void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene);
 /*
  * Get the geometry for the type, either return it from the cache
  * or load the geometry into the cache and return it
  * Returns nullptr if no valid geometry can be loaded
  */
-Geometry* get_geometry(const std::string &type, Scene &scene);
+static Geometry* get_geometry(const std::string &type, Scene &scene);
 
-Scene load_scene(const std::string &file){
+Scene load_scene(const std::string &file, int depth){
 	using namespace tinyxml2;
 	XMLDocument doc;
 	XMLError err = doc.LoadFile(file.c_str());
@@ -61,7 +61,7 @@ Scene load_scene(const std::string &file){
 	int w = 0, h = 0;
 	Camera camera = load_camera(cam, w, h);
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h)};
-	Scene scene{std::move(camera), std::move(render_target)};
+	Scene scene{std::move(camera), std::move(render_target), depth};
 	
 	//Run a pre-pass to load the materials so they're available when loading the objects
 	XMLElement *mats = scene_node->FirstChildElement("material");

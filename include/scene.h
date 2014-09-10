@@ -18,6 +18,8 @@ class Scene {
 	Camera camera;
 	RenderTarget render_target;
 	Node root;
+	//The max recursion depth for reflected/refracted rays
+	int max_depth;
 
 public:
 	/*
@@ -25,7 +27,7 @@ public:
 	 * Geometry can be added by adding nodes to the root
 	 * and selecting from or adding to the geometry cache
 	 */
-	Scene(const Camera &camera, const RenderTarget &target);
+	Scene(const Camera &camera, const RenderTarget &target, int depth);
 	GeometryCache& get_geom_cache();
 	MaterialCache& get_mat_cache();
 	LightCache& get_light_cache();
@@ -33,6 +35,7 @@ public:
 	RenderTarget& get_render_target();
 	const RenderTarget& get_render_target() const;
 	Node& get_root();
+	int get_max_depth() const;
 };
 
 #endif

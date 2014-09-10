@@ -27,6 +27,8 @@ const static std::string USAGE =
 -bh <num>   - Optional: specify the desired height of blocks to partition\n\
               the scene into for the threads to work on, should evenly divide\n\
               the image height. Default is image height.\n\
+-d <num>    - Optional: specify the max recursion depth for reflected/refracted rays.\n\
+              Default is 4.\n\
 -h          - Show this help information\n"
 #ifdef BUILD_PREVIEWER
 + std::string{"-p          - Show a live preview of the image as it's rendered.\n\
@@ -71,8 +73,12 @@ int main(int argc, char **argv){
 	if (flag(argv, argv + argc, "-bh")){
 		bh = get_param<int>(argv, argv + argc, "-bh");
 	}
+	int depth = 4;
+	if (flag(argv, argv + argc, "-d")){
+		depth = get_param<int>(argv, argv + argc, "-d");
+	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
-	Scene scene = load_scene(scene_file);
+	Scene scene = load_scene(scene_file, depth);
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
 	}
