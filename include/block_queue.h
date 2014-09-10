@@ -25,6 +25,12 @@ public:
 	 * been taken
 	 */
 	Sampler get_block();
+
+private:
+	/*
+	 * Check if the spiral iteration is finished
+	 */
+	static bool spiral_done(int x_start, int x_end, int y_start, int y_end);
 };
 
 #endif
