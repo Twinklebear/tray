@@ -10,7 +10,6 @@
 #include "render/camera.h"
 #include "render/render_target.h"
 #include "geometry/sphere.h"
-#include "geometry/box.h"
 #include "geometry/plane.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
@@ -179,9 +178,6 @@ Geometry* get_geometry(const std::string &type, Scene &scene){
 	if (!cache.get(type)){
 		if (type == "sphere"){
 			cache.add(type, std::unique_ptr<Geometry>(new Sphere{}));
-		}
-		else if (type == "box"){
-			cache.add(type, std::unique_ptr<Geometry>(new Box{}));
 		}
 		else if (type == "plane"){
 			cache.add(type, std::unique_ptr<Geometry>(new Plane{}));
