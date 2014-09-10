@@ -40,4 +40,10 @@ Transform& Node::get_inv_transform(){
 const std::string& Node::get_name() const {
 	return name;
 }
+BBox Node::world_bound() const {
+	if (geometry){
+		return transform(geometry->object_bound());
+	}
+	return BBox{};
+}
 

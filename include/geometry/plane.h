@@ -10,6 +10,7 @@
 class Plane : public Geometry {
 public:
 	bool intersect(Ray &ray, HitInfo &hitinfo) override;
+	BBox object_bound() const override;
 };
 
 #endif

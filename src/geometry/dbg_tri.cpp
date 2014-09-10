@@ -46,4 +46,7 @@ bool DebugTri::intersect(Ray &ray, HitInfo &hitinfo) {
 	hitinfo.normal = normal;
 	return true;
 }
+BBox DebugTri::object_bound() const {
+	return BBox{Point{0, 0, 0}, Point{1, 1, 0}};
+}
 

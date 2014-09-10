@@ -27,4 +27,7 @@ bool Plane::intersect(Ray &ray, HitInfo &hitinfo){
 	}
 	return false;
 }
+BBox Plane::object_bound() const {
+	return BBox{Point{-1, -1, 0}, Point{1, 1, 0}};
+}
 

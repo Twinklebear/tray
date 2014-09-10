@@ -35,4 +35,7 @@ bool Sphere::intersect(Ray &ray, HitInfo &hitinfo){
 	hitinfo.normal = Normal{hitinfo.point};
 	return true;
 }
+BBox Sphere::object_bound() const {
+	return BBox{Point{-1, -1, -1}, Point{1, 1, 1}};
+}
 

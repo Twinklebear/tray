@@ -9,6 +9,7 @@
 #include "material/material.h"
 #include "cache.h"
 #include "hitinfo.h"
+#include "bbox.h"
 
 class Geometry {
 public:
@@ -24,6 +25,10 @@ public:
 	 * If no hit occurs the ray and hitinfo are left unmodified
 	 */
 	virtual bool intersect(Ray &ray, HitInfo &hitinfo) = 0;
+	/*
+	 * Get the object-space AABB for the object
+	 */
+	virtual BBox object_bound() const = 0;
 };
 
 typedef Cache<Geometry> GeometryCache;
@@ -67,6 +72,11 @@ public:
 	const Transform& get_inv_transform() const;
 	Transform& get_inv_transform();
 	const std::string& get_name() const;
+	/*
+	 * Get the world space bound for the object
+	 * Returns degenerate box if the node doesn't have geometry attached
+	 */
+	BBox world_bound() const;
 };
 
 #endif
