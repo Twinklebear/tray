@@ -1,10 +1,12 @@
 #ifndef BBOX_H
 #define BBOX_H
 
+#include <array>
 #include <ostream>
 #include <cmath>
 #include "linalg/util.h"
 #include "linalg/point.h"
+#include "linalg/ray.h"
 
 /*
  * An AABB
@@ -97,6 +99,27 @@ struct BBox {
 	}
 	inline Point& operator[](size_t i){
 		return i == 0 ? min : max;
+	}
+	/*
+	 * Test if the ray intersects the box
+	 */
+	inline bool intersect(const Ray &ray){
+		std::array<float, 2> t = { ray.min_t, ray.max_t };
+		//Check each slab of the bbox
+		for (int i = 0; i < 3; ++i){
+			float inv_dir = 1 / ray.d[i];
+			float near = (min[i] - ray.o[i]) * inv_dir;
+			float far = (max[i] - ray.o[i]) * inv_dir;
+			if (near > far){
+				std::swap(near, far);
+			}
+			t[0] = near > t[0] ? near : t[0];
+			t[1] = far < t[1] ? far : t[1];
+			if (t[0] > t[1]){
+				return false;
+			}
+		}
+		return true;
 	}
 };
 inline std::ostream& operator<<(std::ostream &os, const BBox &b){
