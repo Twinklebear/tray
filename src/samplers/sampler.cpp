@@ -3,7 +3,6 @@
 #include <vector>
 #include "samplers/sampler.h"
 
-int x_start, x_end, y_start, y_end, x, y;
 Sampler::Sampler(int x_start, int x_end, int y_start, int y_end)
 	: x_start(x_start), x_end(x_end), y_start(y_start), y_end(y_end),
 	x(x_start), y(y_start)
@@ -44,11 +43,11 @@ std::vector<Sampler> Sampler::get_subsamplers(int count) const {
 	y_dim /= n_rows;
 	//Check & warn if the space hasn't been split up evenly
 	if (x_dim * n_cols != x_end - x_start || y_dim * n_rows != y_end - y_start){
-		std::cerr << "Warning: sampler could not be partitioned equally into"
+		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " the desired number of subsamplers\n";
 	}
-	for (int i = 0; i < n_cols; ++i){
-		for (int j = 0; j < n_rows; ++j){
+	for (int j = 0; j < n_rows; ++j){
+		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(i * x_dim + x_start, (i + 1) * x_dim + x_start,
 				j * y_dim + y_start, (j + 1) * y_dim + y_start);
 		}
