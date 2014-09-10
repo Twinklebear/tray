@@ -23,6 +23,19 @@ public:
 	 * object is not reflective
 	 */
 	virtual Colorf reflective() const = 0;
+	/*
+	 * Check if the object is transparent
+	 */
+	virtual bool is_transparent() const = 0;
+	/*
+	 * Get the refractive index of the material,
+	 * -1 is used to indicate the material isn't transparent
+	 */
+	virtual float refractive_idx() const = 0;
+	/*
+	 * Get the refractive color
+	 */
+	virtual Colorf refractive() const = 0;
 };
 
 typedef Cache<Material> MaterialCache;

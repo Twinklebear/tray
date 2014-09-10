@@ -38,4 +38,13 @@ bool BlinnPhong::is_reflective() const {
 Colorf BlinnPhong::reflective() const {
 	return reflection;
 }
+bool BlinnPhong::is_transparent() const {
+	return refr_index > 0;
+}
+float BlinnPhong::refractive_idx() const {
+	return refr_index;
+}
+Colorf BlinnPhong::refractive() const {
+	return refraction;
+}
 

@@ -11,4 +11,13 @@ bool FlatMaterial::is_reflective() const {
 Colorf FlatMaterial::reflective() const {
 	return Colorf{0, 0, 0};
 }
+bool FlatMaterial::is_transparent() const {
+	return false;
+}
+float FlatMaterial::refractive_idx() const {
+	return -1;
+}
+Colorf FlatMaterial::refractive() const {
+	return Colorf{0, 0, 0};
+}
 

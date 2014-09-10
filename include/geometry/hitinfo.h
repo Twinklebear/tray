@@ -6,6 +6,8 @@
 
 class Node;
 
+enum HITSIDE { NONE, FRONT, BACK };
+
 /*
  * Stores information about the geometry at a hit location
  * and a pointer to the node that was hit so we can
@@ -15,8 +17,10 @@ struct HitInfo {
 	Point point;
 	Normal normal;
 	const Node *node;
+	HITSIDE hit_side;
 
-	HitInfo(const Point &point = Point{}, const Normal &normal = Normal{}, const Node *node = nullptr);
+	HitInfo(const Point &point = Point{}, const Normal &normal = Normal{},
+		const Node *node = nullptr, HITSIDE hit_side = NONE);
 };
 
 #endif

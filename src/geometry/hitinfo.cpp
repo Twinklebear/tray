@@ -3,7 +3,7 @@
 #include "geometry/geometry.h"
 #include "geometry/hitinfo.h"
 
-HitInfo::HitInfo(const Point &point, const Normal &normal, const Node *node)
-	: point(point), normal(normal), node(node)
+HitInfo::HitInfo(const Point &point, const Normal &normal, const Node *node, HITSIDE hit_side)
+	: point(point), normal(normal), node(node), hit_side(hit_side)
 {}
 

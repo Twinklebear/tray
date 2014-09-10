@@ -55,6 +55,24 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 	if (intersect_nodes(node, ray, hitinfo)){
 		const Material *mat = hitinfo.node->get_material();
 		if (mat){
+			if (mat->is_transparent() && ray.depth < scene.get_max_depth()){
+				float r = 0;
+				Vector n;
+				if (hitinfo.hit_side == HITSIDE::FRONT){
+					r = 1.f / mat->refractive_idx();
+					n = Vector{hitinfo.normal.normalized()};
+				}
+				else {
+					r = mat->refractive_idx();
+					n = -Vector{hitinfo.normal.normalized()};
+				}
+				float c = -n.dot(ray.d);
+				Vector dir = r * ray.d + (r * c - std::sqrt(1 - r * r * (1 - c * c))) * n;
+				Ray refr{hitinfo.point, dir.normalized(), ray};
+				refr.o += 0.01 * refr.d;
+				//TODO: What do we do with refractive and absorption values?
+				color += shade_ray(refr, scene.get_root());
+			}
 			if (mat->is_reflective() && ray.depth < scene.get_max_depth()){
 				//Reflect and cast ray
 				Vector n{hitinfo.normal.normalized()};
@@ -62,7 +80,7 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				Ray refl{hitinfo.point, dir.normalized(), ray};
 				//Scoot the ray along a bit to prevent self intersection
 				refl.o += 0.01 * refl.d;
-				color = shade_ray(refl, scene.get_root()) * mat->reflective();
+				color += shade_ray(refl, scene.get_root()) * mat->reflective();
 			}
 			std::vector<Light*> lights = visible_lights(hitinfo.point);
 			color += mat->shade(ray, hitinfo, lights);
@@ -94,10 +112,18 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 		transform(hitinfo.point, hitinfo.point);
 		transform(hitinfo.normal, hitinfo.normal);
 		ray.max_t = node_space.max_t;
+		if (ray.d.dot(Vector{hitinfo.normal}) <= 0){
+			hitinfo.hit_side = HITSIDE::FRONT;
+		}
+		else {
+			hitinfo.hit_side = HITSIDE::BACK;
+		}
 	}
 	return hit;
 }
 std::vector<Light*> Worker::visible_lights(const Point &p){
+	//Maybe the list passed should be a pair of { light, light_mod } to account
+	//for absorption when the light is viewed through a transparent object
 	std::vector<Light*> lights;
 	HitInfo info;
 	for (const auto &l : scene.get_light_cache()){

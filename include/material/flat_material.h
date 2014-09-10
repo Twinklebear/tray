@@ -18,6 +18,9 @@ public:
 	Colorf shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const override;
 	bool is_reflective() const override;
 	Colorf reflective() const override;
+	bool is_transparent() const override;
+	float refractive_idx() const override;
+	Colorf refractive() const override;
 };
 
 #endif
