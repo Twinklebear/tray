@@ -4,6 +4,7 @@
 #include <array>
 #include <ostream>
 #include <cmath>
+#include <limits>
 #include "linalg/util.h"
 #include "linalg/point.h"
 #include "linalg/ray.h"
@@ -14,8 +15,11 @@
 struct BBox {
 	Point min, max;
 
-	inline BBox() : min(Point{INFINITY, INFINITY, INFINITY}),
-		max(Point{-INFINITY, -INFINITY, -INFINITY})
+	inline BBox()
+		: min(Point{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(),
+			std::numeric_limits<float>::infinity()}),
+		max(Point{-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(),
+			std::numeric_limits<float>::infinity()})
 	{}
 	inline BBox(const Point &p) : min(p), max(p) {}
 	inline BBox(const Point &a, const Point &b)
@@ -103,18 +107,18 @@ struct BBox {
 	/*
 	 * Test if the ray intersects the box
 	 */
-	inline bool intersect(const Ray &ray){
+	inline bool intersect(const Ray &ray) const {
 		std::array<float, 2> t = { ray.min_t, ray.max_t };
 		//Check each slab of the bbox
 		for (int i = 0; i < 3; ++i){
 			float inv_dir = 1 / ray.d[i];
-			float near = (min[i] - ray.o[i]) * inv_dir;
-			float far = (max[i] - ray.o[i]) * inv_dir;
-			if (near > far){
-				std::swap(near, far);
+			float tnear = (min[i] - ray.o[i]) * inv_dir;
+			float tfar = (max[i] - ray.o[i]) * inv_dir;
+			if (tnear > tfar){
+				std::swap(tnear, tfar);
 			}
-			t[0] = near > t[0] ? near : t[0];
-			t[1] = far < t[1] ? far : t[1];
+			t[0] = tnear > t[0] ? tnear : t[0];
+			t[1] = tfar < t[1] ? tfar : t[1];
 			if (t[0] > t[1]){
 				return false;
 			}
