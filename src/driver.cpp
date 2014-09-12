@@ -58,6 +58,8 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 			if (mat->is_transparent() && ray.depth < scene.get_max_depth()){
 				float r = 0;
 				Vector n;
+				//Compute proper refractive index ration and set normal to be on same side
+				//as indicdent ray for refraction computation when entering/exiting material
 				if (hitinfo.hit_side == HITSIDE::FRONT){
 					r = 1.f / mat->refractive_idx();
 					n = Vector{hitinfo.normal.normalized()};
@@ -68,18 +70,14 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				}
 				float c = -n.dot(ray.d);
 				Vector dir = r * ray.d + (r * c - std::sqrt(1 - r * r * (1 - c * c))) * n;
-				Ray refr{hitinfo.point, dir.normalized(), ray};
-				refr.o += 0.01 * refr.d;
-				//TODO: What do we do with refractive and absorption values?
+				Ray refr{hitinfo.point, dir.normalized(), ray, 0.001};
 				color += shade_ray(refr, scene.get_root());
 			}
 			if (mat->is_reflective() && ray.depth < scene.get_max_depth()){
 				//Reflect and cast ray
 				Vector n{hitinfo.normal.normalized()};
 				Vector dir = ray.d - 2 * n.dot(ray.d) * n;
-				Ray refl{hitinfo.point, dir.normalized(), ray};
-				//Scoot the ray along a bit to prevent self intersection
-				refl.o += 0.01 * refl.d;
+				Ray refl{hitinfo.point, dir.normalized(), ray, 0.001};
 				color += shade_ray(refl, scene.get_root()) * mat->reflective();
 			}
 			std::vector<Light*> lights = visible_lights(hitinfo.point);
@@ -131,9 +129,7 @@ std::vector<Light*> Worker::visible_lights(const Point &p){
 			lights.push_back(l.second.get());
 			continue;
 		}
-		Ray r{p, -l.second->direction(p)};
-		//Scoot the ray along the direction a tiny bit to avoid self intersection
-		r.o += 0.01 * r.d;
+		Ray r{p, -l.second->direction(p), 0.001};
 		bool hit = intersect_nodes(scene.get_root(), r, info);
 		if (l.second->type() == LIGHT::DIRECT && !hit){
 			lights.push_back(l.second.get());

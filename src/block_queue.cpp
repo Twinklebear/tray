@@ -1,4 +1,3 @@
-#include <iostream>
 #include <atomic>
 #include <vector>
 #include <algorithm>

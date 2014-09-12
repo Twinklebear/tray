@@ -1,7 +1,8 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include <iostream>
+#include <limits>
+#include <ostream>
 #include "vector.h"
 #include "point.h"
 
@@ -17,15 +18,16 @@ struct Ray {
 	int depth;
 
 	inline Ray(const Point &o = Point{}, const Vector &d = Vector{}, float min_t = 0,
-		float max_t = INFINITY, int depth = 0)
+		float max_t = std::numeric_limits<float>::infinity(), int depth = 0)
 		: o(o), d(d), min_t(min_t), max_t(max_t), depth(depth)
 	{}
 	/*
 	 * Use to indicate that some ray has spawned this one,
 	 * increasing the recursion depth
 	 */
-	inline Ray(const Point &o, const Vector &d, const Ray &parent) :
-		o(o), d(d), min_t(0), max_t(INFINITY), depth(parent.depth + 1)
+	inline Ray(const Point &o, const Vector &d, const Ray &parent, float min_t = 0,
+		float max_t = std::numeric_limits<float>::infinity())
+		: o(o), d(d), min_t(min_t), max_t(max_t), depth(parent.depth + 1)
 	{}
 	//Get a point at some t along the ray
 	inline Point operator()(float t) const {
