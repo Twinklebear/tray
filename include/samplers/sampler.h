@@ -29,6 +29,11 @@ public:
 	 */
 	bool has_samples();
 	/*
+	 * Get the x and y starting positions of the sampler
+	 */
+	int get_x_start() const;
+	int get_y_start() const;
+	/*
 	 * Get the width and height of the sampler
 	 */
 	int width() const;

@@ -1,57 +1,37 @@
+#include <iostream>
 #include <atomic>
 #include <vector>
 #include <algorithm>
 #include "samplers/sampler.h"
 #include "block_queue.h"
 
+//Fabian Giesen's Morton code generation
+//See: http://fgiesen.wordpress.com/2009/12/13/decoding-morton-codes/
+static uint32_t part1_by1(uint32_t x){
+	// x = ---- ---- ---- ---- fedc ba98 7654 3210
+	x &= 0x0000ffff;
+	// x = ---- ---- fedc ba98 ---- ---- 7654 3210
+	x = (x ^ (x << 8)) & 0x00ff00ff;
+	// x = ---- fedc ---- ba98 ---- 7654 ---- 3210
+	x = (x ^ (x << 4)) & 0x0f0f0f0f;
+	// x = --fe --dc --ba --98 --76 --54 --32 --10
+	x = (x ^ (x << 2)) & 0x33333333;
+	// x = -f-e -d-c -b-a -9-8 -7-6 -5-4 -3-2 -1-0
+	x = (x ^ (x << 1)) & 0x55555555;
+	return x;
+}
+static uint32_t morton2(uint32_t x, uint32_t y){
+	return (part1_by1(y) << 1) + part1_by1(x);
+}
+
 BlockQueue::BlockQueue(const Sampler &sampler, int bwidth, int bheight)
 	: samplers(sampler.get_subsamplers(bwidth, bheight)), sampler_idx(0)
 {
-	//I wonder if it'd be possible to do this in-place? Maybe more complicated
-	//that I want to get into though
-	int cols = sampler.width() / samplers.at(0).width();
-	int rows = sampler.height() / samplers.at(0).height();
-	int x_start = 0, x_end = cols - 1;
-	int y_start = 0, y_end = rows - 1;
-	std::vector<Sampler> spiral;
-	while (true){
-		for (int i = x_start; i <= x_end; ++i){
-			spiral.push_back(samplers[y_start * cols + i]);
-		}
-		++y_start;
-
-		if (spiral_done(x_start, x_end, y_start, y_end)){
-			break;
-		}
-		for (int j = y_start; j <= y_end; ++j){
-			spiral.push_back(samplers[j * cols + x_end]);
-		}
-		--x_end;
-
-		if (spiral_done(x_start, x_end, y_start, y_end)){
-			break;
-		}
-		for (int i = x_end; i >= x_start; --i){
-			spiral.push_back(samplers[y_end * cols + i]);
-		}
-		--y_end;
-
-		if (spiral_done(x_start, x_end, y_start, y_end)){
-			break;
-		}
-		for (int j = y_end; j >= y_start; --j){
-			spiral.push_back(samplers[j * cols + x_start]);
-		}
-		++x_start;
-
-		if (spiral_done(x_start, x_end, y_start, y_end)){
-			break;
-		}
-	}
-	//The spiral starts at the top-left and goes in clockwise so to work out from
-	//the center just reverse it
-	samplers = std::move(spiral);
-	std::reverse(samplers.begin(), samplers.end());
+	//Sort the samplers in Morton order
+	std::sort(samplers.begin(), samplers.end(),
+		[](const Sampler &a, const Sampler &b){
+			return morton2(a.get_x_start(), a.get_y_start()) < morton2(b.get_x_start(), b.get_y_start());
+		});
 }
 Sampler BlockQueue::get_block(){
 	int n = samplers.size();

@@ -20,6 +20,12 @@ std::array<float, 2> Sampler::get_sample(){
 bool Sampler::has_samples(){
 	return y != y_end;
 }
+int Sampler::get_x_start() const {
+	return x_start;
+}
+int Sampler::get_y_start() const {
+	return y_start;
+}
 int Sampler::width() const {
 	return x_end - x_start;
 }
