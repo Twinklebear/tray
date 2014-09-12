@@ -43,9 +43,10 @@ public:
 	static bool intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo);
 	/*
 	 * Get the list of lights visible from some point in the scene
-	 * the normal is used to offset the ray start point some so we don't self-intersect
+	 * The normal is used to test if the light would even contribute to this
+	 * surface so we can skip lights on the back of the surface
 	 */
-	std::vector<Light*> visible_lights(const Point &p);
+	std::vector<Light*> visible_lights(const Point &p, const Normal &n);
 };
 
 /*

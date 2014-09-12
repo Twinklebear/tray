@@ -80,7 +80,7 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				Ray refl{hitinfo.point, dir.normalized(), ray, 0.001};
 				color += shade_ray(refl, scene.get_root()) * mat->reflective();
 			}
-			std::vector<Light*> lights = visible_lights(hitinfo.point);
+			std::vector<Light*> lights = visible_lights(hitinfo.point, hitinfo.normal);
 			color += mat->shade(ray, hitinfo, lights);
 		}
 		else {
@@ -119,7 +119,7 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	}
 	return hit;
 }
-std::vector<Light*> Worker::visible_lights(const Point &p){
+std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 	//Maybe the list passed should be a pair of { light, light_mod } to account
 	//for absorption when the light is viewed through a transparent object
 	std::vector<Light*> lights;
@@ -129,14 +129,18 @@ std::vector<Light*> Worker::visible_lights(const Point &p){
 			lights.push_back(l.second.get());
 			continue;
 		}
+		//Check that this light would even make a contribution to the surface
+		if (n.dot(-l.second->direction(p)) <= 0.f){
+			continue;
+		}
 		Ray r{p, -l.second->direction(p), 0.001};
-		bool hit = intersect_nodes(scene.get_root(), r, info);
-		if (l.second->type() == LIGHT::DIRECT && !hit){
+		if (l.second->type() == LIGHT::DIRECT && !intersect_nodes(scene.get_root(), r, info)){
 			lights.push_back(l.second.get());
 		}
 		else if (l.second->type() == LIGHT::POINT){
-			//Check that the intersected item isn't behind point lights
-			if (!hit || (r(r.max_t) - r.o).length_sqr() > l.second->direction(r.o).length_sqr()){
+			//Set max_t as well to not get intersections past the point light
+			r.max_t = 1;
+			if (!intersect_nodes(scene.get_root(), r, info)){
 				lights.push_back(l.second.get());
 			}
 		}
