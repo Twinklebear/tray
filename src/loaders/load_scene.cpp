@@ -11,7 +11,7 @@
 #include "render/render_target.h"
 #include "geometry/sphere.h"
 #include "geometry/plane.h"
-#include "geometry/dbg_tri.h"
+#include "geometry/tri_mesh.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
 #include "loaders/load_scene.h"
@@ -178,13 +178,20 @@ Geometry* get_geometry(const std::string &type, Scene &scene){
 	auto &cache = scene.get_geom_cache();
 	if (!cache.get(type)){
 		if (type == "sphere"){
-			cache.add(type, std::unique_ptr<Geometry>(new Sphere{}));
+			cache.add(type, std::unique_ptr<Geometry>{new Sphere{}});
 		}
 		else if (type == "plane"){
-			cache.add(type, std::unique_ptr<Geometry>(new Plane{}));
+			cache.add(type, std::unique_ptr<Geometry>{new Plane{}});
 		}
-		else if (type == "dbg_tri"){
-			cache.add(type, std::unique_ptr<Geometry>(new DebugTri{}));
+		else if (type == "dbg_mesh"){
+			std::vector<Point> v = {Point{-1, 1, 0}, Point{-1, -1, 0},
+				Point{1, -1, 0}, Point{1, 1, 0}};
+			std::vector<Point> t = {Point{0, 1, 0}, Point{0, 0, 0},
+				Point{1, 0, 0}, Point{1, 1, 0}};
+			std::vector<Normal> n = {Normal{0, 0.5, 0.5}, Normal{0, -0.5, 0.5},
+				Normal{0, -0.5, 0.5}, Normal{0, 0.5, 0.5}};
+			std::vector<int> i = {0, 1, 2, 2, 3, 0};
+			cache.add(type, std::unique_ptr<Geometry>{new TriMesh{v, t, n, i}});
 		}
 		else {
 			return nullptr;
