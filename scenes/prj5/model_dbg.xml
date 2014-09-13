@@ -1,9 +1,8 @@
 <xml>
   <scene>
     <!-- Objects -->
-    <object type="obj" name="teapot_lres.obj" material="mtl1">
+    <object type="obj" name="suzanne.obj" material="mtl1">
       <scale value="0.8"/>
-	  <rotate angle="-75" z="1"/>
       <translate x="0" y="6" z="0"/>
     </object>
 
