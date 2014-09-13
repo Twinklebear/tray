@@ -1,26 +1,13 @@
 <xml>
   <scene>
     <!-- Objects -->
-	<object type="obj" name="../model/sphere.obj" material="mtl1">
-      <scale value="15"/>
+	<object type="obj" name="../models/suzanne.obj" material="mtl1">
+      <scale value="10"/>
 	  <rotate angle="90" x="1"/>
-	  <rotate angle="-135" z="1"/>
-      <translate x="0" y="0" z="6"/>
+      <translate x="0" y="0" z="10"/>
     </object>
 
     <!-- Materials -->
-    <material type="blinn" name="wall">
-      <diffuse  r="1" g="1" b="1"/>
-      <specular value="0"/>
-    </material>
-    <material type="blinn" name="wallRed">
-      <diffuse  r="1.0" g="0.5" b="0.5"/>
-      <specular value="0"/>
-    </material>
-    <material type="blinn" name="wallBlue">
-      <diffuse  r="0.5" g="0.5" b="1.0"/>
-      <specular value="0"/>
-    </material>
     <material type="blinn" name="mtl1">
       <diffuse  r="0.8" g="0.2" b="0.2"/>
       <specular r="1.0" g="1.0" b="1.0" value="0.7"/>
