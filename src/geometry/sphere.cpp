@@ -35,7 +35,10 @@ bool Sphere::intersect(Ray &ray, HitInfo &hitinfo){
 	hitinfo.normal = Normal{hitinfo.point};
 	return true;
 }
-BBox Sphere::object_bound() const {
+BBox Sphere::bound() const {
 	return BBox{Point{-1, -1, -1}, Point{1, 1, 1}};
+}
+void Sphere::refine(std::vector<Geometry*> &prims){
+	prims.push_back(this);
 }
 

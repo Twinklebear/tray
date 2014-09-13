@@ -96,7 +96,7 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	auto &inv_transform = node.get_inv_transform();
 	inv_transform(ray, node_space);
 	//Test this node then its children
-	if (node.get_geometry() && node.get_geometry()->object_bound().intersect(node_space)){
+	if (node.get_geometry() && node.get_geometry()->bound().intersect(node_space)){
 		hit = node.get_geometry()->intersect(node_space, hitinfo);
 		if (hit){
 			hitinfo.node = &node;

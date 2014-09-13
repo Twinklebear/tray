@@ -42,7 +42,7 @@ const std::string& Node::get_name() const {
 }
 BBox Node::world_bound() const {
 	if (geometry){
-		return transform(geometry->object_bound());
+		return transform(geometry->bound());
 	}
 	return BBox{};
 }

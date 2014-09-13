@@ -28,7 +28,12 @@ public:
 	/*
 	 * Get the object-space AABB for the object
 	 */
-	virtual BBox object_bound() const = 0;
+	virtual BBox bound() const = 0;
+	/*
+	 * Request that the primitive fully refine itself into
+	 * its component geometric primitives and fill prims with them
+	 */
+	virtual void refine(std::vector<Geometry*> &prims) = 0;
 };
 
 typedef Cache<Geometry> GeometryCache;

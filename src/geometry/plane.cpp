@@ -27,7 +27,10 @@ bool Plane::intersect(Ray &ray, HitInfo &hitinfo){
 	}
 	return false;
 }
-BBox Plane::object_bound() const {
+BBox Plane::bound() const {
 	return BBox{Point{-1, -1, 0}, Point{1, 1, 0}};
+}
+void Plane::refine(std::vector<Geometry*> &prims){
+	prims.push_back(this);
 }
 

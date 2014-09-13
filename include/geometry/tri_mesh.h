@@ -9,6 +9,23 @@
 #include "bbox.h"
 #include "geometry.h"
 
+class TriMesh;
+
+/*
+ * A single triangle in the TriMesh, just holds
+ * its 3 vertex indices and a non-owning pointer to the mesh
+ */
+class Triangle : public Geometry {
+	int a, b, c;
+	const TriMesh *mesh;
+
+public:
+	Triangle(int a, int b, int c, const TriMesh *mesh);
+	bool intersect(Ray &ray, HitInfo &hitinfo) override;
+	BBox bound() const override;
+	void refine(std::vector<Geometry*> &prims) override;
+};
+
 /*
  * A mesh composed of triangles
  */
@@ -18,6 +35,9 @@ class TriMesh : public Geometry {
 	//Indices for each face's vert, texcoord and normal
 	//We could do better by storing 3 indices one for each vert, texcoord and normal
 	std::vector<int> vert_indices;
+	//Triangles for the mesh, cached after the first time the mesh is refined
+	//since we hand out references to them
+	std::vector<Triangle> tris;
 	//The mesh computes its object-space bounds once after loading and saves it
 	BBox bounds;
 
@@ -34,7 +54,8 @@ public:
 	TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 		const std::vector<Normal> &norm, const std::vector<int> vert_idx);
 	bool intersect(Ray &ray, HitInfo &hitinfo) override;
-	BBox object_bound() const override;
+	BBox bound() const override;
+	void refine(std::vector<Geometry*> &prims) override;
 	/*
 	 * Get a vertex, texcoord or normal at the desired index
 	 */
@@ -49,23 +70,14 @@ private:
 	 */
 	void compute_bounds();
 	/*
+	 * Refine the mesh down to its component triangles by computing them
+	 * and cacheing them
+	 */
+	void refine_tris();
+	/*
 	 * Load the mesh data from a wavefront obj file
 	 */
 	void load_wobj(const std::string &file);
-};
-
-/*
- * A single triangle in the TriMesh, just holds
- * its 3 vertex indices and a non-owning pointer to the mesh
- */
-class Triangle : public Geometry {
-	int a, b, c;
-	const TriMesh *mesh;
-
-public:
-	Triangle(int a, int b, int c, const TriMesh *mesh);
-	bool intersect(Ray &ray, HitInfo &hitinfo) override;
-	BBox object_bound() const override;
 };
 
 #endif

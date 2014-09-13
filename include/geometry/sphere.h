@@ -10,7 +10,8 @@
 class Sphere : public Geometry {
 public:
 	bool intersect(Ray &ray, HitInfo &hitinfo) override;
-	BBox object_bound() const override;
+	BBox bound() const override;
+	void refine(std::vector<Geometry*> &prims) override;
 };
 
 #endif
