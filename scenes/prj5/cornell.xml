@@ -28,12 +28,12 @@
         <translate x="15"/>
       </object>
     </object>
-    <object type="obj" name="teapot.obj" material="mtl1">
+    <object type="obj" name="teapot_lres.obj" material="mtl1">
       <scale value="0.8"/>
       <rotate angle="-30" z="1"/>
       <translate x="2" y="5" z="0"/>
     </object>
-    <object type="obj" name="teapot.obj" material="mtl1">
+    <object type="obj" name="teapot_lres.obj" material="mtl1">
       <scale value="0.3"/>
       <rotate angle="-60" z="1"/>
       <translate x="5" y="-6" z="0"/>

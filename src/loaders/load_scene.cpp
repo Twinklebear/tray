@@ -26,14 +26,20 @@ static Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h);
  * Load object nodes in the XMLElement as children of the
  * passed node. Any geometry needed will be loaded from
  * the scene's geometry cache or added if it's missing
+ * file is the scene filepath so we can use it to construct paths to
+ * any obj files we're loading
  */
-static void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene);
+static void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::string &file);
 /*
  * Get the geometry for the type, either return it from the cache
  * or load the geometry into the cache and return it
  * Returns nullptr if no valid geometry can be loaded
+ * file is the scene filepath so we can use it to construct paths to
+ * any obj files we're loading
+ * the name is used by the obj loader as the model filename and is used as the
+ * key in the geometry cache to store the object
  */
-static Geometry* get_geometry(const std::string &type, Scene &scene);
+static Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file);
 
 Scene load_scene(const std::string &file, int depth){
 	using namespace tinyxml2;
@@ -72,7 +78,7 @@ Scene load_scene(const std::string &file, int depth){
 	if (lights){
 		load_lights(lights, scene.get_light_cache());
 	}
-	load_node(scene_node, scene.get_root(), scene);
+	load_node(scene_node, scene.get_root(), scene, file);
 	return scene;
 }
 Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
@@ -103,7 +109,7 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 	}
 	return Camera{Transform::look_at(pos, target, up), fov, w, h};
 }
-void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
+void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::string &file){
 	using namespace tinyxml2;
 	auto &children = node.get_children();
 	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
@@ -116,7 +122,7 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			if (t){
 				std::string type = t;
 				std::cout << "Geometry type: " << type << std::endl;
-				geom = get_geometry(type, scene);
+				geom = get_geometry(type, name, scene, file);
 			}
 			const char *m = e->Attribute("material");
 			Material *mat = nullptr;
@@ -131,7 +137,7 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 			//Push the new child on and assign its geometry, the transform will
 			//be setup in further iterations when we read the scale/translate elements
 			children.push_back(std::make_shared<Node>(geom, mat, Transform{}, name));
-			load_node(e, *children.back(), scene);
+			load_node(e, *children.back(), scene, file);
 		}
 		else if (c->Value() == std::string{"scale"}){
 			//Query both uniform and non-uniform scaling possibilities
@@ -173,31 +179,43 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene){
 		}
 	}
 }
-Geometry* get_geometry(const std::string &type, Scene &scene){
+Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file){
 	//Check if the geometry is in our cache, if not load it
 	auto &cache = scene.get_geom_cache();
-	if (!cache.get(type)){
-		if (type == "sphere"){
-			cache.add(type, std::unique_ptr<Geometry>{new Sphere{}});
-		}
-		else if (type == "plane"){
-			cache.add(type, std::unique_ptr<Geometry>{new Plane{}});
-		}
-		else if (type == "dbg_mesh"){
-			std::vector<Point> v = {Point{-1, 1, 0}, Point{-1, -1, 0},
-				Point{1, -1, 0}, Point{1, 1, 0}};
-			std::vector<Point> t = {Point{0, 1, 0}, Point{0, 0, 0},
-				Point{1, 0, 0}, Point{1, 1, 0}};
-			std::vector<Normal> n = {Normal{0, 0.5, 0.5}, Normal{0, -0.5, 0.5},
-				Normal{0, -0.5, 0.5}, Normal{0, 0.5, 0.5}};
-			std::vector<int> i = {0, 1, 2, 2, 3, 0};
-			cache.add(type, std::unique_ptr<Geometry>{new TriMesh{v, t, n, i}});
-		}
-		else {
-			return nullptr;
-		}
+	Geometry *g = cache.get(type);
+	if (g){
+		return g;
 	}
-	return cache.get(type);
+	g = cache.get(name);
+	if (g){
+		return g;
+	}
+	if (type == "sphere"){
+		cache.add(type, std::unique_ptr<Geometry>{new Sphere{}});
+		return cache.get(type);
+	}
+	else if (type == "plane"){
+		cache.add(type, std::unique_ptr<Geometry>{new Plane{}});
+		return cache.get(type);
+	}
+	else if (type == "dbg_mesh"){
+		std::vector<Point> v = {Point{-1, 1, 0}, Point{-1, -1, 0},
+			Point{1, -1, 0}, Point{1, 1, 0}};
+		std::vector<Point> t = {Point{0, 1, 0}, Point{0, 0, 0},
+			Point{1, 0, 0}, Point{1, 1, 0}};
+		std::vector<Normal> n = {Normal{0, 0.5, 0.5}, Normal{0, -0.5, 0.5},
+			Normal{0, -0.5, 0.5}, Normal{0, 0.5, 0.5}};
+		std::vector<int> i = {0, 1, 2, 2, 3, 0};
+		cache.add(type, std::unique_ptr<Geometry>{new TriMesh{v, t, n, i}});
+		return cache.get(type);
+	}
+	else if (type == "obj"){
+		std::string model_file = file.substr(0, file.rfind('/') + 1) + name;
+		std::cout << "Loading model from file: " << model_file << std::endl;
+		cache.add(name, std::unique_ptr<Geometry>{new TriMesh{model_file}});
+		return cache.get(name);
+	}
+	return nullptr;
 }
 void read_vector(tinyxml2::XMLElement *elem, Vector &v){
 	elem->QueryFloatAttribute("x", &v.x);

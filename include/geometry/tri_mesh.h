@@ -13,7 +13,7 @@
  * A mesh composed of triangles
  */
 class TriMesh : public Geometry {
-	std::vector<Point> verts, texcoords;
+	std::vector<Point> vertices, texcoords;
 	std::vector<Normal> normals;
 	//Indices for each face's vert, texcoord and normal
 	//We could do better by storing 3 indices one for each vert, texcoord and normal
