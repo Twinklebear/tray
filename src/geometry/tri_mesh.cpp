@@ -124,9 +124,8 @@ bool Triangle::intersect(Ray &ray, HitInfo &hitinfo){
 		mesh->vertex(b) - mesh->vertex(a),
 		mesh->vertex(c) - mesh->vertex(a)
 	};
-	Vector dir = ray.d.normalized();
 	std::array<Vector, 2> s;
-	s[0] = dir.cross(e[1]);
+	s[0] = ray.d.cross(e[1]);
 	float div = s[0].dot(e[0]);
 	//Check for degenerate triangle
 	if (div == 0){
@@ -141,7 +140,7 @@ bool Triangle::intersect(Ray &ray, HitInfo &hitinfo){
 		return false;
 	}
 	s[1] = d.cross(e[0]);
-	bary[1] = dir.dot(s[1]) * div;
+	bary[1] = ray.d.dot(s[1]) * div;
 	//Check the second barycentric coordinate is in the triangle bounds
 	if (bary[1] < 0 || bary[0] + bary[1] > 1){
 		return false;
