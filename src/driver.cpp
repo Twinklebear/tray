@@ -71,7 +71,7 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				float c = -n.dot(ray.d);
 				Vector dir = r * ray.d + (r * c - std::sqrt(1 - r * r * (1 - c * c))) * n;
 				Ray refr{hitinfo.point, dir.normalized(), ray, 0.001};
-				color += shade_ray(refr, scene.get_root());
+				color += shade_ray(refr, scene.get_root()) * mat->refractive();
 			}
 			if (mat->is_reflective() && ray.depth < scene.get_max_depth()){
 				//Reflect and cast ray

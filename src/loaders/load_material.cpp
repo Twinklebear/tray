@@ -51,7 +51,7 @@ std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
 std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	using namespace tinyxml2;
 	Colorf diff{1, 1, 1}, spec{1, 1, 1}, refl{1, 1, 1},
-		refrc{0, 0, 0}, absorp{0, 0, 0};
+		refrc{1, 1, 1}, absorp{1, 1, 1};
 	float gloss = 1, refr_index = -1;
 	XMLElement *e = elem->FirstChildElement("diffuse");
 	if (e){
