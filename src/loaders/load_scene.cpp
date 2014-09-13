@@ -210,7 +210,12 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		return cache.get(type);
 	}
 	else if (type == "obj"){
-		std::string model_file = file.substr(0, file.rfind('/') + 1) + name;
+#ifdef _WIN32
+		const char PATH_SEP = '\\';
+#else
+		const char PATH_SEP = '/';
+#endif
+		std::string model_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
 		std::cout << "Loading model from file: " << model_file << std::endl;
 		cache.add(name, std::unique_ptr<Geometry>{new TriMesh{model_file}});
 		return cache.get(name);
