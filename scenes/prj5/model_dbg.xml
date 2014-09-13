@@ -1,9 +1,11 @@
 <xml>
   <scene>
     <!-- Objects -->
-    <object type="obj" name="suzanne.obj" material="mtl1">
-      <scale value="0.8"/>
-      <translate x="0" y="6" z="0"/>
+	<object type="obj" name="../model/sphere.obj" material="mtl1">
+      <scale value="15"/>
+	  <rotate angle="90" x="1"/>
+	  <rotate angle="-135" z="1"/>
+      <translate x="0" y="0" z="6"/>
     </object>
 
     <!-- Materials -->
