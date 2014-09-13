@@ -41,6 +41,9 @@ Colorf BlinnPhong::reflective() const {
 bool BlinnPhong::is_transparent() const {
 	return refr_index > 0;
 }
+Colorf BlinnPhong::absorbed() const {
+	return absorption;
+}
 float BlinnPhong::refractive_idx() const {
 	return refr_index;
 }

@@ -28,6 +28,10 @@ public:
 	 */
 	virtual bool is_transparent() const = 0;
 	/*
+	 * Get the object's absorption amount per unit t for transparency
+	 */
+	virtual Colorf absorbed() const = 0;
+	/*
 	 * Get the refractive index of the material,
 	 * -1 is used to indicate the material isn't transparent
 	 */

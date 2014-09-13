@@ -14,6 +14,9 @@ Colorf FlatMaterial::reflective() const {
 bool FlatMaterial::is_transparent() const {
 	return false;
 }
+Colorf FlatMaterial::absorbed() const {
+	return Colorf{0, 0, 0};
+}
 float FlatMaterial::refractive_idx() const {
 	return -1;
 }
