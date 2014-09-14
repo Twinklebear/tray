@@ -1,0 +1,114 @@
+<xml>
+  <scene>
+    <!-- Objects -->
+    <object name="box">
+      <translate x="0" y="0" z="12"/>
+      <object type="plane" name="WallBottom" material="wall">
+        <scale value="32"/>
+        <translate z="-12"/>
+      </object>
+      <object type="plane" name="WallTop" material="wall">
+        <scale value="32"/>
+        <rotate angle="180" x="1"/>
+        <translate z="12"/>
+      </object>
+      <object type="plane" name="WallBack" material="wall">
+        <scale value="32"/>
+        <rotate angle="90" x="1"/>
+        <translate y="20"/>
+      </object>
+      <object type="plane" name="WallLeft" material="wallRed">
+        <scale value="32"/>
+        <rotate angle="90" y="1"/>
+        <translate x="-15"/>
+      </object>
+      <object type="plane" name="WallRight" material="wallBlue">
+        <scale value="32"/>
+        <rotate angle="-90" y="1"/>
+        <translate x="15"/>
+      </object>
+    </object>
+	<object type="obj" name="../models/dragon.obj" material="mtl3">
+      <scale value="23"/>
+	  <rotate angle="90" x="1"/>
+	  <rotate angle="110" z="1"/>
+      <translate x="2" y="5" z="6"/>
+    </object>
+	<object type="obj" name="../models/buddha.obj" material="mtl1">
+      <scale value="15"/>
+      <rotate angle="90" x="1"/>
+	  <rotate angle="145" z="1"/>
+      <translate x="7" y="2" z="6"/>
+    </object>
+	<object type="obj" name="../models/teapot_hres.obj" material="mtl2">
+      <scale value="0.4"/>
+	  <rotate angle="-20" z="1"/>
+      <translate x="-8" y="-6" z="0"/>
+    </object>
+	<object type="obj" name="../models/bunny.obj" material="mtl4">
+	  <scale value="2.5"/>
+      <rotate angle="90" x="1"/>
+	  <translate x="10" y="-6" z="0.9"/>
+	</object>
+ 
+    <!-- Materials -->
+    <material type="blinn" name="wall">
+      <diffuse  r="1" g="1" b="1"/>
+      <specular value="0"/>
+    </material>
+    <material type="blinn" name="wallRed">
+      <diffuse  r="1.0" g="0.5" b="0.5"/>
+      <specular value="0"/>
+    </material>
+    <material type="blinn" name="wallBlue">
+      <diffuse  r="0.5" g="0.5" b="1.0"/>
+      <specular value="0"/>
+    </material>
+    <material type="blinn" name="mtl1">
+      <diffuse  r="0.8" g="0.7" b="0.1"/>
+      <specular r="1.0" g="1.0" b="1.0" value="0.7"/>
+      <glossiness value="20"/>
+      <reflection value="0.3"/>
+    </material>
+    <material type="blinn" name="mtl2">
+      <diffuse  r="0.1" g="0.1" b="0.9"/>
+      <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
+      <glossiness value="10"/>
+      <refraction value="0.8" index="1.52"/>
+      <absorption r="0.01" g="0.001" b="0.0001"/>
+    </material>
+	<material type="blinn" name="mtl3">
+      <diffuse  r="0.8" g="0.2" b="0.8"/>
+      <specular r="1.0" g="0.0" b="0.0" value="0.7"/>
+      <glossiness value="20"/>
+      <reflection value="0.6"/>
+    </material>
+	<material type="blinn" name="mtl4">
+	  <diffuse  value="0.9"/>
+      <specular r="1.0" g="1.0" b="1.0" value="1"/>
+      <glossiness value="20"/>
+      <refraction value="0.4" index="1.52"/>
+      <absorption r="0.01" g="0.001" b="0.0001"/>
+    </material>
+
+ 
+    <!-- Lights -->
+    <light type="ambient" name="ambientLight">
+      <intensity value="0.1"/>
+    </light>
+    <light type="point" name="pointLight">
+      <intensity value="0.5"/>
+      <position x="0" y="0" z="22"/>
+    </light>
+  </scene>
+ 
+  <camera>
+    <position x="0" y="-60" z="12"/>
+    <target x="0" y="0" z="12"/>
+    <up x="0" y="0" z="1"/>
+    <fov value="30"/>
+    <width value="800"/>
+    <height value="600"/>
+  </camera>
+</xml>
+
