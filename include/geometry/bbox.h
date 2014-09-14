@@ -19,7 +19,7 @@ struct BBox {
 		: min(Point{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(),
 			std::numeric_limits<float>::infinity()}),
 		max(Point{-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(),
-			std::numeric_limits<float>::infinity()})
+			-std::numeric_limits<float>::infinity()})
 	{}
 	inline BBox(const Point &p) : min(p), max(p) {}
 	inline BBox(const Point &a, const Point &b)
