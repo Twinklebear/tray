@@ -104,7 +104,7 @@ const Normal& TriMesh::normal(int i) const {
 	return normals[i];
 }
 void TriMesh::compute_bounds(){
-	bounds = BBox{Point{0, 0, 0}, Point{0, 0, 0}};
+	bounds = BBox{};
 	for (const Point &p : vertices){
 		bounds = bounds.box_union(p);
 	}
