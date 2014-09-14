@@ -9,6 +9,11 @@
 #endif
 
 /*
+ * Enum for storing x/y/z axis ids
+ */
+enum AXIS { X, Y, Z };
+
+/*
  * Some basic math/geometric utility functions
  */
 constexpr inline float lerp(float t, float a, float b){

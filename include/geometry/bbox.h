@@ -73,15 +73,15 @@ struct BBox {
 	/*
 	 * Return which axis is the longest
 	 */
-	inline int max_extent() const {
+	inline AXIS max_extent() const {
 		Vector d = max - min;
 		if (d.x > d.y && d.x > d.z){
-			return 0;
+			return AXIS::X;
 		}
 		else if (d.y > d.z){
-			return 1;
+			return AXIS::Y;
 		}
-		return 2;
+		return AXIS::Z;
 	}
 	/*
 	 * Blend between the min/max points to get some point in the box
