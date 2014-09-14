@@ -4,19 +4,18 @@
 #include <future>
 #include <algorithm>
 #include "geometry/tri_mesh.h"
+#include "loaders/async_loader.h"
 #include "mesh_preprocess.h"
 
 void batch_process(char **argv, int argc){
-	std::vector<std::future<bool>> processes;
 	auto files = std::find(argv, argv + argc, std::string{"-pmesh"}) + 1;
+	AsyncLoader loader;
 	for (char **f = files; f < argv + argc; ++f){
-		processes.emplace_back(std::async(std::launch::async,
-			process_wobj, *f));
+		std::string mesh{*f};
+		loader.run_task("process mesh: " + mesh, process_wobj, mesh);
 	}
 	//Wait for all the tasks to finish
-	for (std::future<bool> &f : processes){
-		f.wait();
-	}
+	loader.wait();
 }
 bool process_wobj(const std::string &file){
 	std::cout << "Processing mesh " << file << std::endl;

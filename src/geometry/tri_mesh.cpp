@@ -148,6 +148,7 @@ void TriMesh::load_model(const std::string &file){
 		}
 	}
 	else {
+		std::cout << "Found optimized binary mesh file " << file_bin << std::endl;
 		fbin.close();
 		load_bobj(file_bin);
 	}
