@@ -1,4 +1,4 @@
-#ifndef BHV_H
+#ifndef BVH_H
 #define BVH_H
 
 #include <memory>
@@ -49,7 +49,10 @@ class BVH {
 		 */
 		BuildNode(AXIS split, std::unique_ptr<BuildNode> a, std::unique_ptr<BuildNode> b);
 	};
-	//Nodes used to store the final flattened BVH structure
+	/*
+	 * Nodes used to store the final flattened BVH structure, the first child
+	 * is right after the parent but the second child is at some offset further down
+	 */
 	struct FlatNode {
 		BBox bounds;
 		union {
@@ -81,9 +84,11 @@ public:
 	/*
 	 * Construct the BVH to create a hierarchy of the refined geometry passed in
 	 * using the desird split method. max_geom specifies the maximum geometry that
-	 * can be stored per node, default is 32, max is 128
+	 * can be stored per node, default is 128, max is 256
+	 * The defaults for the empty constructor will build an empty BVH
 	 */
-	BVH(const std::vector<Geometry*> &geom, SPLIT_METHOD split, unsigned max_geom = 32);
+	BVH(const std::vector<Geometry*> &geom = std::vector<Geometry*>{},
+		SPLIT_METHOD split = SPLIT_METHOD::SAH, unsigned max_geom = 128);
 	/*
 	 * Get the bounds for the BVH
 	 */
@@ -103,6 +108,21 @@ private:
 	 */
 	std::unique_ptr<BuildNode> build(std::vector<GeomInfo> &build_geom, std::vector<Geometry*> &ordered_geom,
 		int start, int end, int &total_nodes);
+	/*
+	 * Build a leaf node in the tree using the geometry passed and push the ordered geometry for the
+	 * leaf into ordered_geom
+	 */
+	std::unique_ptr<BuildNode> build_leaf(std::vector<GeomInfo> &build_geom, std::vector<Geometry*> &ordered_geom,
+		int start, int end, const BBox &box);
+	/*
+	 * Recursively flatten the BVH tree into the flat nodes vector
+	 * offset tracks the current offset into the flat nodes vector
+	 */
+	uint32_t flatten_tree(const std::unique_ptr<BuildNode> &node, uint32_t &offset);
+	/*
+	 * A specialized fast bbox intersection test for the BVH traversal
+	 */
+	bool fast_box_intersect(const BBox &bounds, Ray &r, const Vector &inv_dir, const std::array<int, 3> &neg_dir) const;
 };
 
 #endif

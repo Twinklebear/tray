@@ -8,6 +8,7 @@
 #include "linalg/ray.h"
 #include "bbox.h"
 #include "geometry.h"
+#include "accelerators/bvh.h"
 
 class TriMesh;
 
@@ -38,8 +39,8 @@ class TriMesh : public Geometry {
 	//Triangles for the mesh, cached after the first time the mesh is refined
 	//since we hand out references to them
 	std::vector<Triangle> tris;
-	//The mesh computes its object-space bounds once after loading and saves it
-	BBox bounds;
+	//The BVH used to accelerate ray-triangle intersection tests on the mesh
+	BVH bvh;
 
 public:
 	/*

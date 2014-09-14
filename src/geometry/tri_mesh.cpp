@@ -7,6 +7,7 @@
 #include <string>
 #include "linalg/vector.h"
 #include "linalg/point.h"
+#include "accelerators/bvh.h"
 #include "geometry/bbox.h"
 #include "geometry/geometry.h"
 #include "geometry/tri_mesh.h"
@@ -60,8 +61,9 @@ bool Triangle::intersect(Ray &ray, HitInfo &hitinfo){
 
 }
 BBox Triangle::bound() const {
-	BBox box{mesh->vertex(a), mesh->vertex(b)};
-	return box.box_union(mesh->vertex(c));
+	BBox box;
+	return box.box_union(mesh->vertex(a)).box_union(mesh->vertex(b))
+		.box_union(mesh->vertex(c));
 }
 void Triangle::refine(std::vector<Geometry*> &prims){
 	prims.push_back(this);
@@ -69,6 +71,9 @@ void Triangle::refine(std::vector<Geometry*> &prims){
 
 TriMesh::TriMesh(const std::string &file){
 	load_wobj(file);
+	std::vector<Geometry*> ref_tris;
+	refine(ref_tris);
+	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 128};
 }
 TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 	const std::vector<Normal> &norm, const std::vector<int> vert_idx)
@@ -76,8 +81,15 @@ TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 {
 	compute_bounds();
 	refine_tris();
+	std::vector<Geometry*> ref_tris;
+	refine(ref_tris);
+	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 128};
 }
 bool TriMesh::intersect(Ray &ray, HitInfo &hitinfo){
+	return bvh.intersect(ray, hitinfo);
+	/*
+	//TODO Swap in crappy slow intersection code for the nice bvh when doing
+	//project 5 since we aren't supposed to have it yet
 	//Really terrible method, go through all the triangles in the mesh
 	//and see if we hit them
 	bool hit = false;
@@ -85,9 +97,10 @@ bool TriMesh::intersect(Ray &ray, HitInfo &hitinfo){
 		hit = t.intersect(ray, hitinfo) || hit;
 	}
 	return hit;
+	*/
 }
 BBox TriMesh::bound() const {
-	return bounds;
+	return bvh.bounds();
 }
 void TriMesh::refine(std::vector<Geometry*> &prims){
 	for (Triangle &t : tris){
@@ -104,10 +117,12 @@ const Normal& TriMesh::normal(int i) const {
 	return normals[i];
 }
 void TriMesh::compute_bounds(){
+	/*
 	bounds = BBox{};
 	for (const Point &p : vertices){
 		bounds = bounds.box_union(p);
 	}
+	*/
 }
 void TriMesh::refine_tris(){
 	for (int i = 0; i < vert_indices.size(); i += 3){
