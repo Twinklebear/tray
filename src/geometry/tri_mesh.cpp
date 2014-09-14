@@ -70,7 +70,9 @@ void Triangle::refine(std::vector<Geometry*> &prims){
 }
 
 TriMesh::TriMesh(const std::string &file){
-	load_wobj(file);
+	load_model(file);
+	compute_bounds();
+	refine_tris();
 	std::vector<Geometry*> ref_tris;
 	refine(ref_tris);
 	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 128};
@@ -125,16 +127,33 @@ void TriMesh::compute_bounds(){
 	*/
 }
 void TriMesh::refine_tris(){
+	tris.reserve(vert_indices.size());
 	for (int i = 0; i < vert_indices.size(); i += 3){
 		tris.emplace_back(vert_indices[i], vert_indices[i + 1], vert_indices[i + 2], this);
 	}
 }
-void TriMesh::load_wobj(const std::string &file){
-	std::ifstream fin(file);
-	if (!fin.is_open()){
-		std::cout << "Error: failed to load obj file: " << file << std::endl;
-		return;
+void TriMesh::load_model(const std::string &file){
+	//First see if a binary obj file is available, if not fall back to wavefront obj
+	std::string file_bin = file.substr(0, file.rfind("obj")) + "bobj";
+	std::ifstream fbin{file_bin};
+	if (!fbin.good()){
+		std::ifstream fin{file};
+		if (!fin.good()){
+			std::cout << "Error: failed to load model " << file << std::endl;
+			return;
+		}
+		else {
+			fin.close();
+			load_wobj(file);
+		}
 	}
+	else {
+		fbin.close();
+		load_bobj(file_bin);
+	}
+}
+void TriMesh::load_wobj(const std::string &file){
+	std::ifstream fin{file};
 	//Temporary storage for the data we read in
 	//we could skip doing this if we stored 3 indices per tri {pos, normal, tex} instead of just 1
 	std::vector<Point> tmp_pos, tmp_uv;
@@ -189,8 +208,21 @@ void TriMesh::load_wobj(const std::string &file){
 			}
 		}
 	}
-	compute_bounds();
-	refine_tris();
+}
+void TriMesh::load_bobj(const std::string &file){
+	std::FILE *fin = std::fopen(file.c_str(), "rb");
+	uint32_t nverts = 0, ntris = 0;
+	std::fread(&nverts, sizeof(uint32_t), 1, fin);
+	std::fread(&ntris, sizeof(uint32_t), 1, fin);
+	vertices.resize(nverts);
+	texcoords.resize(nverts);
+	normals.resize(nverts);
+	vert_indices.resize(3 * ntris);
+	std::fread(vertices.data(), sizeof(Point), nverts, fin);
+	std::fread(texcoords.data(), sizeof(Point), nverts, fin);
+	std::fread(normals.data(), sizeof(Normal), nverts, fin);
+	std::fread(vert_indices.data(), sizeof(int), 3 * ntris, fin);
+	std::fclose(fin);
 }
 Point capture_point2(const std::string &s){
 	Point p;

@@ -9,6 +9,7 @@
 #include "bbox.h"
 #include "geometry.h"
 #include "accelerators/bvh.h"
+#include "mesh_preprocess.h"
 
 class TriMesh;
 
@@ -21,7 +22,7 @@ class Triangle : public Geometry {
 	const TriMesh *mesh;
 
 public:
-	Triangle(int a, int b, int c, const TriMesh *mesh);
+	Triangle(int a = 0, int b = 0, int c = 0, const TriMesh *mesh = nullptr);
 	bool intersect(Ray &ray, HitInfo &hitinfo) override;
 	BBox bound() const override;
 	void refine(std::vector<Geometry*> &prims) override;
@@ -41,6 +42,10 @@ class TriMesh : public Geometry {
 	std::vector<Triangle> tris;
 	//The BVH used to accelerate ray-triangle intersection tests on the mesh
 	BVH bvh;
+
+	//Friends with the meshprocessor so it's able to get the data needed
+	//to serialize the binary mesh
+	friend bool process_wobj(const std::string &);
 
 public:
 	/*
@@ -76,9 +81,18 @@ private:
 	 */
 	void refine_tris();
 	/*
+	 * Load the model from a wavefront obj file or a binary obj file
+	 * depending on what's available, preferring binary obj files
+	 */
+	void load_model(const std::string &file);
+	/*
 	 * Load the mesh data from a wavefront obj file
 	 */
 	void load_wobj(const std::string &file);
+	/*
+	 * Load the mesh data from a preprocessed binary obj file
+	 */
+	void load_bobj(const std::string &file);
 };
 
 #endif

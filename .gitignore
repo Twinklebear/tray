@@ -5,6 +5,7 @@
 *.dll
 build/
 bin/
+*.bobj
 
 # Ignored ycm compiled python file
 *.pyc
