@@ -9,9 +9,9 @@ template<>
 std::string get_param(char **beg, char **end, const std::string &f){
 	char **it = std::find(beg, end, f);
 	if (it != end && ++it != end){
-		return std::string(*it);
+		return std::string{*it};
 	}
-	return std::string("");
+	return std::string{""};
 }
 template<>
 int get_param(char **beg, char **end, const std::string &f){
