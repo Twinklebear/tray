@@ -32,22 +32,17 @@ BVH::BVH(const std::vector<Geometry*> &geom, SPLIT_METHOD split, unsigned max_ge
 	if (geometry.empty()){
 		return;
 	}
-	//std::cout << "Building BVH for " << geometry.size() << " geometry, max per node: "
-		//<< max_geom << std::endl;
 	//Get bounds and index info together for the geometry we're storing
 	std::vector<GeomInfo> build_geom;
 	build_geom.reserve(geometry.size());
 	for (size_t i = 0; i < geometry.size(); ++i){
 		build_geom.emplace_back(i, geometry[i]->bound());
-		//std::cout << "Build geom bounds: " << build_geom.back().bounds << std::endl;
 	}
 
 	std::vector<Geometry*> ordered_geom;
 	ordered_geom.reserve(geometry.size());
 	int total_nodes = 0;
-	//std::cout << "Starting to build tree" << std::endl;
 	std::unique_ptr<BuildNode> root = build(build_geom, ordered_geom, 0, geometry.size(), total_nodes);
-	//std::cout << "Tree constructed" << std::endl;
 	//Our BVH structure refers to the ordered geometry so swap out our unordered list for
 	//the correctly ordered one
 	geometry.swap(ordered_geom);
@@ -55,9 +50,7 @@ BVH::BVH(const std::vector<Geometry*> &geom, SPLIT_METHOD split, unsigned max_ge
 	//Recursively flatten the tree for faster traversal
 	flat_nodes.resize(total_nodes);
 	uint32_t offset = 0;
-	//std::cout << "Starting to flatten tree" << std::endl;
 	flatten_tree(root, offset);
-	//std::cout << "Tree flattened" << std::endl;
 }
 BBox BVH::bounds() const {
 	return !flat_nodes.empty() ? flat_nodes[0].bounds : BBox{};
@@ -119,8 +112,6 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 	int start, int end, int &total_nodes)
 {
 	++total_nodes;
-	//std::cout << "Constructing node: " << total_nodes
-	//	<< " for " << end - start << " geometry" << std::endl;
 	//Find total bounds for the geometry we're trying to store
 	BBox box;
 	for (int i = start; i < end; ++i){
@@ -129,7 +120,6 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 	int ngeom = end - start;
 	//Build and return a leaf node for the geometry
 	if (ngeom == 1){
-		//std::cout << "only one geom, building leaf" << std::endl;
 		return build_leaf(build_geom, ordered_geom, start, end, box);
 	}
 	//Need to build an interior node
@@ -140,7 +130,6 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 		centroids = centroids.box_union(build_geom[i].center);
 	}
 	AXIS axis = centroids.max_extent();
-	//std::cout << "Centroid: " << centroids << std::endl;
 	//We can now partition the primitives along this axis
 	int mid = (start + end) / 2;
 	//If all the geometry's centers are on the same point we can't partition
@@ -148,11 +137,9 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 		//Check that we can fit all the geometry into a single leaf node, if not we need
 		//to force a split
 		if (ngeom < max_geom){
-			//std::cout << "All geom on same point, building leaf" << std::endl;
 			return build_leaf(build_geom, ordered_geom, start, end, box);
 		}
 		else {
-			//std::cout << "All geom on same point, but forced to split" << std::endl;
 			return std::unique_ptr<BuildNode>{new BuildNode{axis,
 				build(build_geom, ordered_geom, start, mid, total_nodes),
 				build(build_geom, ordered_geom, mid, end, total_nodes)}};
@@ -161,7 +148,6 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 	//Partition the primitives base on split method chosen
 	switch (split){
 		case SPLIT_METHOD::MIDDLE: {
-			//std::cout << "Starting SPLIT_METHOD::MIDDLE" << std::endl;
 			float mid_pt = 0.5f * (centroids.min[axis] + centroids.max[axis]);
 			auto mid_ptr = std::partition(build_geom.begin() + start, build_geom.begin() + end,
 				[axis, mid_pt](const GeomInfo &g){
@@ -171,26 +157,21 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 			//This technique can fail if the geometry bounds overlap a lot, in which case
 			//fall through to equal split method
 			if (mid != start && mid != end){
-				//std::cout << "middle split successful" << std::endl;
 				break;
 			}
 		}
 		case SPLIT_METHOD::EQUAL: {
-			//std::cout << "Starting SPLIT_METHOD::EQUAL" << std::endl;
 			mid = (start + end) / 2;
 			std::nth_element(build_geom.begin() + start, build_geom.begin() + mid,
 				build_geom.begin() + end,
 				[axis](const GeomInfo &a, const GeomInfo &b){
 					return a.center[axis] < b.center[axis];
 				});
-			//std::cout << "SPLIT_METHOD::EQUAL done" << std::endl;
 			break;
 		}
 		case SPLIT_METHOD::SAH: {
-			//std::cout << "Starting SPLIT_METHOD::SAH" << std::endl;
 			//If there's only a few primitives just use EQUAL and break
 			if (ngeom < 5){
-				//std::cout << "SAH falling to SPLIT_METHOD::EQUAL, too little geom" << std::endl;
 				mid = (start + end) / 2;
 				std::nth_element(build_geom.begin() + start, build_geom.begin() + mid,
 					build_geom.begin() + end,
@@ -210,7 +191,6 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 				++buckets[b].count;
 				buckets[b].bounds = buckets[b].bounds.box_union(build_geom[i].bounds);
 			}
-			//std::cout << "SAH buckets filled" << std::endl;
 			//Use the SAH to compute the costs of splitting at each bucket except the last
 			std::array<float, 11> cost;
 			for (int i = 0; i < cost.size(); ++i){
@@ -230,31 +210,24 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 			//Find the lowest cost split we can make here
 			auto min_cost = std::min_element(cost.begin(), cost.end());
 			int min_cost_idx = std::distance(cost.begin(), min_cost);
-			//std::cout << "SAH min cost computed" << std::endl;
 			//If we're forced to split by the amount of geometry here or it's cheaper to split then do so
 			if (ngeom > max_geom || *min_cost < ngeom){
-				//std::cout << "SAH splitting node, min_cost_idx = " << min_cost_idx << std::endl;
 				//Partition the geometry about the splitting bucket
 				auto mid_ptr = std::partition(build_geom.begin() + start, build_geom.begin() + end,
 					[min_cost_idx, axis, centroids](const GeomInfo &g){
 						int b = (g.center[axis] - centroids.min[axis])
 							/ (centroids.max[axis] - centroids.min[axis]) * 12;
 						b = b == 12 ? b - 1 : b;
-						//std::cout << "geom falling into bucket " << b << " for split" << std::endl;
 						return b <= min_cost_idx;
 					});
 				mid = std::distance(build_geom.begin(), mid_ptr);
 			}
 			else {
-				//std::cout << "SAH building leaf" << std::endl;
 				return build_leaf(build_geom, ordered_geom, start, end, box);
 			}
 			break;
 		}
 	}
-	//std::cout << "Splitting node: start = " << start
-	//	<< ", mid = " << mid
-	//	<< ", end = " << end << std::endl;
 	assert(start != mid && mid != end);
 	return std::unique_ptr<BuildNode>{new BuildNode{axis,
 		build(build_geom, ordered_geom, start, mid, total_nodes),
