@@ -63,6 +63,20 @@
 	  <rotate angle="150" z="1"/>
 	  <translate x="7" y="11" z="17"/>
 	</object>
+	<object type="obj" name="../models/dragon.obj" material="buddha_mat">
+      <scale value="12"/>
+	  <rotate angle="90" x="1"/>
+	  <rotate angle="190" z="1"/>
+	  <rotate angle="90" y="1"/>
+      <translate x="-12" y="-7" z="17"/>
+	</object>
+	<object type="obj" name="../models/suzanne.obj" material="armadillo_mat">
+	  <scale value="3"/>
+	  <rotate angle="90" x="1"/>
+	  <rotate angle="-40" z="1"/>
+	  <rotate angle="-20" y="1"/>
+	  <translate x="10" y="-2" z="17"/>
+	</object>
  
     <!-- Materials -->
     <material type="blinn" name="wall">
