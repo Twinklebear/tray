@@ -29,7 +29,7 @@ void load_lights(tinyxml2::XMLElement *elem, LightCache &cache){
 		if (n->Value() == std::string{"light"}){
 			XMLElement *l = n->ToElement();
 			std::string name = l->Attribute("name");
-			std::cout << "loading light: " << name << std::endl;
+			std::cout << "Loading light: " << name << std::endl;
 			std::unique_ptr<Light> light;
 			std::string type = l->Attribute("type");
 			if (type == "ambient"){
@@ -54,7 +54,6 @@ std::unique_ptr<Light> load_ambientl(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
 	read_color(elem->FirstChildElement("intensity"), color);
 	color.normalize();
-	std::cout << "AmbientLight intensity: " << color << std::endl;
 	return std::unique_ptr<Light>{new AmbientLight{color}};
 }
 std::unique_ptr<Light> load_directl(tinyxml2::XMLElement *elem){
@@ -63,8 +62,6 @@ std::unique_ptr<Light> load_directl(tinyxml2::XMLElement *elem){
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_vector(elem->FirstChildElement("direction"), dir);
 	color.normalize();
-	std::cout << "DirectLight intensity: " << color
-		<< ", direction: " << dir << std::endl;
 	return std::unique_ptr<Light>{new DirectLight{color, dir}};
 }
 std::unique_ptr<Light> load_pointl(tinyxml2::XMLElement *elem){
@@ -73,8 +70,6 @@ std::unique_ptr<Light> load_pointl(tinyxml2::XMLElement *elem){
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_point(elem->FirstChildElement("position"), pos);
 	color.normalize();
-	std::cout << "PointLight intensity: " << color
-		<< ", position: " << pos << std::endl;
 	return std::unique_ptr<Light>{new PointLight{color, pos}};
 }
 

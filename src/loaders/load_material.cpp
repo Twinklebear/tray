@@ -23,7 +23,7 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache){
 		if (n->Value() == std::string{"material"}){
 			XMLElement *m = n->ToElement();
 			std::string name = m->Attribute("name");
-			std::cout << "loading material: " << name << std::endl;
+			std::cout << "Loading material: " << name << std::endl;
 			std::unique_ptr<Material> material;
 			std::string type = m->Attribute("type");
 			if (type == "blinn"){
@@ -45,7 +45,6 @@ std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
 	read_color(elem->FirstChildElement("color"), color);
 	color.normalize();
-	std::cout << "FlatMaterial color: " << color << std::endl;
 	return std::unique_ptr<Material>{new FlatMaterial{color}};
 }
 std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
@@ -83,12 +82,6 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	}
 	diff.normalize();
 	spec.normalize();
-	std::cout << "Blinn material diff: " << diff << ", spec: " << spec
-		<< ", gloss: " << gloss 
-		<< ", reflection: " << refl
-		<< ", refraction: " << refrc
-		<< ", absorption: " << absorp
-		<< ", refractive index: " << refr_index << std::endl;
 	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss,
 		refl, refrc, absorp, refr_index}};
 }

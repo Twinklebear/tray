@@ -117,18 +117,18 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			XMLElement *e = c->ToElement();
 			std::string name = e->Attribute("name");
 			const char *t = e->Attribute("type");
-			std::cout << "Object with name " << name << " found\n";
+			std::cout << "Loading object: " << name << std::endl;
 			Geometry *geom = nullptr;
 			if (t){
 				std::string type = t;
-				std::cout << "Geometry type: " << type << std::endl;
+				std::cout << "Setting geometry: " << type << std::endl;
 				geom = get_geometry(type, name, scene, file);
 			}
 			const char *m = e->Attribute("material");
 			Material *mat = nullptr;
 			if (m){
 				std::string mat_name = m;
-				std::cout << "Material name: " << mat_name << std::endl;
+				std::cout << "Setting material: " << mat_name << std::endl;
 				mat = scene.get_mat_cache().get(mat_name);
 			}
 			if (!mat){
@@ -146,7 +146,6 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			read_float(c->ToElement(), f);
 			read_vector(c->ToElement(), v);
 			v *= f;
-			std::cout << "Scaling of " << v << " applied\n";
 			auto &transform = node.get_transform();
 			auto &inv_transform = node.get_inv_transform();
 			Transform t = Transform::scale(v.x, v.y, v.z);
@@ -157,7 +156,6 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 		else if (c->Value() == std::string{"translate"}){
 			Vector v;
 			read_vector(c->ToElement(), v);
-			std::cout << "Translation of " << v << " applied\n";
 			auto &transform = node.get_transform();
 			auto &inv_transform = node.get_inv_transform();
 			Transform t = Transform::translate(v);
@@ -170,7 +168,6 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			float d = 0;
 			read_vector(c->ToElement(), v);
 			read_float(c->ToElement(), d, "angle");
-			std::cout << "Rotation of " << d << " deg about " << v << " applied\n";
 			auto &transform = node.get_transform();
 			auto &inv_transform = node.get_inv_transform();
 			Transform t = Transform::rotate(v, d);
