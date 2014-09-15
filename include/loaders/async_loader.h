@@ -21,8 +21,7 @@ public:
 	 */
 	template<typename F, typename... Args>
 	void run_task(const std::string &name, F &&f, Args&&... args){
-		tasks.emplace(std::make_pair(name,
-			std::async(std::launch::async, f, std::forward<Args>(args)...)));
+		tasks[name] = std::async(std::launch::async, std::forward<F>(f), std::forward<Args>(args)...);
 	}
 	/*
 	 * Wait for all tasks to be completed and report their status
