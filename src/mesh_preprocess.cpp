@@ -19,7 +19,7 @@ void batch_process(char **argv, int argc){
 }
 bool process_wobj(const std::string &file){
 	std::cout << "Processing mesh " << file << std::endl;
-	TriMesh mesh{file};
+	TriMesh mesh{file, true};
 	if (mesh.vert_indices.empty()){
 		std::cout << "Error: process_wobj failed to load model " << file << std::endl;
 		return false;

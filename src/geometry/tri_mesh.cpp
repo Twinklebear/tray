@@ -69,9 +69,8 @@ void Triangle::refine(std::vector<Geometry*> &prims){
 	prims.push_back(this);
 }
 
-TriMesh::TriMesh(const std::string &file){
-	load_model(file);
-	compute_bounds();
+TriMesh::TriMesh(const std::string &file, bool no_bobj){
+	load_model(file, no_bobj);
 	refine_tris();
 	std::vector<Geometry*> ref_tris;
 	refine(ref_tris);
@@ -132,11 +131,11 @@ void TriMesh::refine_tris(){
 		tris.emplace_back(vert_indices[i], vert_indices[i + 1], vert_indices[i + 2], this);
 	}
 }
-void TriMesh::load_model(const std::string &file){
+void TriMesh::load_model(const std::string &file, bool no_bobj){
 	//First see if a binary obj file is available, if not fall back to wavefront obj
 	std::string file_bin = file.substr(0, file.rfind("obj")) + "bobj";
 	std::ifstream fbin{file_bin};
-	if (!fbin.good()){
+	if (no_bobj || !fbin.good()){
 		std::ifstream fin{file};
 		if (!fin.good()){
 			std::cout << "Error: failed to load model " << file << std::endl;

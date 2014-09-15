@@ -52,8 +52,11 @@ public:
 	 * Load the mesh from a Wavefront OBJ file, both triangle and quad faces
 	 * are supported although quad faces will simply be split into triangles
 	 * during loading
+	 * Can optionally request that any binary obj files found are ignored
+	 * This is only used by the mesh preprocessor to not load & process any
+	 * existing binary files
 	 */
-	TriMesh(const std::string &file);
+	TriMesh(const std::string &file, bool no_bobj = false);
 	/*
 	 * Explicitly specify the mesh information for the model
 	 */
@@ -83,8 +86,11 @@ private:
 	/*
 	 * Load the model from a wavefront obj file or a binary obj file
 	 * depending on what's available, preferring binary obj files
+	 * bobj indicates if we want to ignore any binary object files
+	 * only used by the mesh preprocessor to not load & process any
+	 * existing binary files
 	 */
-	void load_model(const std::string &file);
+	void load_model(const std::string &file, bool no_bobj = false);
 	/*
 	 * Load the mesh data from a wavefront obj file
 	 */
