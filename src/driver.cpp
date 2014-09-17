@@ -56,24 +56,38 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 		const Material *mat = hitinfo.node->get_material();
 		if (mat){
 			if (mat->is_transparent() && ray.depth < scene.get_max_depth()){
-				float r = 0;
+				float n_ratio = 0;
 				Vector n;
-				//Compute proper refractive index ration and set normal to be on same side
+				//Compute proper refractive index ratio and set normal to be on same side
 				//as indicident ray for refraction computation when entering/exiting material
 				if (hitinfo.hit_side == HITSIDE::FRONT){
-					r = 1.f / mat->refractive_idx();
+					n_ratio = 1.f / mat->refractive_idx();
 					n = Vector{hitinfo.normal.normalized()};
 				}
 				else {
-					r = mat->refractive_idx();
+					n_ratio = mat->refractive_idx();
 					n = -Vector{hitinfo.normal.normalized()};
 				}
+				//Compute Schlick's approximation to find amount reflected and transmitted at the surface
+				//Note that we use -ray.d here since V should be from point -> camera
+				//and we use refl_dir as the "light" direction since that's the light reflection
+				//we're interested in
+				Vector refl_dir = ray.d - 2 * n.dot(ray.d) * n;
+				Vector h = (refl_dir - ray.d).normalized();
+				float r = std::pow((mat->refractive_idx() - 1) / (mat->refractive_idx() + 1), 2.f);
+				r = r + (1 - r) * std::pow(1 - h.dot(-ray.d), 5);
+	
+				//Compute the contribution from light refracting through the object
 				float c = -n.dot(ray.d);
-				Vector dir = r * ray.d + (r * c - std::sqrt(1 - r * r * (1 - c * c))) * n;
-				Ray refr{hitinfo.point, dir.normalized(), ray, 0.001};
-				color += shade_ray(refr, scene.get_root()) * mat->refractive();
+				Vector refr_dir = n_ratio * ray.d + (n_ratio * c - std::sqrt(1 - n_ratio * n_ratio * (1 - c * c))) * n;
+				Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
+				color += shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
+
+				//Compute the contribution from of light from Fresnel term by Schlick's approximation
+				Ray refl{hitinfo.point, refl_dir.normalized(), ray, 0.001};
+				color += shade_ray(refl, scene.get_root()) * mat->refractive() * r;
 			}
-			if (mat->is_reflective() && ray.depth < scene.get_max_depth()){
+			else if (mat->is_reflective() && ray.depth < scene.get_max_depth()){
 				//Reflect and cast ray
 				Vector n{hitinfo.normal.normalized()};
 				Vector dir = ray.d - 2 * n.dot(ray.d) * n;
