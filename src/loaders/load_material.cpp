@@ -82,6 +82,9 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	}
 	diff.normalize();
 	spec.normalize();
+	refl.normalize();
+	refrc.normalize();
+	absorp.normalize();
 	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss,
 		refl, refrc, absorp, refr_index}};
 }
