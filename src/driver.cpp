@@ -69,9 +69,8 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 					n = -Vector{hitinfo.normal.normalized()};
 				}
 				//Compute Schlick's approximation to find amount reflected and transmitted at the surface
-				//Note that we use -ray.d here since V should be from point -> camera
-				//and we use refl_dir as the "light" direction since that's the light reflection
-				//we're interested in
+				//Note that we use -ray.d here since V should be from point -> camera and we use
+				//refl_dir as the "light" direction since that's the light reflection we're interested in
 				Vector refl_dir = ray.d - 2 * n.dot(ray.d) * n;
 				Vector h = (refl_dir - ray.d).normalized();
 				float r = std::pow((mat->refractive_idx() - 1) / (mat->refractive_idx() + 1), 2.f);
@@ -83,7 +82,7 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
 				color += shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
 
-				//Compute the contribution from of light from Fresnel term by Schlick's approximation
+				//Compute the contribution from light from Fresnel reflection
 				Ray refl{hitinfo.point, refl_dir.normalized(), ray, 0.001};
 				color += shade_ray(refl, scene.get_root()) * mat->refractive() * r;
 			}
