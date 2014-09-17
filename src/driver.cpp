@@ -59,7 +59,7 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				float r = 0;
 				Vector n;
 				//Compute proper refractive index ration and set normal to be on same side
-				//as indicdent ray for refraction computation when entering/exiting material
+				//as indicident ray for refraction computation when entering/exiting material
 				if (hitinfo.hit_side == HITSIDE::FRONT){
 					r = 1.f / mat->refractive_idx();
 					n = Vector{hitinfo.normal.normalized()};
