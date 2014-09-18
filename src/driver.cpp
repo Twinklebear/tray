@@ -80,21 +80,29 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 					float r = std::pow((mat->refractive_idx() - 1) / (mat->refractive_idx() + 1), 2.f);
 					r = r + (1 - r) * std::pow(1 - h.dot(-ray.d), 5);
 
-					//Compute the contribution from light refracting through the object
+					//Compute the contribution from light refracting through the object and check for total
+					//internal reflection
 					float c = -n.dot(ray.d);
-					Vector refr_dir = n_ratio * ray.d + (n_ratio * c - std::sqrt(1 - n_ratio * n_ratio * (1 - c * c))) * n;
-					Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
-					//Account for absorption by the object if the refraction ray we're casting is entering
-					if (hitinfo.hit_side == HITSIDE::FRONT){
+					float root = 1 - n_ratio * n_ratio * (1 - c * c);
+					if (root > 0){
+						root = std::sqrt(root);
+						Vector refr_dir = n_ratio * ray.d + (n_ratio * c - root) * n;
+						Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
+						//Account for absorption by the object if the refraction ray we're casting is entering it
 						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
-						Colorf absorbed = mat->absorbed();
-						color += refr_col * Colorf{std::exp(-refr.max_t * absorbed.r),
-							std::exp(-refr.max_t * absorbed.g), std::exp(-refr.max_t * absorbed.b)};
+						if (hitinfo.hit_side == HITSIDE::FRONT){
+							Colorf absorbed = mat->absorbed();
+							color += refr_col * Colorf{std::exp(-refr.max_t * absorbed.r),
+								std::exp(-refr.max_t * absorbed.g), std::exp(-refr.max_t * absorbed.b)};
+						}
+						else {
+							color += refr_col;
+						}
 					}
+					//In the case of total internal reflection all the contribution is from the reflected term
 					else {
-						color += shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
+						r = 1;
 					}
-
 					//Add Fresnel reflection contribution to be used when computing reflection
 					fresnel_refl = mat->refractive() * r;
 				}
