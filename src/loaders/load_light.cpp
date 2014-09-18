@@ -54,7 +54,7 @@ std::unique_ptr<Light> load_ambientl(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
 	read_color(elem->FirstChildElement("intensity"), color);
 	color.normalize();
-	return std::unique_ptr<Light>{new AmbientLight{color}};
+	return std::make_unique<AmbientLight>(color);
 }
 std::unique_ptr<Light> load_directl(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
@@ -62,7 +62,7 @@ std::unique_ptr<Light> load_directl(tinyxml2::XMLElement *elem){
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_vector(elem->FirstChildElement("direction"), dir);
 	color.normalize();
-	return std::unique_ptr<Light>{new DirectLight{color, dir}};
+	return std::make_unique<DirectLight>(color, dir);
 }
 std::unique_ptr<Light> load_pointl(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
@@ -70,6 +70,6 @@ std::unique_ptr<Light> load_pointl(tinyxml2::XMLElement *elem){
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_point(elem->FirstChildElement("position"), pos);
 	color.normalize();
-	return std::unique_ptr<Light>{new PointLight{color, pos}};
+	return std::make_unique<PointLight>(color, pos);
 }
 

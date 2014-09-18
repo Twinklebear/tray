@@ -45,7 +45,7 @@ std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
 	read_color(elem->FirstChildElement("color"), color);
 	color.normalize();
-	return std::unique_ptr<Material>{new FlatMaterial{color}};
+	return std::make_unique<FlatMaterial>(color);
 }
 std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	using namespace tinyxml2;
@@ -85,7 +85,7 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem){
 	refl.normalize();
 	refrc.normalize();
 	absorp.normalize();
-	return std::unique_ptr<Material>{new BlinnPhong{diff, spec, gloss,
-		refl, refrc, absorp, refr_index}};
+	return std::make_unique<BlinnPhong>(diff, spec, gloss,
+		refl, refrc, absorp, refr_index);
 }
 
