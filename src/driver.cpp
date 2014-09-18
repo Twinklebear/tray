@@ -55,43 +55,57 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 	if (intersect_nodes(node, ray, hitinfo)){
 		const Material *mat = hitinfo.node->get_material();
 		if (mat){
-			if (mat->is_transparent() && ray.depth < scene.get_max_depth()){
-				float n_ratio = 0;
-				Vector n;
-				//Compute proper refractive index ratio and set normal to be on same side
-				//as indicident ray for refraction computation when entering/exiting material
-				if (hitinfo.hit_side == HITSIDE::FRONT){
-					n_ratio = 1.f / mat->refractive_idx();
-					n = Vector{hitinfo.normal.normalized()};
-				}
-				else {
-					n_ratio = mat->refractive_idx();
-					n = -Vector{hitinfo.normal.normalized()};
-				}
-				//Compute Schlick's approximation to find amount reflected and transmitted at the surface
-				//Note that we use -ray.d here since V should be from point -> camera and we use
-				//refl_dir as the "light" direction since that's the light reflection we're interested in
-				Vector refl_dir = ray.d - 2 * n.dot(ray.d) * n;
-				Vector h = (refl_dir - ray.d).normalized();
-				float r = std::pow((mat->refractive_idx() - 1) / (mat->refractive_idx() + 1), 2.f);
-				r = r + (1 - r) * std::pow(1 - h.dot(-ray.d), 5);
-	
-				//Compute the contribution from light refracting through the object
-				float c = -n.dot(ray.d);
-				Vector refr_dir = n_ratio * ray.d + (n_ratio * c - std::sqrt(1 - n_ratio * n_ratio * (1 - c * c))) * n;
-				Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
-				color += shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
+			if (ray.depth < scene.get_max_depth()){
+				//Track reflection contribution from Fresnel term to be incorporated
+				//into reflection calculation
+				Colorf fresnel_refl;
+				if (mat->is_transparent()){
+					float n_ratio = 0;
+					Vector n;
+					//Compute proper refractive index ratio and set normal to be on same side
+					//as indicident ray for refraction computation when entering/exiting material
+					if (hitinfo.hit_side == HITSIDE::FRONT){
+						n_ratio = 1.f / mat->refractive_idx();
+						n = Vector{hitinfo.normal.normalized()};
+					}
+					else {
+						n_ratio = mat->refractive_idx();
+						n = -Vector{hitinfo.normal.normalized()};
+					}
+					//Compute Schlick's approximation to find amount reflected and transmitted at the surface
+					//Note that we use -ray.d here since V should be from point -> camera and we use
+					//refl_dir as the "light" direction since that's the light reflection we're interested in
+					Vector refl_dir = ray.d - 2 * n.dot(ray.d) * n;
+					Vector h = (refl_dir - ray.d).normalized();
+					float r = std::pow((mat->refractive_idx() - 1) / (mat->refractive_idx() + 1), 2.f);
+					r = r + (1 - r) * std::pow(1 - h.dot(-ray.d), 5);
 
-				//Compute the contribution from light from Fresnel reflection
-				Ray refl{hitinfo.point, refl_dir.normalized(), ray, 0.001};
-				color += shade_ray(refl, scene.get_root()) * mat->refractive() * r;
-			}
-			else if (mat->is_reflective() && ray.depth < scene.get_max_depth()){
-				//Reflect and cast ray
-				Vector n{hitinfo.normal.normalized()};
-				Vector dir = ray.d - 2 * n.dot(ray.d) * n;
-				Ray refl{hitinfo.point, dir.normalized(), ray, 0.001};
-				color += shade_ray(refl, scene.get_root()) * mat->reflective();
+					//Compute the contribution from light refracting through the object
+					float c = -n.dot(ray.d);
+					Vector refr_dir = n_ratio * ray.d + (n_ratio * c - std::sqrt(1 - n_ratio * n_ratio * (1 - c * c))) * n;
+					Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
+					//Account for absorption by the object if the refraction ray we're casting is entering
+					if (hitinfo.hit_side == HITSIDE::FRONT){
+						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
+						Colorf absorbed = mat->absorbed();
+						color += refr_col * Colorf{std::exp(-refr.max_t * absorbed.r),
+							std::exp(-refr.max_t * absorbed.g), std::exp(-refr.max_t * absorbed.b)};
+					}
+					else {
+						color += shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
+					}
+
+					//Add Fresnel reflection contribution to be used when computing reflection
+					fresnel_refl = mat->refractive() * r;
+				}
+				if (mat->is_reflective() || fresnel_refl != Colorf{0, 0, 0}){
+					Colorf refl_col = mat->reflective() + fresnel_refl;
+					//Reflect and cast ray
+					Vector n{hitinfo.normal.normalized()};
+					Vector dir = ray.d - 2 * n.dot(ray.d) * n;
+					Ray refl{hitinfo.point, dir.normalized(), ray, 0.001};
+					color += shade_ray(refl, scene.get_root()) * refl_col;
+				}
 			}
 			std::vector<Light*> lights = visible_lights(hitinfo.point, hitinfo.normal);
 			color += mat->shade(ray, hitinfo, lights);
