@@ -21,11 +21,10 @@ public:
 	 */
 	Sampler(int x_start, int x_end, int y_start, int y_end);
 	/*
-	 * Get an {x, y} position to sample in the space being sampled
-	 * has_samples should be called prior to using this function
-	 * otherwise the sample positions will not be valid
+	 * Get some {x, y} positions to sample in the space being sampled
+	 * If the sampler has finished sampling samples will be empty
 	 */
-	virtual std::array<float, 2> get_sample() = 0;
+	virtual void get_samples(std::vector<std::array<float, 2>> &samples) = 0;
 	/*
 	 * Returns true if we haven't exhausted the sample space for
 	 * the sampler yet

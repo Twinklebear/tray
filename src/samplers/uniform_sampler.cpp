@@ -7,15 +7,18 @@
 UniformSampler::UniformSampler(int x_start, int x_end, int y_start, int y_end)
 	: Sampler(x_start, x_end, y_start, y_end)
 {}
-std::array<float, 2> UniformSampler::get_sample(){
-	std::array<float, 2> sample{x + 0.5f, y + 0.5f};
+void UniformSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+	samples.clear();
+	if (!has_samples()){
+		return;
+	}
+	samples.push_back({x + 0.5f, y + 0.5f});
 	//Advance to next sample position
 	++x;
 	if (x == x_end){
 		x = x_start;
 		++y;
 	}
-	return sample;
 }
 std::vector<std::unique_ptr<Sampler>> UniformSampler::get_subsamplers(int w, int h) const {
 	int x_dim = x_end - x_start;

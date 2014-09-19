@@ -29,20 +29,23 @@ void Worker::render(){
 		if (!sampler){
 			break;
 		}
+		std::vector<std::array<float, 2>> samples;
 		while (sampler->has_samples()){
-			std::array<float, 2> s = sampler->get_sample();
-			Ray ray = camera.generate_ray(s[0], s[1]);
-			Colorf color = shade_ray(ray, scene.get_root());
-			color.normalize();
-			target.write_pixel(s[0], s[1], color);
-			target.write_depth(s[0], s[1], ray.max_t);
+			sampler->get_samples(samples);
+			for (const auto &s : samples){
+				Ray ray = camera.generate_ray(s[0], s[1]);
+				Colorf color = shade_ray(ray, scene.get_root());
+				color.normalize();
+				target.write_pixel(s[0], s[1], color);
+				target.write_depth(s[0], s[1], ray.max_t);
 
-			++check_cancel;
-			if (check_cancel >= 32){
-				check_cancel = 0;
-				int canceled = STATUS::CANCELED;
-				if (status.compare_exchange_strong(canceled, STATUS::DONE, std::memory_order_acq_rel)){
-					return;
+				++check_cancel;
+				if (check_cancel >= 32){
+					check_cancel = 0;
+					int canceled = STATUS::CANCELED;
+					if (status.compare_exchange_strong(canceled, STATUS::DONE, std::memory_order_acq_rel)){
+						return;
+					}
 				}
 			}
 		}

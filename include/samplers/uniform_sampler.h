@@ -17,11 +17,10 @@ public:
 	 */
 	UniformSampler(int x_start, int x_end, int y_start, int y_end);
 	/*
-	 * Get an {x, y} position to sample in the space being sampled
-	 * has_samples should be called prior to using this function
-	 * otherwise the sample positions will not be valid
+	 * Get some {x, y} positions to sample in the space being sampled
+	 * If the sampler has finished sampling samples will be empty
 	 */
-	std::array<float, 2> get_sample() override;
+	void get_samples(std::vector<std::array<float, 2>> &samples) override;
 	/*
 	 * Get subsamplers that divide the space to be sampled
 	 * into count disjoint subsections where each samples a w x h
