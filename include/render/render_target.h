@@ -30,9 +30,6 @@ struct Pixel {
 class RenderTarget {
 	size_t width, height;
 	std::unique_ptr<Filter> filter;
-	std::vector<Color24> color;
-	//TODO: Tracked separately for now but this will eventually
-	//replace the color vector
 	std::vector<Pixel> pixels;
 	std::vector<float> depth;
 	//Pre-computed filter values to save time when storing pixels
@@ -58,7 +55,11 @@ public:
 	bool save_depth(const std::string &file) const;
 	size_t get_width() const;
 	size_t get_height() const;
-	const std::vector<Color24>& get_colorbuf() const;
+	/*
+	 * Get a snapshot of the color buffer at the moment
+	 * stored in img
+	 */
+	void get_colorbuf(std::vector<Color24> &img) const;
 	const std::vector<float>& get_depthbuf() const;
 	/*
 	 * Generate a normalized luminosity image of the depth buffer

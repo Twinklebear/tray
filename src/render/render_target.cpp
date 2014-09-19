@@ -31,8 +31,8 @@ Pixel::Pixel(const Pixel &p) : r(p.r.load(std::memory_order_consume)), g(p.g.loa
 {}
 
 RenderTarget::RenderTarget(size_t width, size_t height, std::unique_ptr<Filter> f)
-	: width(width), height(height), filter(std::move(f)), color(width * height),
-	pixels(width * height), depth(width * height, std::numeric_limits<float>::max())
+	: width(width), height(height), filter(std::move(f)), pixels(width * height),
+	depth(width * height, std::numeric_limits<float>::max())
 {
 	//Pre-compute the filter table values
 	for (int y = 0; y < FILTER_TABLE_SIZE; ++y){
@@ -61,7 +61,6 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	if (x_range[1] - x_range[0] < 0 || y_range[1] - y_range[0] < 0){
 		return;
 	}
-	color[(int)y * width + (int)x] = static_cast<Color24>(c);
 	//Filter this sample to apply it to the pixels in the image affected by it
 	for (int iy = y_range[0]; iy <= y_range[1]; ++iy){
 		for (int ix = x_range[0]; ix <= x_range[1]; ++ix){
@@ -78,7 +77,6 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 			atomic_addf(p.weight, filter);
 		}
 	}
-	color[y_range[0] * width + x_range[0]] = c;
 }
 void RenderTarget::write_depth(size_t x, size_t y, float d){
 	depth[y * width + x] = d;
@@ -112,8 +110,23 @@ size_t RenderTarget::get_width() const {
 size_t RenderTarget::get_height() const {
 	return height;
 }
-const std::vector<Color24>& RenderTarget::get_colorbuf() const { 
-	return color;
+void RenderTarget::get_colorbuf(std::vector<Color24> &img) const { 
+	//Compute the correct image from the saved pixel data
+	img.resize(width * height);
+	for (size_t y = 0; y < height; ++y){
+		for (size_t x = 0; x < width; ++x){
+			const Pixel &p = pixels[y * width + x];
+			float weight = p.weight.load(std::memory_order_consume);
+			if (weight != 0){
+				Colorf c{p.r.load(std::memory_order_consume),
+					p.g.load(std::memory_order_consume),
+					p.b.load(std::memory_order_consume)};
+				c = c / weight;
+				c.normalize();
+				img[y * width + x] = c;
+			}
+		}
+	}
 }
 const std::vector<float>& RenderTarget::get_depthbuf() const {
 	return depth;

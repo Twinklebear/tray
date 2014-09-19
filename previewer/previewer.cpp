@@ -108,6 +108,7 @@ bool render_with_preview(Driver &driver){
 
 	//Run the driver so it renders while we update the texture with the
 	//new output from it
+	std::vector<Color24> color_buf(target.get_width() * target.get_height());
 	driver.render();
 	bool quit = false;
 	int shown_tex = 0;
@@ -139,9 +140,10 @@ bool render_with_preview(Driver &driver){
 		//We could do better and only update blocks of updated pixels, but this is more
 		//work than I want to put into this
 		if (shown_tex == 0){
+			target.get_colorbuf(color_buf);
 			glActiveTexture(GL_TEXTURE0);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
-				GL_UNSIGNED_BYTE, target.get_colorbuf().data());
+				GL_UNSIGNED_BYTE, color_buf.data());
 		}
 		else {
 			glActiveTexture(GL_TEXTURE1);
