@@ -3,7 +3,23 @@
 
 #include <string>
 #include <vector>
+#include <atomic>
+#include <memory>
 #include "color.h"
+#include "filters/filter.h"
+
+/*
+ * A pixel stored in the image being rendered to track pixel
+ * luminance and weight for reconstruction
+ * Because we need to deal with multi-thread synchronization the
+ * rgb values and weights are stored as atomics
+ */
+struct Pixel {
+	std::atomic<float> r, g, b, weight;
+
+	Pixel();
+	Pixel(const Pixel &p);
+};
 
 /*
  * The render target where pixel data is stored for the rendered scene
@@ -11,18 +27,24 @@
  */
 class RenderTarget {
 	size_t width, height;
+	std::unique_ptr<Filter> filter;
 	std::vector<Color24> color;
+	//TODO: Tracked separately for now but this will eventually
+	//replace the color vector
+	std::vector<Pixel> pixels;
 	std::vector<float> depth;
 
 public:
 	/*
-	 * Create a render target with width * height pixels
+	 * Create a render target with width * height pixels that will
+	 * reconstruct the image from the samples using the desired filter
+	 * Default is a box filter with single pixel extent
 	 */
-	RenderTarget(size_t width, size_t height);
+	RenderTarget(size_t width, size_t height, std::unique_ptr<Filter> f);
 	/*
 	 * Write a color value to the image at pixel(x, y)
 	 */
-	void write_pixel(size_t x, size_t y, const Color24 &c);
+	void write_pixel(float x, float y, const Colorf &c);
 	/*
 	 * Write a depth value to the depth buffer at pixel(x, y)
 	 */

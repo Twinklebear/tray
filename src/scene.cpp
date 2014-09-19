@@ -6,9 +6,9 @@
 #include "render/camera.h"
 #include "scene.h"
 
-Scene::Scene(const Camera &camera, const RenderTarget &target, int max_depth)
-	: camera(camera), render_target(target), root(nullptr, nullptr, Transform{}, "root"),
-		max_depth(max_depth)
+Scene::Scene(Camera camera, RenderTarget target, int max_depth)
+	: camera(std::move(camera)), render_target(std::move(target)),
+	root(nullptr, nullptr, Transform{}, "root"), max_depth(max_depth)
 {}
 GeometryCache& Scene::get_geom_cache(){
 	return geom_cache;

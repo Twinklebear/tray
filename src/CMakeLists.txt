@@ -6,7 +6,8 @@ add_subdirectory(material)
 add_subdirectory(loaders)
 add_subdirectory(lights)
 add_subdirectory(accelerators)
-set(RAY_LIBS loaders lights linalg render geometry samplers material accelerators)
+add_subdirectory(filters)
+set(RAY_LIBS loaders lights linalg render geometry samplers material accelerators filters)
 
 add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp ${tinyxml2_SRC})
 

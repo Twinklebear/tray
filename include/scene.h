@@ -27,7 +27,7 @@ public:
 	 * Geometry can be added by adding nodes to the root
 	 * and selecting from or adding to the geometry cache
 	 */
-	Scene(const Camera &camera, const RenderTarget &target, int depth);
+	Scene(Camera camera, RenderTarget target, int depth);
 	GeometryCache& get_geom_cache();
 	MaterialCache& get_mat_cache();
 	LightCache& get_light_cache();
