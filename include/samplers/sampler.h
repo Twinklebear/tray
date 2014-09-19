@@ -3,6 +3,7 @@
 
 #include <array>
 #include <vector>
+#include <memory>
 
 /*
  * A basic sampler that samples the centers of each
@@ -10,6 +11,7 @@
  * so that the work can be distributed across threads
  */
 class Sampler {
+protected:
 	int x_start, x_end, y_start, y_end, x, y;
 
 public:
@@ -22,7 +24,7 @@ public:
 	 * has_samples should be called prior to using this function
 	 * otherwise the sample positions will not be valid
 	 */
-	std::array<float, 2> get_sample();
+	virtual std::array<float, 2> get_sample() = 0;
 	/*
 	 * Returns true if we haven't exhausted the sample space for
 	 * the sampler yet
@@ -43,7 +45,7 @@ public:
 	 * into count disjoint subsections where each samples a w x h
 	 * section of the original sampler
 	 */
-	std::vector<Sampler> get_subsamplers(int w, int h) const;
+	virtual std::vector<std::unique_ptr<Sampler>> get_subsamplers(int w, int h) const = 0;
 };
 
 #endif

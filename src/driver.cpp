@@ -3,7 +3,7 @@
 #include <thread>
 #include <atomic>
 #include "scene.h"
-#include "samplers/sampler.h"
+#include "samplers/uniform_sampler.h"
 #include "render/render_target.h"
 #include "render/camera.h"
 #include "geometry/geometry.h"
@@ -25,12 +25,12 @@ void Worker::render(){
 	//Counter so we can check if we've been canceled, check after every 32 pixels rendered
 	int check_cancel = 0;
 	while (true){
-		Sampler sampler = queue.get_block();
-		if (!sampler.has_samples()){
+		Sampler *sampler = queue.get_block();
+		if (!sampler){
 			break;
 		}
-		while (sampler.has_samples()){
-			std::array<float, 2> s = sampler.get_sample();
+		while (sampler->has_samples()){
+			std::array<float, 2> s = sampler->get_sample();
 			Ray ray = camera.generate_ray(s[0], s[1]);
 			Colorf color = shade_ray(ray, scene.get_root());
 			color.normalize();
@@ -184,7 +184,7 @@ std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 }
 
 Driver::Driver(Scene &scene, int nworkers, int bwidth, int bheight) : scene(scene),
-	queue(Sampler{0, scene.get_render_target().get_width(),
+	queue(UniformSampler{0, scene.get_render_target().get_width(),
 		0, scene.get_render_target().get_height()}, bwidth, bheight)
 {
 	for (int i = 0; i < nworkers; ++i){

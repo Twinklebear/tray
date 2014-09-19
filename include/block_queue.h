@@ -1,6 +1,7 @@
 #ifndef BLOCK_QUEUE_H
 #define BLOCK_QUEUE_H
 
+#include <memory>
 #include <atomic>
 #include "samplers/sampler.h"
 
@@ -9,7 +10,7 @@
  * by threads in the form of samplers for the block of pixels
  */
 class BlockQueue {
-	std::vector<Sampler> samplers;
+	std::vector<std::unique_ptr<Sampler>> samplers;
 	//The index of the next sampler to be handed out
 	std::atomic_int sampler_idx, loops;
 
@@ -20,11 +21,10 @@ public:
 	 */
 	BlockQueue(const Sampler &sampler, int bwidth, int bheight);
 	/*
-	 * Return the next block to be worked on, returns
-	 * a sampler without samples when all samplers have
-	 * been taken
+	 * Return the next block to be worked on, returns nullptrt
+	 * when all samplers have been completed
 	 */
-	Sampler get_block();
+	Sampler* get_block();
 };
 
 #endif

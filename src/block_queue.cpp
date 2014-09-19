@@ -28,21 +28,22 @@ BlockQueue::BlockQueue(const Sampler &sampler, int bwidth, int bheight)
 {
 	//Sort the samplers in Morton order
 	std::sort(samplers.begin(), samplers.end(),
-		[](const Sampler &a, const Sampler &b){
-			return morton2(a.get_x_start(), a.get_y_start()) < morton2(b.get_x_start(), b.get_y_start());
+		[](const std::unique_ptr<Sampler> &a, const std::unique_ptr<Sampler> &b){
+			return morton2(a->get_x_start(), a->get_y_start())
+				< morton2(b->get_x_start(), b->get_y_start());
 		});
 }
-Sampler BlockQueue::get_block(){
+Sampler* BlockQueue::get_block(){
 	int n = samplers.size();
 	if (sampler_idx.compare_exchange_strong(n, n, std::memory_order_acq_rel)){
-		return Sampler{0, 0, 0, 0};
+		return nullptr;
 	}
 	int s = sampler_idx.fetch_add(1, std::memory_order_acq_rel);
 	//Potential race condition if we would have gotten the last block but some other
 	//thread beat us from the cmp_exg to the fetch_add, so we need to double check
 	if (s < samplers.size()){
-		return samplers[s];
+		return samplers[s].get();
 	}
-	return Sampler{0, 0, 0, 0};
+	return nullptr;
 }
 
