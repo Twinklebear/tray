@@ -12,9 +12,10 @@
  */
 class Sampler {
 protected:
-	int x_start, x_end, y_start, y_end, x, y;
+	int x, y;
 
 public:
+	const int x_start, x_end, y_start, y_end;
 	/*
 	 * Create a sampler for some region
 	 */
@@ -30,11 +31,6 @@ public:
 	 * the sampler yet
 	 */
 	bool has_samples();
-	/*
-	 * Get the x and y starting positions of the sampler
-	 */
-	int get_x_start() const;
-	int get_y_start() const;
 	/*
 	 * Get the width and height of the sampler
 	 */

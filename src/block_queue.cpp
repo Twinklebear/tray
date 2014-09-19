@@ -29,8 +29,7 @@ BlockQueue::BlockQueue(const Sampler &sampler, int bwidth, int bheight)
 	//Sort the samplers in Morton order
 	std::sort(samplers.begin(), samplers.end(),
 		[](const std::unique_ptr<Sampler> &a, const std::unique_ptr<Sampler> &b){
-			return morton2(a->get_x_start(), a->get_y_start())
-				< morton2(b->get_x_start(), b->get_y_start());
+			return morton2(a->x_start, a->y_start) < morton2(b->x_start, b->y_start);
 		});
 }
 Sampler* BlockQueue::get_block(){
