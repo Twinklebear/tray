@@ -33,17 +33,26 @@ Pixel::Pixel(const Pixel &p) : r(p.r.load(std::memory_order_consume)), g(p.g.loa
 RenderTarget::RenderTarget(size_t width, size_t height, std::unique_ptr<Filter> f)
 	: width(width), height(height), filter(std::move(f)), color(width * height),
 	pixels(width * height), depth(width * height, std::numeric_limits<float>::max())
-{}
+{
+	//Pre-compute the filter table values
+	for (int y = 0; y < FILTER_TABLE_SIZE; ++y){
+		float fy = (y + .5f) * filter->h / FILTER_TABLE_SIZE;
+		for (int x = 0; x < FILTER_TABLE_SIZE; ++x){
+			float fx = (x + .5f) * filter->w / FILTER_TABLE_SIZE;
+			filter_table[y * FILTER_TABLE_SIZE + x] = filter->weight(fx, fy);
+		}
+	}
+}
 void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	//Compute the discrete pixel coordinates which the sample hits
 	float img_x = x - 0.5f;
 	float img_y = y - 0.5f;
 	//Using the defaults for the box filter in PBR, TODO take a filter param
 	//and use it
-	std::array<int, 2> x_range = {static_cast<int>(std::ceil(img_x - 0.5f)),
-		static_cast<int>(std::floor(img_x + 0.5f))};
-	std::array<int, 2> y_range = {static_cast<int>(std::ceil(img_y - 0.5f)),
-		static_cast<int>(std::floor(img_y + 0.5f))};
+	std::array<int, 2> x_range = {static_cast<int>(std::ceil(img_x - filter->w)),
+		static_cast<int>(std::floor(img_x + filter->w))};
+	std::array<int, 2> y_range = {static_cast<int>(std::ceil(img_y - filter->h)),
+		static_cast<int>(std::floor(img_y + filter->h))};
 	//Keep pixel coordinates in range and ignore degenerate ranges
 	x_range[0] = std::max(x_range[0], 0);
 	x_range[1] = std::min(x_range[1], static_cast<int>(width) - 1);
@@ -54,11 +63,14 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	}
 	color[(int)y * width + (int)x] = static_cast<Color24>(c);
 	//Filter this sample to apply it to the pixels in the image affected by it
-	//TODO: check this condition based on the filter width
 	for (int iy = y_range[0]; iy <= y_range[1]; ++iy){
 		for (int ix = x_range[0]; ix <= x_range[1]; ++ix){
-			//Box filter is always 1 in its extent
-			float filter = 1;
+			//Compute location of this sample in the pre-computed filter values
+			float fx = std::abs(x - width) * filter->inv_w * FILTER_TABLE_SIZE;
+			int fx_idx = std::min(static_cast<int>(fx), FILTER_TABLE_SIZE - 1);
+			float fy = std::abs(y - height) * filter->inv_h * FILTER_TABLE_SIZE;
+			int fy_idx = std::min(static_cast<int>(fy), FILTER_TABLE_SIZE - 1);
+			float filter = filter_table[fy_idx * FILTER_TABLE_SIZE + fx_idx];
 			Pixel &p = pixels[iy * width + x];
 			atomic_addf(p.r, filter * c.r);
 			atomic_addf(p.g, filter * c.g);
@@ -82,7 +94,9 @@ bool RenderTarget::save_image(const std::string &file) const {
 				Colorf c{p.r.load(std::memory_order_consume),
 					p.g.load(std::memory_order_consume),
 					p.b.load(std::memory_order_consume)};
-				img[y * width + x] = c / weight;
+				c = c / weight;
+				c.normalize();
+				img[y * width + x] = c;
 			}
 		}
 	}

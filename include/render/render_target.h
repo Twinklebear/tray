@@ -8,6 +8,8 @@
 #include "color.h"
 #include "filters/filter.h"
 
+const int FILTER_TABLE_SIZE = 16;
+
 /*
  * A pixel stored in the image being rendered to track pixel
  * luminance and weight for reconstruction
@@ -33,6 +35,8 @@ class RenderTarget {
 	//replace the color vector
 	std::vector<Pixel> pixels;
 	std::vector<float> depth;
+	//Pre-computed filter values to save time when storing pixels
+	std::array<float, FILTER_TABLE_SIZE * FILTER_TABLE_SIZE> filter_table;
 
 public:
 	/*

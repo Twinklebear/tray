@@ -13,6 +13,8 @@
 #include "geometry/plane.h"
 #include "geometry/tri_mesh.h"
 #include "filters/box_filter.h"
+#include "filters/triangle_filter.h"
+#include "filters/mitchell_filter.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
 #include "loaders/load_scene.h"
@@ -68,7 +70,7 @@ Scene load_scene(const std::string &file, int depth){
 	int w = 0, h = 0;
 	Camera camera = load_camera(cam, w, h);
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
-		std::make_unique<BoxFilter>(.5f, .5f)};
+		std::make_unique<MitchellFilter>(1.5, 1.5, 0.33, 0.33)};
 	Scene scene{std::move(camera), std::move(render_target), depth};
 	
 	//Run a pre-pass to load the materials so they're available when loading the objects
