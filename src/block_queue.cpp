@@ -45,7 +45,4 @@ Sampler BlockQueue::get_block(){
 	}
 	return Sampler{0, 0, 0, 0};
 }
-bool BlockQueue::spiral_done(int x_start, int x_end, int y_start, int y_end){
-	return x_start > x_end || y_start > y_end;
-}
 
