@@ -46,7 +46,7 @@
       <translate x="-8" y="-6" z="0"/>
     </object>
 	<object type="obj" name="../models/bunny.obj" material="bunny_mat">
-	  <scale value="2.5"/>
+	  <scale value="3"/>
       <rotate angle="90" x="1"/>
 	  <translate x="10" y="-6" z="0.9"/>
 	</object>
@@ -70,7 +70,7 @@
 	  <rotate angle="90" y="1"/>
       <translate x="-12" y="-7" z="17"/>
 	</object>
-	<object type="obj" name="../models/suzanne.obj" material="armadillo_mat">
+	<object type="obj" name="../models/suzanne.obj" material="suzanne_mat">
 	  <scale value="3"/>
 	  <rotate angle="90" x="1"/>
 	  <rotate angle="-40" z="1"/>
@@ -111,11 +111,11 @@
       <reflection value="0.5"/>
     </material>
 	<material type="blinn" name="bunny_mat">
-	  <diffuse  value="0.9"/>
-      <specular r="1.0" g="1.0" b="1.0" value="1"/>
+	  <diffuse  value="0.3"/>
+      <specular r="1.0" g="1.0" b="1.0" value="0.5"/>
       <glossiness value="20"/>
-      <refraction value="0.4" index="1.52"/>
-      <absorption r="0.01" g="0.001" b="0.0001"/>
+      <refraction value="0.9" index="1.52"/>
+      <absorption r="0.5" g="0.001" b="0.001"/>
     </material>
 	<material type="blinn" name="armadillo_mat">
       <diffuse  r="0.8" g="0.2" b="0.2"/>
@@ -129,8 +129,13 @@
       <glossiness value="10"/>
       <reflection value="0.2"/>
     </material>
-
-
+	<material type="blinn" name="suzanne_mat">
+	  <diffuse r="0.8" g="0.2" b="0.2" value="0.5"/>
+      <specular r="1.0" g="1.0" b="1.0" value="0.5"/>
+      <glossiness value="20"/>
+      <refraction value="0.9" index="1.52"/>
+      <absorption r="0.001" g="0.5" b="0.2"/>
+    </material>
  
     <!-- Lights -->
     <light type="ambient" name="ambientLight">
