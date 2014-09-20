@@ -44,4 +44,3 @@ std::unique_ptr<Filter> load_filter(tinyxml2::XMLElement *elem){
 	return std::make_unique<BoxFilter>(0.5, 0.5);
 }
 
-
