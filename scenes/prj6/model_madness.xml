@@ -158,8 +158,8 @@
 
   <!-- Extra config options specific to my ray tracer -->
   <config>
-	  <filter type="mitchell" w="1.5" h="1.5" b="0.33" c="0.33"/>
-	  <sampler type="stratified" spp="32"/>
+	  <filter type="mitchell" w="1.0" h="1.0" b="0.33" c="0.33"/>
+	  <sampler type="stratified" spp="8"/>
   </config>
 
 </xml>
