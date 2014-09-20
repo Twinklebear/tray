@@ -35,7 +35,7 @@ private:
 	 * Generate a 2d pattern of stratified samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
-	void sample2d(std::vector<std::array<float, 2>> &samples, int nx, int ny, std::mt19937 &rng);
+	void sample2d(std::vector<std::array<float, 2>> &samples, std::mt19937 &rng);
 };
 
 #endif
