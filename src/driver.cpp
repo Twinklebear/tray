@@ -191,7 +191,7 @@ std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 
 Driver::Driver(Scene &scene, int nworkers, int bwidth, int bheight) : scene(scene),
 	queue(StratifiedSampler{0, scene.get_render_target().get_width(),
-		0, scene.get_render_target().get_height(), 2}, bwidth, bheight)
+		0, scene.get_render_target().get_height(), 1}, bwidth, bheight)
 {
 	for (int i = 0; i < nworkers; ++i){
 		workers.emplace_back(Worker{scene, queue});

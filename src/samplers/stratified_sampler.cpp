@@ -20,7 +20,7 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	samples.resize(spp);
 	std::cout << "x = " << x << ", y = " << y << std::endl;
 	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
-	sample2d(samples, spp / 2, spp / 2, rng);
+	sample2d(samples, spp, spp, rng);
 	for (auto &s : samples){
 		std::cout << "transforming sample { " << s[0] << ", " << s[1] << " } by"
 			<< " x=" << x << ", y = " << y << std::endl;
