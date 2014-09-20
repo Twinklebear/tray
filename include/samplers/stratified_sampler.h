@@ -14,7 +14,6 @@
 class StratifiedSampler : public Sampler {
 	//Samples per pixel
 	const int spp;
-	//Our random number generator
 	std::mt19937 rng;
 
 public:
