@@ -23,7 +23,7 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	sample2d(samples, spp, spp, rng);
 	for (auto &s : samples){
 		std::cout << "transforming sample { " << s[0] << ", " << s[1] << " } by"
-			<< " x=" << x << ", y = " << y << std::endl;
+			<< " x = " << x << ", y = " << y << std::endl;
 		s[0] += x;
 		s[1] += y;
 	}
