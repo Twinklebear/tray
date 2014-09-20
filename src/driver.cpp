@@ -34,7 +34,6 @@ void Worker::render(){
 		while (sampler->has_samples()){
 			sampler->get_samples(samples);
 			for (const auto &s : samples){
-				std::cout << "sampling { " << s[0] << ", " << s[1] << " }\n";
 				Ray ray = camera.generate_ray(s[0], s[1]);
 				Colorf color = shade_ray(ray, scene.get_root());
 				color.normalize();
@@ -50,7 +49,6 @@ void Worker::render(){
 					}
 				}
 			}
-			std::cout << "\n\n";
 		}
 	}
 	status.store(STATUS::DONE, std::memory_order_release);
@@ -189,9 +187,8 @@ std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 	return lights;
 }
 
-Driver::Driver(Scene &scene, int nworkers, int bwidth, int bheight) : scene(scene),
-	queue(StratifiedSampler{0, scene.get_render_target().get_width(),
-		0, scene.get_render_target().get_height(), 1}, bwidth, bheight)
+Driver::Driver(Scene &scene, int nworkers, int bwidth, int bheight)
+	: scene(scene), queue(scene.get_sampler(), bwidth, bheight)
 {
 	for (int i = 0; i < nworkers; ++i){
 		workers.emplace_back(Worker{scene, queue});

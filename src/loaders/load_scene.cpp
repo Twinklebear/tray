@@ -13,9 +13,11 @@
 #include "geometry/plane.h"
 #include "geometry/tri_mesh.h"
 #include "filters/box_filter.h"
+#include "samplers/uniform_sampler.h"
 #include "loaders/load_filter.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
+#include "loaders/load_sampler.h"
 #include "loaders/load_scene.h"
 #include "scene.h"
 
@@ -66,19 +68,23 @@ Scene load_scene(const std::string &file, int depth){
 		std::cerr << "load_scene Error: no camera found\n";
 		std::exit(1);
 	}
+
+	int w = 0, h = 0;
+	Camera camera = load_camera(cam, w, h);
 	XMLElement *cfg = xml->FirstChildElement("config");
-	std::unique_ptr<Filter> filter = nullptr;
+	std::unique_ptr<Filter> filter;
+	std::unique_ptr<Sampler> sampler;
 	if (cfg){
 		filter = load_filter(cfg);
+		sampler = load_sampler(cfg, w, h);
 	}
 	else {
 		filter = std::make_unique<BoxFilter>(0.5, 0.5);
+		sampler = std::make_unique<UniformSampler>(0, w, 0, h);
 	}
-	int w = 0, h = 0;
-	Camera camera = load_camera(cam, w, h);
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
 		std::move(filter)};
-	Scene scene{std::move(camera), std::move(render_target), depth};
+	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), depth};
 	
 	//Run a pre-pass to load the materials so they're available when loading the objects
 	XMLElement *mats = scene_node->FirstChildElement("material");

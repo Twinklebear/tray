@@ -1,4 +1,5 @@
 #include <cmath>
+#include "linalg/util.h"
 #include "filters/lanczos_sinc_filter.h"
 
 LanczosSincFilter::LanczosSincFilter(float w, float h, float a)

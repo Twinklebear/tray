@@ -7,6 +7,8 @@
 #include "mesh_preprocess.h"
 #include "driver.h"
 
+#include "samplers/stratified_sampler.h"
+
 #ifdef BUILD_PREVIEWER
 #include "previewer.h"
 #endif
