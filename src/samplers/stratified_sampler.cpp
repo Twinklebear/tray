@@ -8,7 +8,9 @@
 #include "samplers/stratified_sampler.h"
 
 StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp)
-	: Sampler(x_start, x_end, y_start, y_end), spp(spp)
+	: Sampler(x_start, x_end, y_start, y_end), spp(spp),
+	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
 {}
 void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	samples.clear();
@@ -17,8 +19,6 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	}
 	samples.resize(spp);
 	std::cout << "x = " << x << ", y = " << y << std::endl;
-	std::mt19937 rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count());
 	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
 	sample2d(samples, spp / 2, spp / 2, rng);
 	for (auto &s : samples){
