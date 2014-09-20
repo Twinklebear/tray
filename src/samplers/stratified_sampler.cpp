@@ -1,4 +1,5 @@
 #include <chrono>
+#include <algorithm>
 #include <random>
 #include <iostream>
 #include <memory>
@@ -10,8 +11,28 @@ StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_
 	: Sampler(x_start, x_end, y_start, y_end), spp(spp)
 {}
 void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+	samples.clear();
+	if (!has_samples()){
+		return;
+	}
+	samples.resize(spp);
+	std::cout << "x = " << x << ", y = " << y << std::endl;
 	std::mt19937 rng(std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
+	sample2d(samples, spp / 2, spp / 2, rng);
+	for (auto &s : samples){
+		std::cout << "transforming sample { " << s[0] << ", " << s[1] << " } by"
+			<< " x=" << x << ", y = " << y << std::endl;
+		s[0] += x;
+		s[1] += y;
+	}
+	++x;
+	if (x == x_end){
+		x = x_start;
+		++y;
+	}
+	std::cout << "post sample x = " << x << ", y = " << y << std::endl;
 }
 std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, int h) const {
 	int x_dim = x_end - x_start;
@@ -44,18 +65,15 @@ std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, 
 	return samplers;
 
 }
-std::vector<float> StratifiedSampler::sample2d(int nx, int ny, std::mt19937 &rng){
+void StratifiedSampler::sample2d(std::vector<std::array<float, 2>> &samples, int nx, int ny, std::mt19937 &rng){
 	std::uniform_real_distribution<float> distrib;
-	std::vector<float> samples(2 * nx * ny);
-	std::cout << "samples size: " << samples.size() << std::endl;
 	float dx = 1.f / nx;
 	float dy = 1.f / ny;
-	for (int y = 0; y < ny; ++y){
-		for (int x = 0; x < nx; ++x){
-			samples[y * 2 + x] = (x + distrib(rng)) * dx;
-			samples[y * 2 + x + 1] = (y + distrib(rng)) * dy;
-		}
+	for (int i = 0; i < samples.size(); ++i){
+		x = i % nx;
+		y = i / ny;
+		samples[i][0] = (x + distrib(rng)) * dx;
+		samples[i][1] = (y + distrib(rng)) * dy;
 	}
-	return samples;
 }
 
