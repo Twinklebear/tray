@@ -29,6 +29,33 @@ void main(void){\n\
 	color = texture(tex, fuv);\n\
 }\n";
 
+/*
+ * Lookup the path for the application icon, which is assumed to be in the
+ * scenes directory
+ */
+std::string get_icon_path(){
+#ifdef _WIN32
+	const char PATH_SEP = '\\';
+#else
+	const char PATH_SEP = '/';
+#endif
+	static std::string icon_path;
+	if (icon_path.empty()){
+		char *s = SDL_GetBasePath();
+		if (s){
+			icon_path = s;
+			SDL_free(s);
+		}
+		else {
+			std::cerr << "Error getting icon path: " << SDL_GetError() << std::endl;
+			return "";
+		}
+		size_t pos = icon_path.rfind("bin");
+		icon_path = icon_path.substr(0, pos) + "scenes" + PATH_SEP + "eye.bmp";
+	}
+	return icon_path;
+}
+
 bool render_with_preview(Driver &driver){
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0){
 		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
@@ -57,6 +84,11 @@ bool render_with_preview(Driver &driver){
 	}
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClearDepth(1.f);
+
+	SDL_Surface *icon = SDL_LoadBMP(get_icon_path().c_str());
+	if (icon){
+		SDL_SetWindowIcon(win, icon);
+	}
 
 #ifdef DEBUG
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
@@ -159,6 +191,7 @@ bool render_with_preview(Driver &driver){
 	glDeleteTextures(1, &color);
 	glDeleteTextures(1, &depth);
 	glDeleteVertexArrays(1, &vao);
+	SDL_FreeSurface(icon);
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
