@@ -17,7 +17,7 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	if (!has_samples()){
 		return;
 	}
-	samples.resize(spp);
+	samples.resize(spp * spp);
 	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
 	sample2d(samples, rng);
 	for (auto &s : samples){

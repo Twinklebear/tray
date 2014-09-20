@@ -19,7 +19,7 @@ std::unique_ptr<Sampler> load_sampler(tinyxml2::XMLElement *elem, size_t w, size
 	}
 	if (type == "stratified"){
 		int spp = s->IntAttribute("spp");
-		std::cout << "Using StratifiedSampler with " << spp << " samples per pixel\n";
+		std::cout << "Using StratifiedSampler with " << spp * spp << " samples per pixel\n";
 		return std::make_unique<StratifiedSampler>(0, w, 0, h, spp);
 	}
 	std::cout << "Error: unrecognized sampler type, defaulting to UniformSampler\n";
