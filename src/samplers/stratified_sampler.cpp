@@ -18,12 +18,9 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 		return;
 	}
 	samples.resize(spp);
-	std::cout << "x = " << x << ", y = " << y << std::endl;
 	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
 	sample2d(samples, spp, spp, rng);
 	for (auto &s : samples){
-		std::cout << "transforming sample { " << s[0] << ", " << s[1] << " } by"
-			<< " x = " << x << ", y = " << y << std::endl;
 		s[0] += x;
 		s[1] += y;
 	}
@@ -32,7 +29,6 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 		x = x_start;
 		++y;
 	}
-	std::cout << "post sample x = " << x << ", y = " << y << std::endl;
 }
 std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, int h) const {
 	int x_dim = x_end - x_start;
@@ -70,8 +66,8 @@ void StratifiedSampler::sample2d(std::vector<std::array<float, 2>> &samples, int
 	float dx = 1.f / nx;
 	float dy = 1.f / ny;
 	for (int i = 0; i < samples.size(); ++i){
-		x = i % nx;
-		y = i / ny;
+		int x = i % nx;
+		int y = i / ny;
 		samples[i][0] = (x + distrib(rng)) * dx;
 		samples[i][1] = (y + distrib(rng)) * dy;
 	}
