@@ -29,19 +29,19 @@ and their parameters are listed below by the type string that selects them. The 
 	- w - width of the filter to apply (Default 0.5)
 	- h - height of the filter to apply (Default 0.5)
 - triangle - Select a triangle filter
-	- w - width of the filter to apply (Default 0.5)
-	- h - height of the filter to apply (Default 0.5)
+	- w - width of the filter to apply
+	- h - height of the filter to apply
 - gaussian - Select a Gaussian filter
-	- w - width of the filter to apply (Default 0.5)
-	- h - height of the filter to apply (Default 0.5)
+	- w - width of the filter to apply
+	- h - height of the filter to apply
 	- alpha - alpha value for the Gaussian function
 - mitchell - Select a Mitchell filter
-	- w - width of the filter to apply (Default 0.5)
-	- h - height of the filter to apply (Default 0.5)
+	- w - width of the filter to apply
+	- h - height of the filter to apply
 	- b - b parameter for the filter
 	- c - c parameter for the filter
 - lanczos - Select a Lanczos filter
-	- w - width of the filter to apply (Default 0.5)
-	- h - height of the filter to apply (Default 0.5)
+	- w - width of the filter to apply
+	- h - height of the filter to apply
 	- a - a parameter for the filter window size
 
