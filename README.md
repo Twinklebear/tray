@@ -45,3 +45,9 @@ and their parameters are listed below by the type string that selects them. The 
 	- h - height of the filter to apply
 	- a - a parameter for the filter window size
 
+Dependencies
+-
+- [SDL2](http://libsdl.org/) is used for the live previewer.
+- [stb\_image\_write](https://github.com/nothings/stb) is used to add support for writing PNG/TGA/BMP images.
+- [TinyXML-2](https://github.com/leethomason/tinyxml2) is used to parse the scene files.
+
