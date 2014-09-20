@@ -79,5 +79,10 @@
     <width value="800"/>
     <height value="600"/>
   </camera>
+
+  <config>
+	  <sampler type="stratified" spp="8"/>
+	  <filter type="mitchell" w="1.0" h="1.0" b="0.33" c="0.33"/>
+  </config>
 </xml>
 
