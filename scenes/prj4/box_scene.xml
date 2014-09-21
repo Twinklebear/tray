@@ -81,7 +81,8 @@
   </camera>
 
   <config>
-	  <sampler type="lowdiscrepancy" spp="64"/>
+	  <filter type="mitchell" w="1.0" h="1.0" b="0.33" c="0.33"/>
+	  <sampler type="lowdiscrepancy" spp="8"/>
   </config>
 </xml>
 
