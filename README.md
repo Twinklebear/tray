@@ -19,7 +19,9 @@ The type of sampler used to render the scene can be configured by the <sampler t
 parameters are listed below by the type string that selects them.
 - uniform - Selects a basic uniform sampler. A single ray is fired through the center of each pixel in the image. (Default)
 - stratified - Selects a stratified sampler which renders the image using some desired number of jittered samples per pixel.
-	- spp - specify the number of samples to be taken per pixel
+	- spp - number of samples to be taken per pixel in x & y, eg. sampler takes spp\*spp samples per pixel
+- lowdiscrepancy - Selects a low-discrepancy which uses a (0, 2) sequence to generate sample positions
+	- spp - number of samples to be taken per pixel
 
 Filters
 -
@@ -48,6 +50,5 @@ and their parameters are listed below by the type string that selects them. The 
 Dependencies
 -
 - [SDL2](http://libsdl.org/) is used for the live previewer.
-- [stb\_image\_write](https://github.com/nothings/stb) is used to add support for writing PNG/TGA/BMP images.
 - [TinyXML-2](https://github.com/leethomason/tinyxml2) is used to parse the scene files.
 
