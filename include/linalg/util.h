@@ -44,6 +44,20 @@ constexpr int sign(T x){
 	return (T{0} < x) - (x < T{0});
 }
 /*
+ * Round x up to the nearest power of 2
+ * Based off Stephan Brumme's method
+ * http://bits.stephan-brumme.com/roundUpToNextPowerOfTwo.html
+ */
+inline uint32_t round_up_pow2(uint32_t x){
+	x--;
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	return x + 1;
+}
+/*
  * Solve a quadratic equation a*t^2 + b*2 + c = 0 and return real roots
  * in t0, t1. Returns false if no real roots exist
  */
