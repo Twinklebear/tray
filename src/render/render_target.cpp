@@ -32,7 +32,7 @@ Pixel::Pixel(const Pixel &p) : r(p.r.load(std::memory_order_consume)), g(p.g.loa
 
 RenderTarget::RenderTarget(size_t width, size_t height, std::unique_ptr<Filter> f)
 	: width(width), height(height), filter(std::move(f)), pixels(width * height),
-	depth(width * height, std::numeric_limits<float>::max())
+	depth(width * height, std::numeric_limits<float>::infinity())
 {
 	//Pre-compute the filter table values
 	for (int y = 0; y < FILTER_TABLE_SIZE; ++y){
@@ -135,10 +135,10 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 	std::vector<uint8_t> depth_norm(width * height);
 	//Determine the min/max range of depth values so we can scale
 	//them into 0-255 range
-	float zmin = std::numeric_limits<float>::max();
+	float zmin = std::numeric_limits<float>::infinity();
 	float zmax = std::numeric_limits<float>::min();
 	for (const float &f : depth){
-		if (f == std::numeric_limits<float>::max()){
+		if (f == std::numeric_limits<float>::infinity()){
 			continue;
 		}
 		if (f < zmin){
@@ -149,7 +149,7 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 		}
 	}
 	for (size_t i = 0; i < depth.size(); ++i){
-		if (depth[i] == std::numeric_limits<float>::max()){
+		if (depth[i] == std::numeric_limits<float>::infinity()){
 			depth_norm[i] = 0;
 		}
 		else {
