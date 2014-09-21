@@ -5,10 +5,10 @@ MitchellFilter::MitchellFilter(float w, float h, float b, float c)
 	: Filter(w, h), b(b), c(c)
 {}
 float MitchellFilter::weight(float x, float y) const {
-	return mitchell_1d(x * inv_w * 2.f) * mitchell_1d(y * inv_h * 2.f);
+	return mitchell_1d(x * inv_w) * mitchell_1d(y * inv_h);
 }
 float MitchellFilter::mitchell_1d(float x) const {
-	float abs_x = std::abs(x);
+	float abs_x = std::abs(2 * x);
 	//Filter for |x| >= 2 -> 0
 	if (abs_x >= 2){
 		return 0;
