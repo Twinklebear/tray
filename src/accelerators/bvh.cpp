@@ -140,9 +140,9 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 			return build_leaf(build_geom, ordered_geom, start, end, box);
 		}
 		else {
-			return std::unique_ptr<BuildNode>{new BuildNode{axis,
+			return std::make_unique<BuildNode>(axis,
 				build(build_geom, ordered_geom, start, mid, total_nodes),
-				build(build_geom, ordered_geom, mid, end, total_nodes)}};
+				build(build_geom, ordered_geom, mid, end, total_nodes));
 		}
 	}
 	//Partition the primitives base on split method chosen
@@ -229,9 +229,9 @@ std::unique_ptr<BVH::BuildNode> BVH::build(std::vector<GeomInfo> &build_geom, st
 		}
 	}
 	assert(start != mid && mid != end);
-	return std::unique_ptr<BuildNode>{new BuildNode{axis,
+	return std::make_unique<BuildNode>(axis,
 		build(build_geom, ordered_geom, start, mid, total_nodes),
-		build(build_geom, ordered_geom, mid, end, total_nodes)}};
+		build(build_geom, ordered_geom, mid, end, total_nodes));
 }
 std::unique_ptr<BVH::BuildNode> BVH::build_leaf(std::vector<GeomInfo> &build_geom, std::vector<Geometry*> &ordered_geom,
 	int start, int end, const BBox &box)
@@ -242,7 +242,7 @@ std::unique_ptr<BVH::BuildNode> BVH::build_leaf(std::vector<GeomInfo> &build_geo
 	for (int i = start; i < end; ++i){
 		ordered_geom.push_back(geometry[build_geom[i].geom_idx]);
 	}
-	return std::unique_ptr<BuildNode>{new BuildNode{geom_offset, ngeom, box}};
+	return std::make_unique<BuildNode>(geom_offset, ngeom, box);
 }
 uint32_t BVH::flatten_tree(const std::unique_ptr<BuildNode> &node, uint32_t &offset){
 	FlatNode &fnode = flat_nodes[offset];
