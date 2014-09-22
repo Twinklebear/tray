@@ -41,7 +41,7 @@ std::string get_icon_path(){
 #endif
 	static std::string icon_path;
 	if (icon_path.empty()){
-		char * s = SDL_GetBasePath();
+		char *s = SDL_GetBasePath();
 		if (s){
 			icon_path = s;
 			SDL_free(s);
