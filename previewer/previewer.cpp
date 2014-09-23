@@ -142,7 +142,9 @@ bool render_with_preview(Driver &driver){
 	//new output from it
 	std::vector<Color24> color_buf(target.get_width() * target.get_height());
 	driver.render();
-	bool quit = false;
+	//We also track if we're done so we can stop updating the textures after doing a last
+	//update
+	bool quit = false, color_done = false, depth_done = false;
 	int shown_tex = 0;
 	while (!quit){
 		SDL_Event e;
@@ -171,13 +173,15 @@ bool render_with_preview(Driver &driver){
 		//Update the texture with new data.
 		//We could do better and only update blocks of updated pixels, but this is more
 		//work than I want to put into this
-		if (shown_tex == 0){
+		if (!color_done && shown_tex == 0){
+			color_done = driver.done();
 			target.get_colorbuf(color_buf);
 			glActiveTexture(GL_TEXTURE0);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
 				GL_UNSIGNED_BYTE, color_buf.data());
 		}
-		else {
+		else if (!depth_done){
+			depth_done = driver.done();
 			glActiveTexture(GL_TEXTURE1);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RED,
 				GL_UNSIGNED_BYTE, target.generate_depth_img().data());
