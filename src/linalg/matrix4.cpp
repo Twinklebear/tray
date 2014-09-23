@@ -13,7 +13,7 @@ Matrix4::Matrix4(){
 }
 Matrix4::Matrix4(const std::array<float, 16> &m) : mat(m) {}
 Matrix4 Matrix4::inverse() const {
-	//MESA's matrix transpose, tweaked for row-major matrices
+	//MESA's matrix inverse, tweaked for row-major matrices
 	Matrix4 inv;
 	float det;
 	inv.mat[0] = mat[5] * mat[10] * mat[15]
