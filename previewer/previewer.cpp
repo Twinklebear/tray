@@ -47,7 +47,7 @@ std::string get_icon_path(){
 			SDL_free(s);
 		}
 		else {
-			std::cerr << "Error getting icon path: " << SDL_GetError() << std::endl;
+			std::cout << "Error getting icon path: " << SDL_GetError() << std::endl;
 			return "";
 		}
 		size_t pos = icon_path.rfind("bin");
