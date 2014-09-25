@@ -55,9 +55,9 @@ void Worker::render(){
 }
 Colorf Worker::shade_ray(Ray &ray, Node &node){
 	Colorf color;
-	HitInfo hitinfo;
-	if (intersect_nodes(node, ray, hitinfo)){
-		const Material *mat = hitinfo.node->get_material();
+	DifferentialGeometry diff_geom;
+	if (intersect_nodes(node, ray, diff_geom)){
+		const Material *mat = diff_geom.node->get_material();
 		if (mat){
 			if (ray.depth < scene.get_max_depth()){
 				//Track reflection contribution from Fresnel term to be incorporated
@@ -68,13 +68,13 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 					Vector n;
 					//Compute proper refractive index ratio and set normal to be on same side
 					//as indicident ray for refraction computation when entering/exiting material
-					if (hitinfo.hit_side == HITSIDE::FRONT){
+					if (diff_geom.hit_side == HITSIDE::FRONT){
 						n_ratio = 1.f / mat->refractive_idx();
-						n = Vector{hitinfo.normal.normalized()};
+						n = Vector{diff_geom.normal.normalized()};
 					}
 					else {
 						n_ratio = mat->refractive_idx();
-						n = -Vector{hitinfo.normal.normalized()};
+						n = -Vector{diff_geom.normal.normalized()};
 					}
 					//Compute Schlick's approximation to find amount reflected and transmitted at the surface
 					//Note that we use -ray.d here since V should be from point -> camera and we use
@@ -91,10 +91,10 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 					if (root > 0){
 						root = std::sqrt(root);
 						Vector refr_dir = n_ratio * ray.d + (n_ratio * c - root) * n;
-						Ray refr{hitinfo.point, refr_dir.normalized(), ray, 0.001};
+						Ray refr{diff_geom.point, refr_dir.normalized(), ray, 0.001};
 						//Account for absorption by the object if the refraction ray we're casting is entering it
 						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
-						if (hitinfo.hit_side == HITSIDE::FRONT){
+						if (diff_geom.hit_side == HITSIDE::FRONT){
 							Colorf absorbed = mat->absorbed();
 							color += refr_col * Colorf{std::exp(-refr.max_t * absorbed.r),
 								std::exp(-refr.max_t * absorbed.g), std::exp(-refr.max_t * absorbed.b)};
@@ -113,14 +113,14 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 				if (mat->is_reflective() || fresnel_refl != Colorf{0, 0, 0}){
 					Colorf refl_col = mat->reflective() + fresnel_refl;
 					//Reflect and cast ray
-					Vector n{hitinfo.normal.normalized()};
+					Vector n{diff_geom.normal.normalized()};
 					Vector dir = ray.d - 2 * n.dot(ray.d) * n;
-					Ray refl{hitinfo.point, dir.normalized(), ray, 0.001};
+					Ray refl{diff_geom.point, dir.normalized(), ray, 0.001};
 					color += shade_ray(refl, scene.get_root()) * refl_col;
 				}
 			}
-			std::vector<Light*> lights = visible_lights(hitinfo.point, hitinfo.normal);
-			color += mat->shade(ray, hitinfo, lights);
+			std::vector<Light*> lights = visible_lights(diff_geom.point, diff_geom.normal);
+			color += mat->shade(ray, diff_geom, lights);
 		}
 		else {
 			color = Colorf{0.4, 0.4, 0.4};
@@ -128,7 +128,7 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 	}
 	return color;
 }
-bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
+bool Worker::intersect_nodes(Node &node, Ray &ray, DifferentialGeometry &diff_geom){
 	bool hit = false;
 	//Transform the ray into this nodes space
 	Ray node_space = ray;
@@ -136,25 +136,18 @@ bool Worker::intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo){
 	inv_transform(ray, node_space);
 	//Test this node then its children
 	if (node.get_geometry() && node.get_geometry()->bound().intersect(node_space)){
-		hit = node.get_geometry()->intersect(node_space, hitinfo);
+		hit = node.get_geometry()->intersect(node_space, diff_geom);
 		if (hit){
-			hitinfo.node = &node;
+			diff_geom.node = &node;
 		}
 	}
 	for (auto &c : node.get_children()){
-		hit = intersect_nodes(*c, node_space, hitinfo) || hit;
+		hit = intersect_nodes(*c, node_space, diff_geom) || hit;
 	}
 	if (hit){
 		auto &transform = node.get_transform();
-		transform(hitinfo.point, hitinfo.point);
-		transform(hitinfo.normal, hitinfo.normal);
+		transform(diff_geom, diff_geom);
 		ray.max_t = node_space.max_t;
-		if (ray.d.dot(Vector{hitinfo.normal}) <= 0){
-			hitinfo.hit_side = HITSIDE::FRONT;
-		}
-		else {
-			hitinfo.hit_side = HITSIDE::BACK;
-		}
 	}
 	return hit;
 }
@@ -162,7 +155,7 @@ std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 	//Maybe the list passed should be a pair of { light, light_mod } to account
 	//for absorption when the light is viewed through a transparent object
 	std::vector<Light*> lights;
-	HitInfo info;
+	DifferentialGeometry diff_geom;
 	for (const auto &l : scene.get_light_cache()){
 		if (l.second->type() == LIGHT::AMBIENT){
 			lights.push_back(l.second.get());
@@ -173,13 +166,13 @@ std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 			continue;
 		}
 		Ray r{p, -l.second->direction(p), 0.001};
-		if (l.second->type() == LIGHT::DIRECT && !intersect_nodes(scene.get_root(), r, info)){
+		if (l.second->type() == LIGHT::DIRECT && !intersect_nodes(scene.get_root(), r, diff_geom)){
 			lights.push_back(l.second.get());
 		}
 		else if (l.second->type() == LIGHT::POINT){
 			//Set max_t as well to not get intersections past the point light
 			r.max_t = 1;
-			if (!intersect_nodes(scene.get_root(), r, info)){
+			if (!intersect_nodes(scene.get_root(), r, diff_geom)){
 				lights.push_back(l.second.get());
 			}
 		}

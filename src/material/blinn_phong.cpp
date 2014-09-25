@@ -8,25 +8,27 @@ BlinnPhong::BlinnPhong(const Colorf &diffuse, const Colorf &specular, float glos
 	: diffuse(diffuse), specular(specular), reflection(reflection), refraction(refraction),
 		absorption(absorption), gloss(gloss), refr_index(refr_index)
 {}
-Colorf BlinnPhong::shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const {
+Colorf BlinnPhong::shade(const Ray &r, const DifferentialGeometry &diff_geom,
+	const std::vector<Light*> &lights) const
+{
 	Colorf illum;
 	for (auto light : lights){
 		if (light->type() == LIGHT::AMBIENT){
-			illum += diffuse * light->illuminate(hitinfo.point);
+			illum += diffuse * light->illuminate(diff_geom.point);
 		}
 		else {
-			Vector l = -light->direction(hitinfo.point).normalized();
+			Vector l = -light->direction(diff_geom.point).normalized();
 			Vector v = -r.d.normalized();
 			Vector h = (l + v).normalized();
 			//Normal may not be normalized due to translation into world space
-			Normal n = hitinfo.normal.normalized();
+			Normal n = diff_geom.normal.normalized();
 			float dif = std::max(l.dot(n), 0.f);
 			if (dif == 0.f){
 				continue;
 			}
 			float spec = std::pow(std::max(n.dot(h), 0.f), gloss);
-			illum += diffuse * dif * light->illuminate(hitinfo.point)
-				+ specular * spec * dif * light->illuminate(hitinfo.point);
+			illum += diffuse * dif * light->illuminate(diff_geom.point)
+				+ specular * spec * dif * light->illuminate(diff_geom.point);
 		}
 	}
 	illum.normalize();

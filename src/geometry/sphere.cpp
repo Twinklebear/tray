@@ -4,7 +4,7 @@
 #include "linalg/vector.h"
 #include "geometry/sphere.h"
 
-bool Sphere::intersect(Ray &ray, HitInfo &hitinfo){
+bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	//Compute quadratic sphere coefficients
 	Vector ray_orig{ray.o};
 	float a = ray.d.length_sqr();
@@ -30,9 +30,15 @@ bool Sphere::intersect(Ray &ray, HitInfo &hitinfo){
 		}
 	}
 	ray.max_t = t_hit;
-	hitinfo.point = ray(t_hit);
+	diff_geom.point = ray(t_hit);
 	//For a unit sphere the normal is the same as the point hit
-	hitinfo.normal = Normal{hitinfo.point};
+	diff_geom.normal = Normal{diff_geom.point};
+	if (ray.d.dot(diff_geom.normal) < 0){
+		diff_geom.hit_side = HITSIDE::FRONT;
+	}
+	else {
+		diff_geom.hit_side = HITSIDE::BACK;
+	}
 	return true;
 }
 BBox Sphere::bound() const {

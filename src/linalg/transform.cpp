@@ -226,6 +226,21 @@ void Transform::operator()(const BBox &in, BBox &out) const {
 		}
 	}
 }
+DifferentialGeometry Transform::operator()(const DifferentialGeometry &d) const {
+	DifferentialGeometry out;
+	(*this)(d, out);
+	return out;
+}
+void Transform::operator()(const DifferentialGeometry &in, DifferentialGeometry &out) const {
+	(*this)(in.point, out.point);
+	(*this)(in.normal, out.normal);
+	(*this)(in.dp_du, out.dp_du);
+	(*this)(in.dp_dv, out.dp_dv);
+	(*this)(in.dp_dx, out.dp_dx);
+	(*this)(in.dp_dy, out.dp_dy);
+	(*this)(in.dn_du, out.dn_du);
+	(*this)(in.dn_dv, out.dn_dv);
+}
 Transform Transform::operator*(const Transform &t) const {
 	return Transform{mat * t.mat, t.inv * inv};
 }

@@ -3,7 +3,7 @@
 #include "linalg/ray.h"
 #include "geometry/plane.h"
 
-bool Plane::intersect(Ray &ray, HitInfo &hitinfo){
+bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	float n_dot_r = ray.d.dot(Vector{0, 0, 1});
 	//If the ray is perpindicular to the normal there's no
 	//way for it to hit the plane
@@ -21,8 +21,14 @@ bool Plane::intersect(Ray &ray, HitInfo &hitinfo){
 	Point hit = ray(t);
 	if (hit.x >= -1 && hit.x <= 1 && hit.y >= -1 && hit.y <= 1){
 		ray.max_t = t;
-		hitinfo.point = hit;
-		hitinfo.normal = Normal{0, 0, 1};
+		diff_geom.point = hit;
+		diff_geom.normal = Normal{0, 0, 1};
+		if (ray.d.dot(diff_geom.normal) < 0){
+			diff_geom.hit_side = HITSIDE::FRONT;
+		}
+		else {
+			diff_geom.hit_side = HITSIDE::BACK;
+		}
 		return true;
 	}
 	return false;

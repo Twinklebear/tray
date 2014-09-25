@@ -6,6 +6,7 @@
 #include "ray.h"
 #include "matrix4.h"
 #include "geometry/bbox.h"
+#include "geometry/differential_geometry.h"
 
 /*
  * A transformation, also stores its inverse since we need it frequenctly
@@ -70,6 +71,8 @@ public:
 	void operator()(const Matrix4 &in, Matrix4 &out) const;
 	BBox operator()(const BBox &b) const;
 	void operator()(const BBox &in, BBox &out) const;
+	DifferentialGeometry operator()(const DifferentialGeometry &d) const;
+	void operator()(const DifferentialGeometry &in, DifferentialGeometry &out) const;
 	/*
 	 * Compose transformations
 	 */

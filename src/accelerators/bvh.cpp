@@ -55,12 +55,11 @@ BVH::BVH(const std::vector<Geometry*> &geom, SPLIT_METHOD split, unsigned max_ge
 BBox BVH::bounds() const {
 	return !flat_nodes.empty() ? flat_nodes[0].bounds : BBox{};
 }
-bool BVH::intersect(Ray &r, HitInfo &hitinfo){
+bool BVH::intersect(Ray &r, DifferentialGeometry &diff_geom){
 	if (flat_nodes.empty()){
 		return false;
 	}
 	bool hit = false;
-	Point origin = r(r.min_t);
 	Vector inv_dir{1 / r.d.x, 1 / r.d.y, 1 / r.d.z};
 	std::array<int, 3> neg_dir = {inv_dir.x < 0, inv_dir.y < 0, inv_dir.z < 0};
 	//Stack of nodes to be visited and the current node being visited. todo_offset is the top of stack
@@ -75,7 +74,7 @@ bool BVH::intersect(Ray &r, HitInfo &hitinfo){
 			//If it's a leaf node check the geometry
 			if (fnode.ngeom > 0){
 				for (uint32_t i = 0; i < fnode.ngeom; ++i){
-					if (geometry[fnode.geom_offset + i]->intersect(r, hitinfo)){
+					if (geometry[fnode.geom_offset + i]->intersect(r, diff_geom)){
 						hit = true;
 					}
 				}

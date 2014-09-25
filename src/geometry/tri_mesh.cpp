@@ -20,7 +20,7 @@ static std::vector<std::string> capture_face(const std::string &s);
 static std::array<int, 3> capture_vertex(const std::string &s);
 
 Triangle::Triangle(int a, int b, int c, const TriMesh *mesh) : a(a), b(b), c(c), mesh(mesh){}
-bool Triangle::intersect(Ray &ray, HitInfo &hitinfo){
+bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	const std::array<Vector, 2> e = {
 		mesh->vertex(b) - mesh->vertex(a),
 		mesh->vertex(c) - mesh->vertex(a)
@@ -53,10 +53,16 @@ bool Triangle::intersect(Ray &ray, HitInfo &hitinfo){
 		return false;
 	}
 	ray.max_t = t;
-	hitinfo.point = ray(t);
-	hitinfo.normal = (1 - bary[0] - bary[1]) * mesh->normal(a) + bary[0] * mesh->normal(b)
+	diff_geom.point = ray(t);
+	diff_geom.normal = (1 - bary[0] - bary[1]) * mesh->normal(a) + bary[0] * mesh->normal(b)
 		+ bary[1] * mesh->normal(c);
-	hitinfo.normal = hitinfo.normal.normalized();
+	diff_geom.normal = diff_geom.normal.normalized();
+	if (ray.d.dot(diff_geom.normal) < 0){
+		diff_geom.hit_side = HITSIDE::FRONT;
+	}
+	else {
+		diff_geom.hit_side = HITSIDE::BACK;
+	}
 	return true;
 
 }
@@ -86,8 +92,8 @@ TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 	refine(ref_tris);
 	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 128};
 }
-bool TriMesh::intersect(Ray &ray, HitInfo &hitinfo){
-	return bvh.intersect(ray, hitinfo);
+bool TriMesh::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+	return bvh.intersect(ray, diff_geom);
 	/*
 	//TODO Swap in crappy slow intersection code for the nice bvh when doing
 	//project 5 since we aren't supposed to have it yet
@@ -95,7 +101,7 @@ bool TriMesh::intersect(Ray &ray, HitInfo &hitinfo){
 	//and see if we hit them
 	bool hit = false;
 	for (Triangle &t : tris){
-		hit = t.intersect(ray, hitinfo) || hit;
+		hit = t.intersect(ray, diff_geom) || hit;
 	}
 	return hit;
 	*/

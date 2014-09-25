@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "linalg/ray.h"
-#include "geometry/hitinfo.h"
+#include "geometry/differential_geometry.h"
 #include "render/color.h"
 #include "lights/light.h"
 #include "cache.h"
@@ -13,7 +13,8 @@ public:
 	/*
 	 * Apply the material shading properties to the hit object
 	 */
-	virtual Colorf shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const = 0;
+	virtual Colorf shade(const Ray &r, const DifferentialGeometry &diff_geom,
+		const std::vector<Light*> &lights) const = 0;
 	/*
 	 * Check if the material is reflective
 	 */
