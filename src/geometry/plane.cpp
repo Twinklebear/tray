@@ -4,15 +4,14 @@
 #include "geometry/plane.h"
 
 bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom){
-	float n_dot_r = ray.d.dot(Vector{0, 0, 1});
 	//If the ray is perpindicular to the normal there's no
 	//way for it to hit the plane
-	if (std::abs(n_dot_r) <= 0){
+	if (std::abs(ray.d.z) < 1e-8){
 		return false;
 	}
 	//We're still treating the plane as infinite here so if it's not
 	//perpindicular it definitely hits somewhere
-	float t = -Vector{ray.o}.dot(Vector{0, 0, 1}) / n_dot_r;
+	float t = -ray.o.z / ray.d.z;
 	if (t <= ray.min_t || t >= ray.max_t){
 		return false;
 	}
