@@ -15,7 +15,8 @@ public:
 	/*
 	 * "Shade" the object, just returns the color set
 	 */
-	Colorf shade(const Ray &r, const HitInfo &hitinfo, const std::vector<Light*> &lights) const override;
+	Colorf shade(const Ray &r, const DifferentialGeometry &diff_geom,
+		const std::vector<Light*> &lights) const override;
 	bool is_reflective() const override;
 	Colorf reflective() const override;
 	bool is_transparent() const override;

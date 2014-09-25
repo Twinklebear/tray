@@ -8,7 +8,7 @@
 #include "linalg/transform.h"
 #include "material/material.h"
 #include "cache.h"
-#include "hitinfo.h"
+#include "differential_geometry.h"
 #include "bbox.h"
 
 class Geometry {
@@ -17,14 +17,12 @@ public:
 	 * Test a ray for intersection with the geometry.
 	 * The ray should have been previously transformed into object space
 	 * If the hit on this object is nearer than any previous ones seen by
-	 * the ray the ray's max_t value will be updated and the hitinfo struct
-	 * will be filled with information about the hit. Data stored in
-	 * hitinfo will be returned in object space, and the node must be set
-	 * outside since the geometry doesn't know which node it's attached too or
-	 * its transformation, etc.
+	 * the ray the ray's max_t value will be updated and the differential
+	 * geometry struct will be filled with information about the hit.
+	 * Data stored in diff_geom will be returned in object space
 	 * If no hit occurs the ray and hitinfo are left unmodified
 	 */
-	virtual bool intersect(Ray &ray, HitInfo &hitinfo) = 0;
+	virtual bool intersect(Ray &ray, DifferentialGeometry &diff_geom) = 0;
 	/*
 	 * Get the object-space AABB for the object
 	 */

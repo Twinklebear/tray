@@ -40,7 +40,7 @@ public:
 	/*
 	 * Run intersecton tests on a node and its children and report back the results
 	 */
-	static bool intersect_nodes(Node &node, Ray &ray, HitInfo &hitinfo);
+	static bool intersect_nodes(Node &node, Ray &ray, DifferentialGeometry &diff_geom);
 	/*
 	 * Get the list of lights visible from some point in the scene
 	 * The normal is used to test if the light would even contribute to this

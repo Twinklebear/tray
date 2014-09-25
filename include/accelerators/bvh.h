@@ -96,7 +96,7 @@ public:
 	/*
 	 * Perform an intersection test on the geometry stored in the BVH
 	 */
-	bool intersect(Ray &r, HitInfo &hitinfo);
+	bool intersect(Ray &ray, DifferentialGeometry &diff_geom);
 
 private:
 	/*
