@@ -41,6 +41,7 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	}
 
 	//Compute parameterization of surface and various derivatives for texturing
+	//Sphere is parameterized by phi and theta coords
 	float phi = std::atan2(diff_geom.point.x, diff_geom.point.y);
 	float theta = std::acos(clamp(diff_geom.point.z, -1.f, 1.f));
 	diff_geom.u = phi / TAU;

@@ -28,6 +28,16 @@ bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 		else {
 			diff_geom.hit_side = HITSIDE::BACK;
 		}
+		//Compute parameterization of surface and various derivatives for texturing
+		//Plane is parameterized by x and y coords
+		diff_geom.u = (hit.x + 1) / 2;
+		diff_geom.v = (hit.y + 1) / 2;
+		//The change in x/y vs. u/v. Is this correct?
+		diff_geom.dp_du = Vector{2, 0, 0};
+		diff_geom.dp_dv = Vector{0, 2, 0};
+		//Normal doesn't change over the plane so these are trivial
+		diff_geom.dn_du = Normal{0, 0, 0};
+		diff_geom.dn_dv = Normal{0, 0, 0};
 		return true;
 	}
 	return false;
