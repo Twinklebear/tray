@@ -16,7 +16,7 @@ float LanczosSincFilter::lanczos_sinc1d(float x) const {
 	if (abs_x >= a){
 		return 0;
 	}
-	abs_x *= M_PI;
+	abs_x *= PI;
 	return a * std::sin(abs_x) * std::sin(abs_x / a) / std::pow(abs_x, 2.f);
 }
 

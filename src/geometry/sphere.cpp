@@ -39,6 +39,37 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	else {
 		diff_geom.hit_side = HITSIDE::BACK;
 	}
+
+	//Compute parameterization of surface and various derivatives for texturing
+	float phi = std::atan2(diff_geom.point.x, diff_geom.point.y);
+	float theta = std::acos(clamp(diff_geom.point.z, -1.f, 1.f));
+	diff_geom.u = phi / TAU;
+	diff_geom.v = theta / PI;
+
+	float inv_z = 1 / std::sqrt(diff_geom.point.x * diff_geom.point.x
+		+ diff_geom.point.y * diff_geom.point.y);
+	float cos_phi = diff_geom.point.x * inv_z;
+	float sin_phi = diff_geom.point.y * inv_z;
+	diff_geom.dp_du = Vector{-TAU * diff_geom.point.y, TAU * diff_geom.point.x, 0};
+	diff_geom.dp_dv = PI * Vector{diff_geom.point.z * cos_phi, diff_geom.point.z * sin_phi,
+		-std::sin(theta)};
+
+	//Compute derivatives of normals using Weingarten eqns
+	Vector ddp_duu = -TAU * TAU * Vector{diff_geom.point.x, diff_geom.point.y, 0};
+	Vector ddp_duv = PI * TAU * diff_geom.point.z * Vector{-sin_phi, cos_phi, 0};
+	Vector ddp_dvv = -PI * PI * Vector{diff_geom.point.x, diff_geom.point.y, diff_geom.point.z};
+
+	float E = diff_geom.dp_du.dot(diff_geom.dp_du);
+	float F = diff_geom.dp_du.dot(diff_geom.dp_dv);
+	float G = diff_geom.dp_dv.dot(diff_geom.dp_dv);
+	float e = diff_geom.normal.dot(ddp_duu);
+	float f = diff_geom.normal.dot(ddp_duv);
+	float g = diff_geom.normal.dot(ddp_dvv);
+	float divisor = 1 / (E * G - F * F);
+	diff_geom.dn_du = Normal{(f * F - e * G) * divisor * diff_geom.dp_du
+		+ (e * F - f * E) * divisor * diff_geom.dp_dv};
+	diff_geom.dn_dv = Normal{(g * F - f * G) * divisor * diff_geom.dp_du
+		+ (f * F - g * E) * divisor * diff_geom.dp_dv};
 	return true;
 }
 BBox Sphere::bound() const {

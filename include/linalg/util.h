@@ -4,9 +4,8 @@
 #include <cmath>
 #include <algorithm>
 
-#ifndef M_PI
-#define M_PI 3.14159
-#endif
+const float PI = 3.14159;
+const float TAU = 6.28318;
 
 /*
  * Enum for storing x/y/z axis ids
@@ -30,10 +29,10 @@ inline int mod(int a, int m){
 	return a < 0 ? a + m : a;
 }
 constexpr inline float radians(float deg){
-	return M_PI / 180.f * deg;
+	return PI / 180.f * deg;
 }
 constexpr inline float degrees(float rad){
-	return 180.f / M_PI * rad;
+	return 180.f / PI * rad;
 }
 inline float log_2(float x){
 	static float inv_log2 = 1.f / std::log(2);
