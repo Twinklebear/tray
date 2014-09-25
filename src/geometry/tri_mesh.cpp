@@ -37,13 +37,13 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	std::array<float, 2> bary;
 	bary[0] = d.dot(s[0]) * div;
 	//Check that the first barycentric coordinate is in the triangle bounds
-	if (bary[0] < 0 || bary[0] > 1){
+	if (bary[0] < -1e-8 || bary[0] > 1){
 		return false;
 	}
 	s[1] = d.cross(e[0]);
 	bary[1] = ray.d.dot(s[1]) * div;
 	//Check the second barycentric coordinate is in the triangle bounds
-	if (bary[1] < 0 || bary[0] + bary[1] > 1){
+	if (bary[1] < -1e-8 || bary[0] + bary[1] > 1){
 		return false;
 	}
 
@@ -64,7 +64,6 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 		diff_geom.hit_side = HITSIDE::BACK;
 	}
 	return true;
-
 }
 BBox Triangle::bound() const {
 	BBox box;
