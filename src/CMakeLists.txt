@@ -10,7 +10,8 @@ add_subdirectory(filters)
 add_subdirectory(textures)
 set(RAY_LIBS loaders lights linalg render geometry samplers material accelerators filters textures)
 
-add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp ${tinyxml2_SRC})
+add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp
+	${tinyxml2_DIR}/tinyxml2.cpp)
 
 # Need to link libm on Unix
 if (NOT WIN32)

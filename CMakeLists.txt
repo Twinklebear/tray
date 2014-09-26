@@ -16,8 +16,17 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 endif()
 
 set(CS6620_INSTALL_DIR "${CS6620_SOURCE_DIR}/bin")
-set(tinyxml2_SRC "${CS6620_SOURCE_DIR}/tinyxml2/tinyxml2.cpp")
-include_directories(tinyxml2 include)
+
+set(tinyxml2_DIR "${CS6620_SOURCE_DIR}/external/tinyxml2/")
+file(DOWNLOAD "https://raw.githubusercontent.com/leethomason/tinyxml2/master/tinyxml2.cpp"
+	"${tinyxml2_DIR}/tinyxml2.cpp")
+file(DOWNLOAD "https://raw.githubusercontent.com/leethomason/tinyxml2/master/tinyxml2.h"
+	"${tinyxml2_DIR}/tinyxml2.h")
+# Use stb_image for wider range of image format support
+set(stb_image_INCLUDE_DIR "${CS6620_SOURCE_DIR}/external/stb/")
+file(DOWNLOAD "https://raw.githubusercontent.com/nothings/stb/master/stb_image.h"
+	"${stb_image_INCLUDE_DIR}/stb_image.h")
+include_directories(include ${tinyxml2_DIR} ${stb_image_INCLUDE_DIR})
 
 # If we're building the live previewer find SDL2
 if (BUILD_PREVIEWER)
