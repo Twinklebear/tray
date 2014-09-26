@@ -6,6 +6,7 @@
 #include "textures/constant_texture.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_material.h"
+#include "loaders/load_texture.h"
 
 /*
  * Load the FlatMaterial properties and return the material
@@ -43,29 +44,22 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 	}
 }
 std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem, TextureCache &tcache){
-	Colorf color{1, 1, 1};
-	read_color(elem->FirstChildElement("color"), color);
-	color.normalize();
-	std::string tex_name = elem->Attribute("name") + std::string{"_color_tex"};
-	Texture *tex = tcache.get(tex_name);
-	if (!tex){
-		tcache.add(tex_name, std::make_unique<ConstantTexture>(color));
-		tex = tcache.get(tex_name);
-	}
+	Texture *tex = load_texture(elem->FirstChildElement("color"), elem->Attribute("name"), tcache);
 	return std::make_unique<FlatMaterial>(tex);
 }
 std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem, TextureCache &tcache){
 	using namespace tinyxml2;
-	Colorf diff{1, 1, 1}, spec{1, 1, 1}, refl{1, 1, 1},
-		refrc{1, 1, 1}, absorp{1, 1, 1};
+	Texture *diff = nullptr, *spec = nullptr, *refl = nullptr,
+		*refrc = nullptr, *absorp = nullptr;
 	float gloss = 1, refr_index = -1;
+	std::string name = elem->Attribute("name");
 	XMLElement *e = elem->FirstChildElement("diffuse");
 	if (e){
-		read_color(e, diff);
+		diff = load_texture(e, name, tcache);
 	}
 	e = elem->FirstChildElement("specular");
 	if (e){
-		read_color(e, spec);
+		spec = load_texture(e, name, tcache);
 	}
 	e = elem->FirstChildElement("glossiness");
 	if (e){
@@ -73,25 +67,17 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem, TextureCac
 	}
 	e = elem->FirstChildElement("reflection");
 	if (e){
-		read_color(e, refl);
-	}
-	else {
-		refl = Colorf{0, 0, 0};
+		refl = load_texture(e, name, tcache);
 	}
 	e = elem->FirstChildElement("refraction");
 	if (e){
-		read_color(e, refrc);
+		refrc = load_texture(e, name, tcache);
 		read_float(e, refr_index, "index");
 	}
 	e = elem->FirstChildElement("absorption");
 	if (e){
-		read_color(e, absorp);
+		absorp = load_texture(e, name, tcache);
 	}
-	diff.normalize();
-	spec.normalize();
-	refl.normalize();
-	refrc.normalize();
-	absorp.normalize();
 	return std::make_unique<BlinnPhong>(diff, spec, gloss,
 		refl, refrc, absorp, refr_index);
 }

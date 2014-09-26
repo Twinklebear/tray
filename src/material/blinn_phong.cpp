@@ -3,8 +3,8 @@
 #include "material/blinn_phong.h"
 
 
-BlinnPhong::BlinnPhong(const Colorf &diffuse, const Colorf &specular, float gloss, const Colorf &reflection,
-	const Colorf &refraction, const Colorf &absorption, float refr_index)
+BlinnPhong::BlinnPhong(const Texture *diffuse, const Texture *specular, float gloss, const Texture *reflection,
+	const Texture *refraction, const Texture *absorption, float refr_index)
 	: diffuse(diffuse), specular(specular), reflection(reflection), refraction(refraction),
 		absorption(absorption), gloss(gloss), refr_index(refr_index)
 {}
@@ -14,7 +14,7 @@ Colorf BlinnPhong::shade(const Ray &r, const DifferentialGeometry &diff_geom,
 	Colorf illum;
 	for (auto light : lights){
 		if (light->type() == LIGHT::AMBIENT){
-			illum += diffuse * light->illuminate(diff_geom.point);
+			illum += diffuse->sample(diff_geom) * light->illuminate(diff_geom.point);
 		}
 		else {
 			Vector l = -light->direction(diff_geom.point).normalized();
@@ -27,29 +27,29 @@ Colorf BlinnPhong::shade(const Ray &r, const DifferentialGeometry &diff_geom,
 				continue;
 			}
 			float spec = std::pow(std::max(n.dot(h), 0.f), gloss);
-			illum += diffuse * dif * light->illuminate(diff_geom.point)
-				+ specular * spec * dif * light->illuminate(diff_geom.point);
+			illum += diffuse->sample(diff_geom) * dif * light->illuminate(diff_geom.point)
+				+ specular->sample(diff_geom) * spec * dif * light->illuminate(diff_geom.point);
 		}
 	}
 	illum.normalize();
 	return illum;
 }
 bool BlinnPhong::is_reflective() const {
-	return reflection.r > 0 || reflection.g > 0 || reflection.b > 0;
+	return reflection != nullptr;
 }
-Colorf BlinnPhong::reflective() const {
-	return reflection;
+Colorf BlinnPhong::reflective(const DifferentialGeometry &dg) const {
+	return reflection ? reflection->sample(dg) : Colorf{0, 0, 0};
 }
 bool BlinnPhong::is_transparent() const {
 	return refr_index > 0;
 }
-Colorf BlinnPhong::absorbed() const {
-	return absorption;
+Colorf BlinnPhong::absorbed(const DifferentialGeometry &dg) const {
+	return absorption ? absorption->sample(dg) : Colorf{0, 0, 0};
 }
 float BlinnPhong::refractive_idx() const {
 	return refr_index;
 }
-Colorf BlinnPhong::refractive() const {
-	return refraction;
+Colorf BlinnPhong::refractive(const DifferentialGeometry &dg) const {
+	return refraction ? refraction->sample(dg) : Colorf{0, 0, 0};
 }
 

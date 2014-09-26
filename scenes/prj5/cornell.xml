@@ -45,26 +45,26 @@
     </object>
  
     <!-- Materials -->
-    <material type="flat" name="wall">
-      <color r="1" g="1" b="1"/>
+    <material type="blinn" name="wall">
+      <diffuse  r="1" g="1" b="1"/>
       <specular value="0"/>
     </material>
-    <material type="flat" name="wallRed">
-      <color  r="1.0" g="0.5" b="0.5"/>
+    <material type="blinn" name="wallRed">
+      <diffuse  r="1.0" g="0.5" b="0.5"/>
       <specular value="0"/>
     </material>
-    <material type="flat" name="wallBlue">
-      <color  r="0.5" g="0.5" b="1.0"/>
+    <material type="blinn" name="wallBlue">
+      <diffuse  r="0.5" g="0.5" b="1.0"/>
       <specular value="0"/>
     </material>
-    <material type="flat" name="mtl1">
-      <color  r="0.8" g="0.2" b="0.2"/>
+    <material type="blinn" name="mtl1">
+      <diffuse  r="0.8" g="0.2" b="0.2"/>
       <specular r="1.0" g="1.0" b="1.0" value="0.7"/>
       <glossiness value="20"/>
       <reflection value="0.7"/>
     </material>
-    <material type="flat" name="mtl2">
-      <color  r="0.1" g="0.1" b="0.9"/>
+    <material type="blinn" name="mtl2">
+      <diffuse  r="0.1" g="0.1" b="0.9"/>
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
       <glossiness value="10"/>
       <refraction value="0.8" index="1.52"/>

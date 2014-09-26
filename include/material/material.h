@@ -23,7 +23,7 @@ public:
 	 * Get the reflective color of the object, is 0 if the
 	 * object is not reflective
 	 */
-	virtual Colorf reflective() const = 0;
+	virtual Colorf reflective(const DifferentialGeometry &dg) const = 0;
 	/*
 	 * Check if the object is transparent
 	 */
@@ -31,7 +31,7 @@ public:
 	/*
 	 * Get the object's absorption amount per unit t for transparency
 	 */
-	virtual Colorf absorbed() const = 0;
+	virtual Colorf absorbed(const DifferentialGeometry &dg) const = 0;
 	/*
 	 * Get the refractive index of the material,
 	 * -1 is used to indicate the material isn't transparent
@@ -40,7 +40,7 @@ public:
 	/*
 	 * Get the refractive color
 	 */
-	virtual Colorf refractive() const = 0;
+	virtual Colorf refractive(const DifferentialGeometry &dg) const = 0;
 };
 
 typedef Cache<Material> MaterialCache;

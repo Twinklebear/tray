@@ -93,9 +93,9 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 						Vector refr_dir = n_ratio * ray.d + (n_ratio * c - root) * n;
 						Ray refr{diff_geom.point, refr_dir.normalized(), ray, 0.001};
 						//Account for absorption by the object if the refraction ray we're casting is entering it
-						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive() * (1 - r);
+						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive(diff_geom) * (1 - r);
 						if (diff_geom.hit_side == HITSIDE::FRONT){
-							Colorf absorbed = mat->absorbed();
+							Colorf absorbed = mat->absorbed(diff_geom);
 							color += refr_col * Colorf{std::exp(-refr.max_t * absorbed.r),
 								std::exp(-refr.max_t * absorbed.g), std::exp(-refr.max_t * absorbed.b)};
 						}
@@ -108,10 +108,10 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 						r = 1;
 					}
 					//Add Fresnel reflection contribution to be used when computing reflection
-					fresnel_refl = mat->refractive() * r;
+					fresnel_refl = mat->refractive(diff_geom) * r;
 				}
 				if (mat->is_reflective() || fresnel_refl != Colorf{0, 0, 0}){
-					Colorf refl_col = mat->reflective() + fresnel_refl;
+					Colorf refl_col = mat->reflective(diff_geom) + fresnel_refl;
 					//Reflect and cast ray
 					Vector n{diff_geom.normal.normalized()};
 					Vector dir = ray.d - 2 * n.dot(ray.d) * n;

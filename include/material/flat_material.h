@@ -20,11 +20,11 @@ public:
 	Colorf shade(const Ray &r, const DifferentialGeometry &diff_geom,
 		const std::vector<Light*> &lights) const override;
 	bool is_reflective() const override;
-	Colorf reflective() const override;
+	Colorf reflective(const DifferentialGeometry &dg) const override;
 	bool is_transparent() const override;
-	Colorf absorbed() const override;
+	Colorf absorbed(const DifferentialGeometry &dg) const override;
 	float refractive_idx() const override;
-	Colorf refractive() const override;
+	Colorf refractive(const DifferentialGeometry &dg) const override;
 };
 
 #endif
