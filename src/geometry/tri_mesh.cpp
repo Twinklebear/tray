@@ -7,6 +7,7 @@
 #include <string>
 #include "linalg/vector.h"
 #include "linalg/point.h"
+#include "linalg/util.h"
 #include "accelerators/bvh.h"
 #include "geometry/bbox.h"
 #include "geometry/geometry.h"
@@ -21,7 +22,7 @@ static std::array<int, 3> capture_vertex(const std::string &s);
 
 Triangle::Triangle(int a, int b, int c, const TriMesh *mesh) : a(a), b(b), c(c), mesh(mesh){}
 bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
-	const std::array<Vector, 2> e = {
+	const std::array<Vector, 2> e{
 		mesh->vertex(b) - mesh->vertex(a),
 		mesh->vertex(c) - mesh->vertex(a)
 	};
@@ -34,7 +35,7 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	}
 	div = 1.f / div;
 	Vector d = ray.o - mesh->vertex(a);
-	std::array<float, 2> bary;
+	std::array<float, 3> bary;
 	bary[0] = d.dot(s[0]) * div;
 	//Check that the first barycentric coordinate is in the triangle bounds
 	if (bary[0] < -1e-8 || bary[0] > 1){
@@ -52,10 +53,14 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	if (t < ray.min_t || t > ray.max_t){
 		return false;
 	}
+	bary[2] = 1 - bary[0] - bary[1];
 	ray.max_t = t;
 	diff_geom.point = ray(t);
-	diff_geom.normal = (1 - bary[0] - bary[1]) * mesh->normal(a) + bary[0] * mesh->normal(b)
-		+ bary[1] * mesh->normal(c);
+
+	const Normal &na = mesh->normal(a);
+	const Normal &nb = mesh->normal(b);
+	const Normal &nc = mesh->normal(c);
+	diff_geom.normal = bary[2] * na + bary[0] * nb + bary[1] * nc;
 	diff_geom.normal = diff_geom.normal.normalized();
 	if (ray.d.dot(diff_geom.normal) < 0){
 		diff_geom.hit_side = HITSIDE::FRONT;
@@ -63,6 +68,37 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	else {
 		diff_geom.hit_side = HITSIDE::BACK;
 	}
+
+	//Compute parameterization of surface and various derivatives for texturing
+	//Triangles are parameterized by the obj texcoords at the vertices
+	const Point &ta = mesh->texcoord(a);
+	const Point &tb = mesh->texcoord(b);
+	const Point &tc = mesh->texcoord(c);
+
+	//Triangle points can be found by p_i = p_0 + u_i dp/du + v_i dp/dv
+	//we use this property to find the derivatives dp/du and dp/dv
+	std::array<float, 2> du{ta.x - tc.x, tb.x - tc.x};
+	std::array<float, 2> dv{ta.y - tc.y, tb.y - tc.y};
+	float det = du[0] * dv[1] - dv[0] * du[1];
+	//If the texcoords are degenerate pick arbitrary coordinate system
+	if (det == 0){
+		coordinate_system(e[1].cross(e[0]).normalized(), diff_geom.dp_du,
+			diff_geom.dp_dv);
+		diff_geom.dn_du = Normal{0, 0, 0};
+		diff_geom.dn_dv = Normal{0, 0, 0};
+	}
+	else {
+		det = 1 / det;
+		std::array<Vector, 2> dp{a - c, b - c};
+		diff_geom.dp_du = (dv[1] * dp[0] - dv[0] * dp[1]) * det;
+		diff_geom.dp_dv = (-du[1] * dp[0] - du[0] * dp[1]) * det;
+
+		std::array<Normal, 2> dn{na - nc, nb - nc};
+		diff_geom.dn_du = (dv[1] * dn[0] - dv[0] * dn[1]) * det;
+		diff_geom.dn_dv = (-du[1] * dn[0] - du[0] * dn[1]) * det;
+	}
+	diff_geom.u = bary[2] * ta.x + bary[0] * tb.x + bary[1] * tc.x;
+	diff_geom.v = bary[2] * ta.y + bary[0] * tb.y + bary[1] * tc.y;
 	return true;
 }
 BBox Triangle::bound() const {
