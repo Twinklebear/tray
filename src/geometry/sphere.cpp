@@ -47,6 +47,8 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	diff_geom.u = phi / TAU;
 	diff_geom.v = theta / PI;
 
+	//Compute derivatives for point vs. parameterization, using trig shortcuts to
+	//skip cos/sin calls
 	float inv_z = 1 / std::sqrt(diff_geom.point.x * diff_geom.point.x
 		+ diff_geom.point.y * diff_geom.point.y);
 	float cos_phi = diff_geom.point.x * inv_z;
