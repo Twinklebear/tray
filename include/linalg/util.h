@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include "vector.h"
 
 const float PI = 3.14159;
 const float TAU = 6.28318;
@@ -73,6 +74,20 @@ inline bool solve_quadratic(float a, float b, float c, float &t0, float &t1){
 		std::swap(t0, t1);
 	}
 	return true;
+}
+/*
+ * Compute a local coordinate system from a single vector
+ */
+inline void coordinate_system(const Vector &e1, Vector &e2, Vector &e3){
+	if (std::abs(e1.x) > std::abs(e1.y)){
+		float inv_len = 1 / std::sqrt(e1.x * e1.x + e1.z * e1.z);
+		e2 = Vector{-e1.z * inv_len, 0, e1.x * inv_len};
+	}
+	else {
+		float inv_len = 1 / std::sqrt(e1.y * e1.y + e1.z * e1.z);
+		e2 = Vector{0, e1.z * inv_len, -e1.y * inv_len};
+	}
+	e3 = e1.cross(e2);
 }
 
 #endif
