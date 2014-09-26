@@ -2,16 +2,18 @@
 #define FLAT_MATERIAL_H
 
 #include "material.h"
+#include "textures/texture.h"
 
 class FlatMaterial : public Material {
-	Colorf color;
+	//Non-owning reference the texture we're drawing
+	const Texture* texture;
 
 public:
 	/*
 	 * Create a basic flat material that will simply return
 	 * the color set
 	 */
-	FlatMaterial(const Colorf &color);
+	FlatMaterial(const Texture *texture);
 	/*
 	 * "Shade" the object, just returns the color set
 	 */

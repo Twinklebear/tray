@@ -89,7 +89,7 @@ Scene load_scene(const std::string &file, int depth){
 	//Run a pre-pass to load the materials so they're available when loading the objects
 	XMLElement *mats = scene_node->FirstChildElement("material");
 	if (mats){
-		load_materials(mats, scene.get_mat_cache());
+		load_materials(mats, scene.get_mat_cache(), scene.get_tex_cache());
 	}
 	XMLElement *lights = scene_node->FirstChildElement("light");
 	if (lights){

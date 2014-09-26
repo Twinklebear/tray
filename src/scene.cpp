@@ -17,6 +17,9 @@ GeometryCache& Scene::get_geom_cache(){
 MaterialCache& Scene::get_mat_cache(){
 	return mat_cache;
 }
+TextureCache& Scene::get_tex_cache(){
+	return tex_cache;
+}
 LightCache& Scene::get_light_cache(){
 	return light_cache;
 }

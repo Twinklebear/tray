@@ -1,11 +1,12 @@
 #include "lights/light.h"
+#include "textures/texture.h"
 #include "material/flat_material.h"
 
-FlatMaterial::FlatMaterial(const Colorf &color) : color(color) {}
+FlatMaterial::FlatMaterial(const Texture *texture) : texture(texture){}
 Colorf FlatMaterial::shade(const Ray &r, const DifferentialGeometry &diff_geom,
 	const std::vector<Light*> &lights) const
 {
-	return color;
+	return texture->sample(diff_geom);
 }
 bool FlatMaterial::is_reflective() const {
 	return false;
