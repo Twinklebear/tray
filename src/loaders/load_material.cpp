@@ -25,6 +25,9 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 		if (n->Value() == std::string{"material"}){
 			XMLElement *m = n->ToElement();
 			std::string name = m->Attribute("name");
+			if (cache.get(name)){
+				continue;
+			}
 			std::cout << "Loading material: " << name << std::endl;
 			std::unique_ptr<Material> material;
 			std::string type = m->Attribute("type");
