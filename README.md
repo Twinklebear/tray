@@ -11,6 +11,14 @@ If you want to build the renderer with the live preview you'll need [SDL2](http:
 can then run CMake with the `-DBUILD_PREVIEWER=1` flag to compile the previewer. To view the live preview
 when rendering run with the `-p` flag.
 
+Textures
+-
+The ray tracer supports JPEG baseline, PNG (8bit channel only), BMP (non-1bpp, non-RLE), and PPM image formats for textures.
+Note that texture names beginning with \_\_ are reserved for generated texture names the ray tracer may need to create
+and should not be used.
+
+Extras
+-
 The ray tracer also supports some extra scene options that can be specified within a <config> block in the scene file.
 
 Samplers
@@ -53,4 +61,5 @@ Dependencies
 -
 - [SDL2](http://libsdl.org/) is used for the live previewer.
 - [TinyXML-2](https://github.com/leethomason/tinyxml2) is used to parse the scene files.
+- [stb_image](https://github.com/nothings/stb) is used to support a wider range of texture formats
 
