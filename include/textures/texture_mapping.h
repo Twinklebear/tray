@@ -2,7 +2,6 @@
 #define TEXTURE_MAPPING_H
 
 #include "geometry/differential_geometry.h"
-#include "linalg/vector.h"
 
 /*
  * Stores information about the s,t coords and derivatives
@@ -18,11 +17,7 @@ struct TextureSample {
 /*
  * Interface for mapping u,v coords to s,t texture coords
  */
-class TextureMapping {
-	Vector scale, translate;
-
-public:
-	TextureMapping(const Vector &scale, const Vector &translate);
+struct TextureMapping {
 	/*
 	 * Compute the texture sample position and derivatives for the
 	 * differential geometry being rendered

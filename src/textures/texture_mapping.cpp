@@ -6,7 +6,3 @@ TextureSample::TextureSample(float s, float t, float ds_dx, float ds_dy, float d
 	: s(s), t(t), ds_dx(ds_dx), ds_dy(ds_dy), dt_dx(dt_dx), dt_dy(dt_dy)
 {}
 
-TextureMapping::TextureMapping(const Vector &scale, const Vector &translate)
-	: scale(scale), translate(translate)
-{}
-
