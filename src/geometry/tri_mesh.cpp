@@ -281,7 +281,7 @@ Normal capture_normal(const std::string &s){
 	return n;
 }
 std::vector<std::string> capture_face(const std::string &s){
-	std::regex match_vert("([0-9]+)/([0-9]+)/([0-9]+)");
+	std::regex match_vert{"([0-9]+)/([0-9]+)/([0-9]+)"};
 	std::vector<std::string> face;
 	std::transform(std::sregex_iterator{s.begin(), s.end(), match_vert},
 		std::sregex_iterator{}, std::back_inserter(face),
