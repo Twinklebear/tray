@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main(int , char**){
-	std::regex match_file{".*\\.[a-zA-Z]{1,3}"};
+	std::regex match_file{".*\\.[a-zA-Z]{3}"};
 	std::array<std::string, 4> files{
 		"checkerboard", "file.ppm",
 		"not_file", "chicken.png"
