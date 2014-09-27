@@ -35,11 +35,6 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 			std::regex match_file{".*\\.[a-zA-Z]{3}$"};
 			std::smatch match;
 			if (std::regex_match(name, match, match_file)){
-#ifdef _WIN32
-				const char PATH_SEP = '\\';
-#else
-				const char PATH_SEP = '/';
-#endif
 				std::string tex_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
 				//TODO: read the scale & translate
 				cache.add(name, std::make_unique<ImageTexture>(tex_file,

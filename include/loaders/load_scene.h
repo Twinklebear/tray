@@ -7,6 +7,12 @@
 #include "geometry/geometry.h"
 #include "scene.h"
 
+#ifdef _WIN32
+const char PATH_SEP = '\\';
+#else
+const char PATH_SEP = '/';
+#endif
+
 /*
  * Load a scene as described by the XML document and return it and
  * set its max ray recursion depth to the desired value
