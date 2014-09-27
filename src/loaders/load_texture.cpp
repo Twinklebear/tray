@@ -1,3 +1,4 @@
+#include <regex>
 #include <memory>
 #include <string>
 #include <tinyxml2.h>
@@ -9,6 +10,7 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	TextureCache &cache)
 {
 	using namespace tinyxml2;
+	static std::regex match_file{"\..{3}$"};
 	std::string tex_name;
 	if (elem->Attribute("texture")){
 		tex_name = elem->Attribute("texture");
