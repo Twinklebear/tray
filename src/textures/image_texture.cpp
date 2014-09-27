@@ -5,12 +5,13 @@
 #include <memory>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include "linalg/util.h"
 #include "textures/texture.h"
 #include "textures/texture_mapping.h"
 #include "textures/image_texture.h"
 
-ImageTexture::ImageTexture(const std::string &file, std::unique_ptr<TextureMapping> mapping)
-	: mapping(std::move(mapping)), width(0), height(0), ncomp(0)
+ImageTexture::ImageTexture(const std::string &file, std::unique_ptr<TextureMapping> mapping, WRAP_MODE wrap_mode)
+	: mapping(std::move(mapping)), wrap_mode(wrap_mode), width(0), height(0), ncomp(0)
 {
 	if (!load_image(file)){
 		std::cout << "ImageTexture Error: could not load " << file << std::endl;
@@ -25,6 +26,20 @@ Colorf ImageTexture::sample(const DifferentialGeometry &dg) const {
 	//TODO: No filtering for now
 	int ts = static_cast<int>(sample.s * width);
 	int tt = static_cast<int>(sample.t * height);
+	switch (wrap_mode){
+		case WRAP_MODE::REPEAT:
+			ts = std::abs(ts) % width;
+			tt = std::abs(tt) % height;
+			break;
+		case WRAP_MODE::CLAMP:
+			ts = clamp(ts, 0, width - 1);
+			tt = clamp(tt, 0, height - 1);
+			break;
+		case WRAP_MODE::BLACK:
+			if (ts < 0 || ts >= width || tt < 0 || tt >= height){
+				return Colorf{0, 0, 0};
+			}
+	}
 	//TODO: If there's only one component then do RRR, if two do RG0
 	return Colorf{pixels[tt * width * ncomp + ts * ncomp] * inv,
 		pixels[tt * width * ncomp + ts * ncomp + 1] * inv,
