@@ -44,11 +44,6 @@ bool ImageTexture::load_stb(const std::string &file){
 	if (!img){
 		return false;
 	}
-	//Perform y-flip of image so we'll have it right side up in our mapping
-	for (int i = 0; i < height / 2; ++i){
-		std::swap_ranges(&img[i * width * ncomp], &img[(i + 1) * width * ncomp],
-			&img[(height - i - 1) * width * ncomp]);
-	}
 	pixels.reserve(width * height * ncomp);
 	pixels.insert(pixels.begin(), img, img + width * height * ncomp);
 	stbi_image_free(img);

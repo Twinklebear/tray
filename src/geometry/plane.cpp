@@ -31,7 +31,8 @@ bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 		//Compute parameterization of surface and various derivatives for texturing
 		//Plane is parameterized by x and y coords
 		diff_geom.u = (hit.x + 1) / 2;
-		diff_geom.v = (hit.y + 1) / 2;
+		//We flip the y parameterization to put image top-left at the top-left of the plane
+		diff_geom.v = -(hit.y + 1) / 2 + 1;
 		//The change in x/y vs. u/v. Is this correct?
 		diff_geom.dp_du = Vector{2, 0, 0};
 		diff_geom.dp_dv = Vector{0, 2, 0};
