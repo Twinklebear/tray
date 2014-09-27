@@ -53,7 +53,8 @@ flags = [
 '-x',
 'c++',
 '-I./include',
-'-I./tinyxml2'
+'-I./external/tinyxml2',
+'-I./external/stb'
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
