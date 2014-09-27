@@ -1,10 +1,9 @@
 <xml>
   <scene>
     <!-- Objects -->
-	<object type="sphere" name="wall" material="tex_test">
-		<scale value="16"/>
-		<rotate angle="90" x="1"/>
-		<translate y="20"/>
+	<object type="obj" name="../models/teapot_hres.obj" material="tex_test">
+		<scale value="1"/>
+		<translate y="10"/>
 	</object>
 
     <!-- Materials -->
