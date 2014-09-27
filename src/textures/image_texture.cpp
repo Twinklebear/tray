@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <cstdio>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <memory>
@@ -25,7 +25,7 @@ Colorf ImageTexture::sample(const DifferentialGeometry &dg) const {
 	//TODO: No filtering for now
 	int ts = static_cast<int>(sample.s * width);
 	int tt = static_cast<int>(sample.t * height);
-	//Handle # of components?
+	//TODO: If there's only one component then do RRR, if two do RG0
 	return Colorf{pixels[tt * width * ncomp + ts * ncomp] * inv,
 		pixels[tt * width * ncomp + ts * ncomp + 1] * inv,
 		pixels[tt * width * ncomp + ts * ncomp + 2] * inv};
@@ -37,7 +37,28 @@ bool ImageTexture::load_image(const std::string &file){
 	return load_stb(file);
 }
 bool ImageTexture::load_ppm(const std::string &file){
-	return false;
+	std::ifstream f{file.c_str(), std::ios::in | std::ios::binary};
+	if (!f){
+		return false;
+	}
+	std::string line;
+	if (!std::getline(f, line) || line != "P6"){
+		return false;
+	}
+	//Skip comments
+	while (std::getline(f, line) && line[0] == '#');
+
+	size_t sep = line.find(' ');
+	width = std::stoi(line.substr(0, sep));
+	height = std::stoi(line.substr(sep + 1));
+	//Read the max val, but we know it's 255 so ignore it
+	std::getline(f, line);
+	ncomp = 3;
+	pixels.resize(width * height * ncomp);
+	if (!f.read(reinterpret_cast<char*>(pixels.data()), width * height * ncomp)){
+		return false;
+	}
+	return true;
 }
 bool ImageTexture::load_stb(const std::string &file){
 	uint8_t *img = stbi_load(file.c_str(), &width, &height, &ncomp, 0);

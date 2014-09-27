@@ -1,7 +1,7 @@
 <xml>
   <scene>
     <!-- Objects -->
-	<object type="plane" name="wall" material="tex_test">
+	<object type="sphere" name="wall" material="tex_test">
 		<scale value="16"/>
 		<rotate angle="90" x="1"/>
 		<translate y="20"/>
@@ -9,7 +9,7 @@
 
     <!-- Materials -->
 	<material type="blinn" name="tex_test">
-		<diffuse texture="../textures/4color.bmp">
+		<diffuse texture="../textures/bricks.ppm">
 		</diffuse>
 		<specular value="0.1"/>
     </material>
