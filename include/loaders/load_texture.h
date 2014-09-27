@@ -11,9 +11,10 @@
  * already in the cache the existing entry will be returned
  * name specifies the material name, to be used for prefixing
  * generated texture names
+ * Also takes the XML file name so we can construct paths to the textures
  */
 Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
-	TextureCache &cache);
+	TextureCache &cache, const std::string &file);
 
 #endif
 

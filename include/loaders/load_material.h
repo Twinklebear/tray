@@ -14,7 +14,8 @@
  * file is layed out with materials coming after objects
  * Loaded textures for the materials will be placed in the texture cache
  */
-void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache);
+void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache,
+	const std::string &file);
 
 #endif
 

@@ -4,7 +4,7 @@
 #include "linalg/vector.h"
 #include "texture_mapping.h"
 
-class UVMapping : TextureMapping {
+class UVMapping : public TextureMapping {
 	Vector scale, translate;
 
 public:

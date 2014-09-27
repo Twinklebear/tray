@@ -1,0 +1,32 @@
+<xml>
+  <scene>
+    <!-- Objects -->
+	<object type="plane" name="wall" material="tex_test">
+		<scale value="16"/>
+		<rotate angle="90" x="1"/>
+		<translate y="20"/>
+	</object>
+
+    <!-- Materials -->
+	<material type="blinn" name="tex_test">
+		<diffuse texture="../textures/4color.bmp">
+		</diffuse>
+		<specular value="0.1"/>
+    </material>
+
+	<!-- Lights -->
+    <light type="ambient" name="ambientLight">
+      <intensity value="1"/>
+    </light>
+  </scene>
+ 
+  <camera>
+    <position x="0" y="-70" z="0"/>
+    <target x="0" y="0" z="0"/>
+    <up x="0" y="0" z="1"/>
+    <fov value="30"/>
+    <width value="800"/>
+    <height value="600"/>
+  </camera>
+</xml>
+

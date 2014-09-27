@@ -17,7 +17,8 @@ struct TextureSample {
 /*
  * Interface for mapping u,v coords to s,t texture coords
  */
-struct TextureMapping {
+class TextureMapping {
+public:
 	/*
 	 * Compute the texture sample position and derivatives for the
 	 * differential geometry being rendered
