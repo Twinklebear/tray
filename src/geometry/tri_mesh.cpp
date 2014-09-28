@@ -127,16 +127,7 @@ TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 128};
 }
 bool TriMesh::intersect(Ray &ray, DifferentialGeometry &diff_geom){
-	//return bvh.intersect(ray, diff_geom);
-	//Swap in crappy slow intersection code for the nice bvh when doing
-	//project 5 since we aren't supposed to have it yet
-	//Really terrible method, go through all the triangles in the mesh
-	//and see if we hit them
-	bool hit = false;
-	for (Triangle &t : tris){
-		hit = t.intersect(ray, diff_geom) || hit;
-	}
-	return hit;
+	return bvh.intersect(ray, diff_geom);
 }
 BBox TriMesh::bound() const {
 	return bvh.bounds();
