@@ -74,11 +74,6 @@ public:
 
 private:
 	/*
-	 * Compute the object space AABB for this mesh, done once after loading
-	 * or setting explicitly the mesh data
-	 */
-	void compute_bounds();
-	/*
 	 * Refine the mesh down to its component triangles by computing them
 	 * and cacheing them
 	 */

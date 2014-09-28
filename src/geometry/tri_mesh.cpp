@@ -121,7 +121,6 @@ TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 	const std::vector<Normal> &norm, const std::vector<int> vert_idx)
 	: vertices(verts), texcoords(tex), normals(norm), vert_indices(vert_idx)
 {
-	compute_bounds();
 	refine_tris();
 	std::vector<Geometry*> ref_tris;
 	refine(ref_tris);
@@ -157,14 +156,6 @@ const Point& TriMesh::texcoord(int i) const {
 }
 const Normal& TriMesh::normal(int i) const {
 	return normals[i];
-}
-void TriMesh::compute_bounds(){
-	/*
-	bounds = BBox{};
-	for (const Point &p : vertices){
-		bounds = bounds.box_union(p);
-	}
-	*/
 }
 void TriMesh::refine_tris(){
 	tris.reserve(vert_indices.size());
