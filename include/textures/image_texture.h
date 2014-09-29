@@ -17,6 +17,9 @@ enum class WRAP_MODE {REPEAT, CLAMP, BLACK};
 
 /*
  * A 2D image to be used as a texture
+ * If the texture has one color component the color returned when sampling
+ * will be RRR.
+ * If two components RG0 is returned, for three RGB is returned
  */
 class ImageTexture : public Texture {
 	std::unique_ptr<TextureMapping> mapping;

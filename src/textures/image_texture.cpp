@@ -40,10 +40,17 @@ Colorf ImageTexture::sample(const DifferentialGeometry &dg) const {
 				return Colorf{0, 0, 0};
 			}
 	}
-	//TODO: If there's only one component then do RRR, if two do RG0
-	return Colorf{pixels[tt * width * ncomp + ts * ncomp] * inv,
-		pixels[tt * width * ncomp + ts * ncomp + 1] * inv,
-		pixels[tt * width * ncomp + ts * ncomp + 2] * inv};
+	switch (ncomp){
+		case 1:
+			return Colorf{pixels[tt * width * ncomp + ts * ncomp] * inv};
+		case 2:
+			return Colorf{pixels[tt * width * ncomp + ts * ncomp] * inv,
+				pixels[tt * width * ncomp + ts * ncomp + 1] * inv, 0};
+		default:
+			return Colorf{pixels[tt * width * ncomp + ts * ncomp] * inv,
+				pixels[tt * width * ncomp + ts * ncomp + 1] * inv,
+				pixels[tt * width * ncomp + ts * ncomp + 2] * inv};
+	}
 }
 bool ImageTexture::load_image(const std::string &file){
 	if (file.substr(file.rfind(".")) == ".ppm"){
