@@ -8,10 +8,31 @@
 
     <!-- Materials -->
 	<material type="blinn" name="tex_test">
-		<diffuse texture="uv">
+		<diffuse texture="checkerboard">
+			<color1 r="1" g="0" b="0"/>
+			<color2 r="0" g="0" b="1"/>
 		</diffuse>
 		<specular value="0.1"/>
     </material>
+	<material type="blinn" name="ground">
+		<diffuse r="1" g="1" b="1" texture="checkerboard">
+			<color1 r="0.2" g="0.2" b="0.2"/>
+			<color2 r="0.6" g="0.6" b="0.6"/>
+			<scale value="0.01"/>
+		</diffuse>
+		<specular value="0"/>
+		<reflection value="0.5"/>
+	</material>
+	<material type="blinn" name="checkerMtl">
+		<diffuse texture="checkerboard">
+			<color1 r="0.3" g="0" b="0" />
+			<color2 r="0.7" g="0" b="0" />
+			<scale x="0.25" y="0.4"/>
+		</diffuse>
+		<specular value="0.8"/>
+		<glossiness value="100"/>
+		<reflection value="0.5"/>
+	</material>
 
 	<!-- Lights -->
     <light type="ambient" name="ambientLight">

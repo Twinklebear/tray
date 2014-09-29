@@ -12,6 +12,7 @@ inline Vector operator-(const Vector &a, const Vector &b);
 inline Vector operator*(const Vector &v, float s);
 inline Vector operator*(float s, const Vector &v);
 inline Vector operator/(const Vector &v, float s);
+inline Vector operator/(const Vector &a, const Vector &b);
 inline Vector operator-(const Vector &v);
 inline bool operator==(const Vector &a, const Vector &b);
 inline bool operator!=(const Vector &a, const Vector &b);
@@ -96,6 +97,9 @@ inline Vector operator*(float s, const Vector &v){
 }
 inline Vector operator/(const Vector &v, float s){
 	return v * (1 / s);
+}
+inline Vector operator/(const Vector &a, const Vector &b){
+	return Vector{a.x / b.x, a.y / b.y, a.z / b.z};
 }
 inline Vector operator-(const Vector &v){
 	return Vector{-v.x, -v.y, -v.z};

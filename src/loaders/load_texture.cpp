@@ -5,6 +5,7 @@
 #include "textures/constant_texture.h"
 #include "textures/image_texture.h"
 #include "textures/uv_texture.h"
+#include "textures/checkerboard_texture.h"
 #include "textures/uv_mapping.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_texture.h"
@@ -20,9 +21,9 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	else {
 		name = "__" + mat_name + "_" + elem->Value() + "_tex";
 	}
-	std::cout << "name: " << name << std::endl;
 	Texture *tex = cache.get(name);
 	if (tex){
+		std::cout << "Using cached texture, name: " << name << std::endl;
 		return tex;
 	}
 	//If it's a generated texture we're just setting a constant color
@@ -40,6 +41,9 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 		XMLElement *c = elem->FirstChildElement("scale");
 		if (c){
 			read_vector(c, scale);
+			//The scale specified in the scene files is 2 / scale of what we
+			//want to happen to the texture, very odd.
+			scale = Vector{2} / scale;
 		}
 		c = elem->FirstChildElement("translate");
 		if (c){
@@ -56,8 +60,28 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 			tex = cache.get(name);
 		}
 		else if (name == "uv"){
+			name = "__" + mat_name + "_" + name + "_tex";
 			cache.add(name, std::make_unique<UVTexture>(std::make_unique<UVMapping>(scale, translate)));
 			tex = cache.get(name);
+		}
+		else if (name == "checkerboard"){
+			Colorf a, b{1};
+			//My checkerboard colors are flipped compared to what Cem's expect
+			c = elem->FirstChildElement("color1");
+			if (c){
+				read_color(c, b);
+			}
+			c = elem->FirstChildElement("color2");
+			if (c){
+				read_color(c, a);
+			}
+			name = "__" + mat_name + "_" + name + "_tex";
+			cache.add(name, std::make_unique<CheckerboardTexture>(a, b, std::make_unique<UVMapping>(scale, translate)));
+			tex = cache.get(name);
+
+			std::cout << "Texture " << name
+				<< " scale: " << scale << ", translate: " << translate
+				<< std::endl;
 		}
 		else {
 			std::cout << "Procedural texture " << name << " not implemented\n";
@@ -65,6 +89,7 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 			tex = cache.get(name);
 		}
 	}
+	std::cout << "name: " << name << std::endl;
 	return tex;
 }
 

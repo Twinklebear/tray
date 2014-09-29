@@ -157,12 +157,8 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			load_node(e, *children.back(), scene, file);
 		}
 		else if (c->Value() == std::string{"scale"}){
-			//Query both uniform and non-uniform scaling possibilities
-			float f = 1;
 			Vector v{1, 1, 1};
-			read_float(c->ToElement(), f);
 			read_vector(c->ToElement(), v);
-			v *= f;
 			auto &transform = node.get_transform();
 			auto &inv_transform = node.get_inv_transform();
 			Transform t = Transform::scale(v.x, v.y, v.z);
@@ -235,6 +231,9 @@ void read_vector(tinyxml2::XMLElement *elem, Vector &v){
 	elem->QueryFloatAttribute("x", &v.x);
 	elem->QueryFloatAttribute("y", &v.y);
 	elem->QueryFloatAttribute("z", &v.z);
+	float s = 1;
+	read_float(elem, s);
+	v *= s;
 }
 void read_color(tinyxml2::XMLElement *elem, Colorf &c){
 	elem->QueryFloatAttribute("r", &c.r);
