@@ -19,7 +19,14 @@ struct Color24 {
 struct Colorf {
 	float r, g, b;
 
-	Colorf(float r = 0, float g = 0, float b = 0);
+	/*
+	 * Initialize the RGB values to the same value
+	 */
+	Colorf(float c = 0);
+	/*
+	 * Create an RGB color
+	 */
+	Colorf(float r, float g, float b);
 	/*
 	 * Normalize the floating point color values to be clamped between 0-1
 	 */

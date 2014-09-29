@@ -4,6 +4,7 @@
 
 Color24::Color24(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
 
+Colorf::Colorf(float c) : r(c), g(c), b(c){}
 Colorf::Colorf(float r, float g, float b) : r(r), g(g), b(b){}
 void Colorf::normalize(){
 	r = clamp(r, 0.f, 1.f);
