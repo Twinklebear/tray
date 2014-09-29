@@ -4,6 +4,7 @@
 #include <tinyxml2.h>
 #include "textures/constant_texture.h"
 #include "textures/image_texture.h"
+#include "textures/uv_texture.h"
 #include "textures/uv_mapping.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_texture.h"
@@ -21,31 +22,47 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	}
 	std::cout << "name: " << name << std::endl;
 	Texture *tex = cache.get(name);
-	if (!tex){
-		//If it's a generated texture we're just setting a constant color
-		//for a material
-		if (name.substr(0, 2) == "__"){
-			Colorf color{1, 1, 1};
-			read_color(elem, color);
-			cache.add(name, std::make_unique<ConstantTexture>(color));
+	if (tex){
+		return tex;
+	}
+	//If it's a generated texture we're just setting a constant color
+	//for a material
+	if (name.substr(0, 2) == "__"){
+		Colorf color{1, 1, 1};
+		read_color(elem, color);
+		cache.add(name, std::make_unique<ConstantTexture>(color));
+		tex = cache.get(name);
+	}
+	//We need to load a texture file or procedural texture
+	else {
+		//Read any scaling and translation being applied to the mapping
+		Vector scale{1}, translate;
+		XMLElement *c = elem->FirstChildElement("scale");
+		if (c){
+			read_vector(c, scale);
+		}
+		c = elem->FirstChildElement("translate");
+		if (c){
+			read_vector(c, translate);
+		}
+
+		std::regex match_file{".*\\.[a-zA-Z]{3}$"};
+		std::smatch match;
+		if (std::regex_match(name, match, match_file)){
+			std::string tex_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
+			//TODO: read the scale & translate
+			cache.add(name, std::make_unique<ImageTexture>(tex_file,
+				std::make_unique<UVMapping>(scale, translate)));
 			tex = cache.get(name);
 		}
-		//We need to load a texture file or procedural texture
+		else if (name == "uv"){
+			cache.add(name, std::make_unique<UVTexture>(std::make_unique<UVMapping>(scale, translate)));
+			tex = cache.get(name);
+		}
 		else {
-			std::regex match_file{".*\\.[a-zA-Z]{3}$"};
-			std::smatch match;
-			if (std::regex_match(name, match, match_file)){
-				std::string tex_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
-				//TODO: read the scale & translate
-				cache.add(name, std::make_unique<ImageTexture>(tex_file,
-					std::make_unique<UVMapping>(Vector{1, 1, 1}, Vector{0, 0, 0})));
-				tex = cache.get(name);
-			}
-			else {
-				std::cout << "Procedural texture " << name << " not implemented\n";
-				cache.add(name, std::make_unique<ConstantTexture>(Colorf{0, 0, 0}));
-				tex = cache.get(name);
-			}
+			std::cout << "Procedural texture " << name << " not implemented\n";
+			cache.add(name, std::make_unique<ConstantTexture>(Colorf{0, 0, 0}));
+			tex = cache.get(name);
 		}
 	}
 	return tex;

@@ -8,7 +8,7 @@
 
     <!-- Materials -->
 	<material type="blinn" name="tex_test">
-		<diffuse texture="../textures/bricks.ppm">
+		<diffuse texture="uv">
 		</diffuse>
 		<specular value="0.1"/>
     </material>
