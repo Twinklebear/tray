@@ -19,6 +19,13 @@ public:
 	 * Sample the texture color for the piece of geometry being textured
 	 */
 	Colorf sample(const DifferentialGeometry &dg) const override;
+
+private:
+	/*
+	 * Compute the integral of the checkerboard step function so
+	 * we can interpolate the textures when blending between them
+	 */
+	float step_integral(float x) const;
 };
 
 #endif

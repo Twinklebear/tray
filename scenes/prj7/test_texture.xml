@@ -1,9 +1,12 @@
 <xml>
   <scene>
     <!-- Objects -->
-	<object type="obj" name="../models/teapot_hres.obj" material="tex_test">
-		<scale value="1"/>
-		<translate y="10"/>
+	<object type="plane" name="test_plane" material="ground">
+		<scale value="1000"/>
+		<rotate angle="30" z="1"/>
+		<!-- It seems like I need some x rotation to have the filtering work for the plane
+			 is it something wrong with my derivatives? -->
+		<rotate angle="0.01" x="1"/>
 	</object>
 
     <!-- Materials -->
@@ -12,7 +15,7 @@
 			<color1 r="1" g="0" b="0"/>
 			<color2 r="0" g="0" b="1"/>
 		</diffuse>
-		<specular value="0.1"/>
+		<specular value="0.01"/>
     </material>
 	<material type="blinn" name="ground">
 		<diffuse r="1" g="1" b="1" texture="checkerboard">
@@ -39,10 +42,10 @@
       <intensity value="1"/>
     </light>
   </scene>
- 
+  
   <camera>
-    <position x="0" y="-70" z="0"/>
-    <target x="0" y="0" z="0"/>
+    <position x="0" y="-70" z="15"/>
+    <target x="2" y="0" z="3"/>
     <up x="0" y="0" z="1"/>
     <fov value="30"/>
     <width value="800"/>

@@ -66,7 +66,7 @@
       <intensity value="0.6"/>
       <direction x="-1" y="0.2" z="-1"/>
     </light>
-    <light type="direct" name="directLight">
+    <light type="direct" name="directLight2">
       <intensity value="0.4"/>
       <direction x="1" y="0.3" z="-1"/>
     </light>

@@ -2,6 +2,7 @@
 #define LINALG_UTIL_H
 
 #include <cmath>
+#include <array>
 #include <algorithm>
 #include "vector.h"
 
@@ -72,6 +73,23 @@ inline bool solve_quadratic(float a, float b, float c, float &t0, float &t1){
 	t1 = c / q;
 	if (t0 > t1){
 		std::swap(t0, t1);
+	}
+	return true;
+}
+/*
+ * Solve a 2x2 linear system of equations, mat is the 2x2 matrix in row-major order
+ * rhs is the right side vector to solve for. Solutions are returned through a and b
+ * returns true if the system was solved successfully
+ */
+inline bool solve_linear2x2(const std::array<float, 4> &mat, const std::array<float, 2> &rhs, float &a, float &b){
+	float det = mat[0] * mat[3] - mat[1] * mat[2];
+	if (std::abs(det) < 1e-10){
+		return false;
+	}
+	a = (mat[3] * rhs[0] - mat[1] * rhs[1]) / det;
+	b = (mat[0] * rhs[1] - mat[2] * rhs[0]) / det;
+	if (std::isnan(a) || std::isnan(b)){
+		return false;
 	}
 	return true;
 }
