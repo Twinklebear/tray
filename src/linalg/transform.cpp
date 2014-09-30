@@ -192,6 +192,17 @@ void Transform::operator()(const Ray &in, Ray &out) const {
 	(*this)(in.o, out.o);
 	(*this)(in.d, out.d);
 }
+RayDifferential Transform::operator()(const RayDifferential &r) const {
+	RayDifferential b;
+	(*this)(r, b);
+	return b;
+}
+void Transform::operator()(const RayDifferential &in, RayDifferential &out) const {
+	(*this)(in.o, out.o);
+	(*this)(in.d, out.d);
+	(*this)(in.rx, out.rx);
+	(*this)(in.ry, out.ry);
+}
 Matrix4 Transform::operator()(const Matrix4 &m) const {
 	Matrix4 a;
 	(*this)(m, a);

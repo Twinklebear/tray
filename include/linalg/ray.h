@@ -49,15 +49,16 @@ struct RayDifferential : Ray {
 	Ray rx, ry;
 
 	inline RayDifferential(const Point &o = Point{}, const Vector &d = Vector{},
-		float min_t = 0, float max_t = INFINITY, int depth = 0)
-		: Ray{o, d, min_t, max_t, depth}
+		float min_t = 0, float max_t = std::numeric_limits<float>::infinity(), int depth = 0)
+		: Ray(o, d, min_t, max_t, depth)
 	{}
 	/*
 	 * Use to indicate that some ray has spawned this one,
 	 * increasing the recursion depth
 	 */
-	inline RayDifferential(const Point &o, const Vector &d, const Ray &parent)
-		: Ray{o, d, parent}
+	inline RayDifferential(const Point &o, const Vector &d, const Ray &parent, float min_t = 0,
+		float max_t = std::numeric_limits<float>::infinity())
+		: Ray(o, d, parent, min_t, max_t)
 	{}
 	inline explicit RayDifferential(const Ray &r) : Ray{r} {}
 	inline void scale_differentials(float s){
@@ -66,7 +67,7 @@ struct RayDifferential : Ray {
 		rx.d = d + (rx.d - d) * s;
 		ry.d = d + (ry.d - d) * s;
 	}
-	inline bool has_differentials(){
+	inline bool has_differentials() const {
 		return rx.d.length_sqr() > 0 && ry.d.length_sqr() > 0;
 	}
 };

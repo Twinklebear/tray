@@ -2,8 +2,7 @@
 #define CAMERA_H
 
 #include <array>
-#include "linalg/vector.h"
-#include "linalg/point.h"
+#include "linalg/ray.h"
 #include "linalg/transform.h"
 
 class Camera {
@@ -11,6 +10,8 @@ class Camera {
 	Transform cam_world;
 	//Transforms from raster to camera space
 	Transform raster_cam;
+	//dx and dy for pixels, for computing ray differentials
+	Vector dx, dy;
 
 public:
 	/*
@@ -20,10 +21,16 @@ public:
 	 */
 	Camera(const Transform &cam_world, float fov, int xres, int yres);
 	/*
-	 * Generate a ray to sample the pixel at x,y. Pixel coordinates should be
+	 * Generate a ray to sample the scene through x,y. Pixel coordinates should be
 	 * in raster space
 	 */
 	Ray generate_ray(float x, float y) const;
+	/*
+	 * Generate a ray with differentials to sample the scene through x,y.
+	 * The differentials will be +1 in x and y, pixel coords passed should
+	 * be in raster space
+	 */
+	RayDifferential generate_raydifferential(float x, float y) const;
 };
 
 #endif

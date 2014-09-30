@@ -26,13 +26,27 @@ Camera::Camera(const Transform &cam_world, float fov, int xres, int yres) : cam_
 	Transform raster_screen = screen_raster.inverse();
 	Transform cam_screen = Transform::perspective(fov, 1, 1000);
 	raster_cam = cam_screen.inverse() * raster_screen;
+	dx = raster_cam(Point{1, 0, 0}) - raster_cam(Point{0, 0, 0});
+	dy = raster_cam(Point{0, 1, 0}) - raster_cam(Point{0, 0, 0});
 }
 Ray Camera::generate_ray(float x, float y) const {
 	//Take the raster space position -> camera space
 	Point px_pos{x, y, 0};
 	raster_cam(px_pos, px_pos);
 	//Shoot ray from origin (camera pos) through the point
-	Ray ray{Point{0, 0, 0}, Vector{px_pos}.normalized()};
+	Ray ray{Point{0}, Vector{px_pos}.normalized()};
+	//Transform the ray to world space so it can be cast through the scene
+	cam_world(ray, ray);
+	return ray;
+}
+RayDifferential Camera::generate_raydifferential(float x, float y) const {
+	//Take the raster space position -> camera space
+	Point px_pos{x, y, 0};
+	raster_cam(px_pos, px_pos);
+	//Shoot ray from origin (camera pos) through the point
+	RayDifferential ray{Point{0}, Vector{px_pos}.normalized()};
+	ray.rx = Ray{ray.o, (Vector{px_pos} + dx).normalized()};
+	ray.ry = Ray{ray.o, (Vector{px_pos} + dy).normalized()};
 	//Transform the ray to world space so it can be cast through the scene
 	cam_world(ray, ray);
 	return ray;

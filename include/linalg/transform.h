@@ -67,6 +67,8 @@ public:
 	void operator()(const Normal &in, Normal &out) const;
 	Ray operator()(const Ray &r) const;
 	void operator()(const Ray &in, Ray &out) const;
+	RayDifferential operator()(const RayDifferential &r) const;
+	void operator()(const RayDifferential &in, RayDifferential &out) const;
 	Matrix4 operator()(const Matrix4 &m) const;
 	void operator()(const Matrix4 &in, Matrix4 &out) const;
 	BBox operator()(const BBox &b) const;

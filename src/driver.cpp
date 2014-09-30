@@ -34,7 +34,7 @@ void Worker::render(){
 		while (sampler->has_samples()){
 			sampler->get_samples(samples);
 			for (const auto &s : samples){
-				Ray ray = camera.generate_ray(s[0], s[1]);
+				RayDifferential ray = camera.generate_raydifferential(s[0], s[1]);
 				Colorf color = shade_ray(ray, scene.get_root());
 				color.normalize();
 				target.write_pixel(s[0], s[1], color);
@@ -53,7 +53,7 @@ void Worker::render(){
 	}
 	status.store(STATUS::DONE, std::memory_order_release);
 }
-Colorf Worker::shade_ray(Ray &ray, Node &node){
+Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 	Colorf color;
 	DifferentialGeometry diff_geom;
 	if (intersect_nodes(node, ray, diff_geom)){
@@ -91,7 +91,10 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 					if (root > 0){
 						root = std::sqrt(root);
 						Vector refr_dir = n_ratio * ray.d + (n_ratio * c - root) * n;
-						Ray refr{diff_geom.point, refr_dir.normalized(), ray, 0.001};
+						RayDifferential refr{diff_geom.point, refr_dir.normalized(), ray, 0.001};
+						//TODO: Properly reflect and refract ray differentials
+						refr.rx = Ray{refr.o, refr.d, ray, 0.001};
+						refr.ry = Ray{refr.o, refr.d, ray, 0.001};
 						//Account for absorption by the object if the refraction ray we're casting is entering it
 						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive(diff_geom) * (1 - r);
 						if (diff_geom.hit_side == HITSIDE::FRONT){
@@ -115,11 +118,14 @@ Colorf Worker::shade_ray(Ray &ray, Node &node){
 					//Reflect and cast ray
 					Vector n{diff_geom.normal.normalized()};
 					Vector dir = ray.d - 2 * n.dot(ray.d) * n;
-					Ray refl{diff_geom.point, dir.normalized(), ray, 0.001};
+					RayDifferential refl{diff_geom.point, dir.normalized(), ray, 0.001};
+					refl.rx = Ray{refl.o, refl.d, ray, 0.001};
+					refl.ry = Ray{refl.o, refl.d, ray, 0.001};
 					color += shade_ray(refl, scene.get_root()) * refl_col;
 				}
 			}
 			std::vector<Light*> lights = visible_lights(diff_geom.point, diff_geom.normal);
+			diff_geom.compute_differentials(ray);
 			color += mat->shade(ray, diff_geom, lights);
 		}
 		else {

@@ -36,7 +36,7 @@ public:
 	/*
 	 * Find the color coming back along some ray
 	 */
-	Colorf shade_ray(Ray &ray, Node &node);
+	Colorf shade_ray(RayDifferential &ray, Node &node);
 	/*
 	 * Run intersecton tests on a node and its children and report back the results
 	 */
