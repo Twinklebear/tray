@@ -59,7 +59,7 @@ bool ImageTexture::load_image(const std::string &file){
 	return load_stb(file);
 }
 bool ImageTexture::load_ppm(const std::string &file){
-	std::ifstream f{file.c_str(), std::ios::in | std::ios::binary};
+	std::ifstream f{file, std::ios::in | std::ios::binary};
 	if (!f){
 		return false;
 	}
