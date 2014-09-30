@@ -6,14 +6,16 @@
 #include <array>
 #include "linalg/ray.h"
 #include "linalg/util.h"
-#include "geometry/geometry.h"
 #include "geometry/bbox.h"
+#include "geometry/differential_geometry.h"
 
 /*
  * Different methods that can be used to partition the space
  * when building the BVH
  */
 enum class SPLIT_METHOD { MIDDLE, EQUAL, SAH };
+
+class Geometry;
 
 /*
  * A BVH built off of the one introduced in PBR
