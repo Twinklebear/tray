@@ -45,7 +45,7 @@
       <scale value="7"/>
 	  <rotate angle="90" x="1"/>
 	  <rotate angle="225" z="1"/>
-      <translate x="-11.5" y="-10.5" z="1.5"/>
+      <translate x="-11.5" y="-10.5" z="1.9"/>
     </object>
 	<object type="obj" name="../models/buddha.obj" material="buddha_mat">
       <scale value="15"/>
