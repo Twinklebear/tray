@@ -24,12 +24,7 @@ void Node::flatten_children(){
 	children = std::move(flat_children);
 	std::vector<Geometry*> prims;
 	refine(prims);
-	for (Geometry *g : prims){
-		std::cout << "Geometry bounds: " << g->bound() << std::endl;
-	}
 	bvh = std::make_unique<BVH>(prims, SPLIT_METHOD::SAH, 8);
-	std::cout << "# children in BVH: " << prims.size()
-		<< ", BVH bounds: " << bvh->bounds() << std::endl;
 }
 bool Node::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	if (bvh){
