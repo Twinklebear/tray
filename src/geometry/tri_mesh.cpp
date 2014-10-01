@@ -13,8 +13,6 @@
 #include "geometry/geometry.h"
 #include "geometry/tri_mesh.h"
 
-#include <chrono>
-
 //Various capture utilities for loading the wavefront obj format
 static Point capture_point2(const std::string &s);
 static Point capture_point3(const std::string &s);
@@ -114,18 +112,10 @@ void Triangle::refine(std::vector<Geometry*> &prims){
 
 TriMesh::TriMesh(const std::string &file, bool no_bobj){
 	load_model(file, no_bobj);
-	auto start = std::chrono::high_resolution_clock::now();
-
 	refine_tris();
 	std::vector<Geometry*> ref_tris;
 	refine(ref_tris);
 	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 32};
-
-	auto end = std::chrono::high_resolution_clock::now();
-	auto elapsed = end - start;
-	std::cout << "BVH build for " << file << " took: "
-		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-		<< "ms\n";
 }
 TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 	const std::vector<Normal> &norm, const std::vector<int> vert_idx)
@@ -241,7 +231,6 @@ void TriMesh::load_wobj(const std::string &file){
 	}
 }
 void TriMesh::load_bobj(const std::string &file){
-	auto start = std::chrono::high_resolution_clock::now();
 	std::FILE *fin = std::fopen(file.c_str(), "rb");
 	uint32_t nverts = 0, ntris = 0;
 	std::fread(&nverts, sizeof(uint32_t), 1, fin);
@@ -255,11 +244,6 @@ void TriMesh::load_bobj(const std::string &file){
 	std::fread(normals.data(), sizeof(Normal), nverts, fin);
 	std::fread(vert_indices.data(), sizeof(int), 3 * ntris, fin);
 	std::fclose(fin);
-	auto end = std::chrono::high_resolution_clock::now();
-	auto elapsed = end - start;
-	std::cout << "Bobj loading of " << file << " took: "
-		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-		<< "ms\n";
 }
 Point capture_point2(const std::string &s){
 	Point p;
