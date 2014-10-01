@@ -81,6 +81,7 @@ int main(int argc, char **argv){
 	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
 	Scene scene = load_scene(scene_file, depth);
+	scene.get_root().flatten_children();
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
 	}

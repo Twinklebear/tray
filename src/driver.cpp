@@ -135,27 +135,10 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 	return color;
 }
 bool Worker::intersect_nodes(Node &node, Ray &ray, DifferentialGeometry &diff_geom){
-	bool hit = false;
-	//Transform the ray into this nodes space
-	Ray node_space = ray;
-	auto &inv_transform = node.get_inv_transform();
-	inv_transform(ray, node_space);
-	//Test this node then its children
-	if (node.get_geometry() && node.get_geometry()->bound().intersect(node_space)){
-		hit = node.get_geometry()->intersect(node_space, diff_geom);
-		if (hit){
-			diff_geom.node = &node;
-		}
+	if (node.bound().intersect(ray)){
+		return node.intersect(ray, diff_geom);
 	}
-	for (auto &c : node.get_children()){
-		hit = intersect_nodes(*c, node_space, diff_geom) || hit;
-	}
-	if (hit){
-		auto &transform = node.get_transform();
-		transform(diff_geom, diff_geom);
-		ray.max_t = node_space.max_t;
-	}
-	return hit;
+	return false;
 }
 std::vector<Light*> Worker::visible_lights(const Point &p, const Normal &n){
 	//Maybe the list passed should be a pair of { light, light_mod } to account
