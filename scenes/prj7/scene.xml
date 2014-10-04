@@ -11,19 +11,23 @@
       <scale value="1000"/>
       <rotate angle="30" z="1"/>
     </object>
+	<!--
 	<object type="obj" name="../models/teapot_hres.obj" material="bricks">
       <scale value="0.8"/>
       <rotate angle="-50" z="1"/>
       <translate x="2" y="-5" z="0"/>
     </object>
+-->
     <object type="sphere" name="sphere1" material="checkerMtl">
       <scale value="6"/>
       <translate x="15" y="2" z="6"/>
     </object>
+	<!--
     <object type="sphere" name="sphere2" material="refractive">
       <scale value="5"/>
       <translate x="-8" y="-16" z="5"/>
     </object>
+-->
  
     <!-- Materials -->
     <material type="blinn" name="ground">
@@ -33,17 +37,17 @@
         <scale value="0.01"/>
       </diffuse>
       <specular value="0"/>
-      <reflection value="0.5"/>
+	  <!--<reflection value="0.5"/>-->
     </material>
     <material type="blinn" name="checkerMtl">
       <diffuse texture="checkerboard">
-        <color1 r="0.3" g="0" b="0" />
-        <color2 r="0.7" g="0" b="0" />
+        <color1 r="0.1" g="0.1" b="0.1" />
+        <color2 r="0.1" g="0.1" b="0.1" />
         <scale x="0.25" y="0.4"/>
       </diffuse>
       <specular value="0.8"/>
       <glossiness value="100"/>
-      <reflection value="0.5"/>
+      <reflection value="1"/>
     </material>
     <material type="blinn" name="bricks">
       <diffuse texture="../textures/bricks.ppm">

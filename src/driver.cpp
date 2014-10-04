@@ -59,6 +59,7 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 	if (intersect_nodes(node, ray, diff_geom)){
 		const Material *mat = diff_geom.node->get_material();
 		if (mat){
+			diff_geom.compute_differentials(ray);
 			if (ray.depth < scene.get_max_depth()){
 				//Track reflection contribution from Fresnel term to be incorporated
 				//into reflection calculation
@@ -116,16 +117,11 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 				if (mat->is_reflective() || fresnel_refl != Colorf{0, 0, 0}){
 					Colorf refl_col = mat->reflective(diff_geom) + fresnel_refl;
 					//Reflect and cast ray
-					Vector n{diff_geom.normal.normalized()};
-					Vector dir = ray.d - 2 * n.dot(ray.d) * n;
-					RayDifferential refl{diff_geom.point, dir.normalized(), ray, 0.001};
-					refl.rx = Ray{refl.o, refl.d, ray, 0.001};
-					refl.ry = Ray{refl.o, refl.d, ray, 0.001};
+					RayDifferential refl = ray.reflect(diff_geom);
 					color += shade_ray(refl, scene.get_root()) * refl_col;
 				}
 			}
 			std::vector<Light*> lights = visible_lights(diff_geom.point, diff_geom.normal);
-			diff_geom.compute_differentials(ray);
 			color += mat->shade(ray, diff_geom, lights);
 		}
 		else {
