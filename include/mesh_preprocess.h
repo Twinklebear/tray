@@ -20,7 +20,7 @@ void batch_process(char **argv, int argc);
  * [float]: 3 * num verts positions
  * [float]: 3 * num verts texcoords
  * [float]: 3 * num verts normals
- * [int]: num tris indices
+ * [int]: 3 * num tris indices
  */
 bool process_wobj(const std::string &file);
 
