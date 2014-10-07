@@ -48,7 +48,7 @@
 
 
     <material type="blinn" name="ground">
-      <diffuse r="1" g="1" b="1" texture="checkerboard">
+      <diffuse texture="checkerboard">
         <color1 r="0.2" g="0.2" b="0.2"/>
         <color2 r="0.6" g="0.6" b="0.6"/>
         <scale value="0.01"/>
