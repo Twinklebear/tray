@@ -37,6 +37,10 @@ void Worker::render(){
 				RayDifferential ray = camera.generate_raydifferential(s[0], s[1]);
 				Colorf color = shade_ray(ray, scene.get_root());
 				color.normalize();
+				Color24 c = color;
+				if (c.r == 0 && c.g == 0 && c.b == 0){
+					std::cout << "DEAD COLOR\n";
+				}
 				target.write_pixel(s[0], s[1], color);
 				target.write_depth(s[0], s[1], ray.max_t);
 
@@ -127,6 +131,9 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 		else {
 			color = Colorf{0.4, 0.4, 0.4};
 		}
+	}
+	else {
+		color = Colorf{0, 0, 0.2};
 	}
 	return color;
 }

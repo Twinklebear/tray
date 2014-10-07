@@ -20,7 +20,9 @@ RayDifferential RayDifferential::reflect(const DifferentialGeometry &dg) const {
 		float ddn_dy = do_dy.dot(n) + d.dot(dn_dy);
 		refl.rx.d = refl.d - do_dx + 2 * Vector{d.dot(n) * dn_dx + ddn_dx * n};
 		refl.ry.d = refl.d - do_dy + 2 * Vector{d.dot(n) * dn_dy + ddn_dy * n};
-		//std::cout << "Reflected RayDifferential = " << refl << "\n\n";
+		refl.rx.d = refl.rx.d.normalized();
+		refl.ry.d = refl.ry.d.normalized();
+		std::cout << "Reflected RayDifferential = " << refl << "\n\n";
 	}
 	return refl;
 }

@@ -18,7 +18,7 @@
     </object>
 -->
     <object type="plane" name="sphere1" material="checkerMtl">
-      <scale value="8"/>
+      <scale value="10"/>
 	  <rotate angle="91" x="1"/>
       <translate x="0" y="0" z="6"/>
     </object>
@@ -86,7 +86,7 @@
   </scene>
  
   <camera>
-    <position x="0" y="-70" z="15"/>
+    <position x="0" y="-50" z="15"/>
     <target x="0" y="0" z="3"/>
     <up x="0" y="0" z="1"/>
     <fov value="30"/>
