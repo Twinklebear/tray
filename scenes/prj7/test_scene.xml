@@ -17,10 +17,10 @@
       <translate x="2" y="-5" z="0"/>
     </object>
 -->
-    <object type="plane" name="sphere1" material="checkerMtl">
+    <object type="plane" name="sphere1" material="pure_reflective">
       <scale value="10"/>
 	  <rotate angle="91" x="1"/>
-      <translate x="0" y="0" z="6"/>
+      <translate x="0" y="1" z="8"/>
     </object>
 	<!--
     <object type="sphere" name="sphere2" material="refractive">
@@ -30,7 +30,7 @@
 -->
 	<object type="sphere" name="dbg_sph" material="dbg_test">
 		<scale value="3"/>
-		<translate x="0" y="-70" z="3"/>
+		<translate x="0" y="-35" z="3"/>
 	</object>
  
     <!-- Materials -->
@@ -39,6 +39,14 @@
 		<specular value="0.4"/>
 		<glossiness value="10"/>
 	</material>
+	<material type="blinn" name="pure_reflective">
+	  <diffuse value="0"/>
+      <specular value="0"/>
+      <glossiness value="0"/>
+      <reflection value="1"/>
+    </material>
+
+
     <material type="blinn" name="ground">
       <diffuse r="1" g="1" b="1" texture="checkerboard">
         <color1 r="0.2" g="0.2" b="0.2"/>
