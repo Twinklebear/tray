@@ -154,38 +154,9 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			//Push the new child on and assign its geometry, the transform will
 			//be setup in further iterations when we read the scale/translate elements
 			children.push_back(std::make_shared<Node>(geom, mat, Transform{}, name));
+			read_transform(e, node.get_transform());
+			node.get_inv_transform() = node.get_transform().inverse();
 			load_node(e, *children.back(), scene, file);
-		}
-		else if (c->Value() == std::string{"scale"}){
-			Vector v{1, 1, 1};
-			read_vector(c->ToElement(), v);
-			auto &transform = node.get_transform();
-			auto &inv_transform = node.get_inv_transform();
-			Transform t = Transform::scale(v.x, v.y, v.z);
-			transform = t * transform;
-			inv_transform = inv_transform * t.inverse();
-
-		}
-		else if (c->Value() == std::string{"translate"}){
-			Vector v;
-			read_vector(c->ToElement(), v);
-			auto &transform = node.get_transform();
-			auto &inv_transform = node.get_inv_transform();
-			Transform t = Transform::translate(v);
-			transform = t * transform;
-			inv_transform = inv_transform * t.inverse();
-
-		}
-		else if (c->Value() == std::string{"rotate"}){
-			Vector v;
-			float d = 0;
-			read_vector(c->ToElement(), v);
-			read_float(c->ToElement(), d, "angle");
-			auto &transform = node.get_transform();
-			auto &inv_transform = node.get_inv_transform();
-			Transform t = Transform::rotate(v, d);
-			transform = t * transform;
-			inv_transform = inv_transform * t.inverse();
 		}
 	}
 }
@@ -250,5 +221,28 @@ void read_point(tinyxml2::XMLElement *elem, Point &p){
 }
 void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib){
 	elem->QueryFloatAttribute(attrib.c_str(), &f);
+}
+void read_transform(tinyxml2::XMLElement *elem, Transform &t){
+	using namespace tinyxml2;
+	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
+		if (c->Value() == std::string{"scale"}){
+			Vector v{1, 1, 1};
+			read_vector(c->ToElement(), v);
+			t = Transform::scale(v.x, v.y, v.z) * t;
+		}
+		else if (c->Value() == std::string{"translate"}){
+			Vector v;
+			read_vector(c->ToElement(), v);
+			t = Transform::translate(v) * t;
+
+		}
+		else if (c->Value() == std::string{"rotate"}){
+			Vector v;
+			float d = 0;
+			read_vector(c->ToElement(), v);
+			read_float(c->ToElement(), d, "angle");
+			t = Transform::rotate(v, d) * t;
+		}
+	}
 }
 

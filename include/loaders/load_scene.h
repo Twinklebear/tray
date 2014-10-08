@@ -4,6 +4,7 @@
 #include <string>
 #include <tinyxml2.h>
 #include "linalg/vector.h"
+#include "linalg/transform.h"
 #include "geometry/geometry.h"
 #include "scene.h"
 
@@ -31,6 +32,11 @@ void read_color(tinyxml2::XMLElement *elem, Colorf &c);
  * Read the x,y,z attributes of the XMLElement and return it
  */
 void read_point(tinyxml2::XMLElement *elem, Point &p);
+/*
+ * Read a transform from the scale, rotate and translate elements
+ * which should be children of the element passed
+ */
+void read_transform(tinyxml2::XMLElement *elem, Transform &t);
 /*
  * Read the value float attribute of the XMLElement and return it
  * optionally passing the attribute name to read from. Default is value
