@@ -38,36 +38,26 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	else {
 		//Read any scaling and translation being applied to the mapping
 		Vector scale{1}, translate;
-		XMLElement *c = elem->FirstChildElement("scale");
-		if (c){
-			read_vector(c, scale);
-			//The scale specified in the scene files is 2 / scale of what we
-			//want to happen to the texture, very odd.
-			scale = Vector{2} / scale;
-		}
-		c = elem->FirstChildElement("translate");
-		if (c){
-			read_vector(c, translate);
-		}
+		Transform transform;
+		read_transform(elem, transform);
 
 		std::regex match_file{".*\\.[a-zA-Z]{3}$"};
 		std::smatch match;
 		if (std::regex_match(name, match, match_file)){
 			std::string tex_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
-			//TODO: read the scale & translate
 			cache.add(name, std::make_unique<ImageTexture>(tex_file,
-				std::make_unique<UVMapping>(scale, translate)));
+				std::make_unique<UVMapping>(transform)));
 			tex = cache.get(name);
 		}
 		else if (name == "uv"){
 			name = "__" + mat_name + "_" + name + "_tex";
-			cache.add(name, std::make_unique<UVTexture>(std::make_unique<UVMapping>(scale, translate)));
+			cache.add(name, std::make_unique<UVTexture>(std::make_unique<UVMapping>(transform)));
 			tex = cache.get(name);
 		}
 		else if (name == "checkerboard"){
 			Colorf a, b{1};
 			//My checkerboard colors are flipped compared to what Cem's expect
-			c = elem->FirstChildElement("color1");
+			XMLElement *c = elem->FirstChildElement("color1");
 			if (c){
 				read_color(c, b);
 			}
@@ -76,7 +66,7 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 				read_color(c, a);
 			}
 			name = "__" + mat_name + "_" + name + "_tex";
-			cache.add(name, std::make_unique<CheckerboardTexture>(a, b, std::make_unique<UVMapping>(scale, translate)));
+			cache.add(name, std::make_unique<CheckerboardTexture>(a, b, std::make_unique<UVMapping>(transform)));
 			tex = cache.get(name);
 
 			std::cout << "Texture " << name
