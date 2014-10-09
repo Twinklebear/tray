@@ -46,7 +46,7 @@
       <reflection value="0.5"/>
     </material>
     <material type="blinn" name="bricks">
-		<diffuse texture="../textures/bricks.ppm">
+	  <diffuse texture="../textures/bricks.ppm">
       </diffuse>
       <specular value="0.3"/>
       <glossiness value="10"/>
@@ -81,4 +81,3 @@
     <height value="600"/>
   </camera>
 </xml>
-

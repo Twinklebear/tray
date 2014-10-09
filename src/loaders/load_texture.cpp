@@ -36,10 +36,9 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	}
 	//We need to load a texture file or procedural texture
 	else {
-		//Read any scaling and translation being applied to the mapping
-		Vector scale{1}, translate;
 		Transform transform;
 		read_transform(elem, transform);
+		transform = transform.inverse();
 
 		std::regex match_file{".*\\.[a-zA-Z]{3}$"};
 		std::smatch match;
@@ -68,10 +67,6 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 			name = "__" + mat_name + "_" + name + "_tex";
 			cache.add(name, std::make_unique<CheckerboardTexture>(a, b, std::make_unique<UVMapping>(transform)));
 			tex = cache.get(name);
-
-			std::cout << "Texture " << name
-				<< " scale: " << scale << ", translate: " << translate
-				<< std::endl;
 		}
 		else {
 			std::cout << "Procedural texture " << name << " not implemented\n";

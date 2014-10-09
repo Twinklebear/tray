@@ -11,6 +11,13 @@ CheckerboardTexture::CheckerboardTexture(const Colorf &a, const Colorf &b,
 {}
 Colorf CheckerboardTexture::sample(const DifferentialGeometry &dg) const {
 	TextureSample sample = mapping->map(dg);
+	//Cem considers each check to be 0.5 wide instead of 1 unit wide so scale to match
+	sample.s *= 2;
+	sample.t *= 2;
+	sample.ds_dx *= 2;
+	sample.ds_dy *= 2;
+	sample.dt_dx *= 2;
+	sample.dt_dy *= 2;
 	//Filter the checkerboard texture by computing an AABB about (s, t)
 	//hs and ht are the half vectors of this box in s and t respectively
 	float hs = std::max(std::abs(sample.ds_dx), std::abs(sample.ds_dy));
