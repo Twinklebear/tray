@@ -154,9 +154,10 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			//Push the new child on and assign its geometry, the transform will
 			//be setup in further iterations when we read the scale/translate elements
 			children.push_back(std::make_shared<Node>(geom, mat, Transform{}, name));
-			read_transform(e, node.get_transform());
-			node.get_inv_transform() = node.get_transform().inverse();
-			load_node(e, *children.back(), scene, file);
+			Node &n = *children.back();
+			read_transform(e, n.get_transform());
+			n.get_inv_transform() = n.get_transform().inverse();
+			load_node(e, n, scene, file);
 		}
 	}
 }
@@ -234,7 +235,6 @@ void read_transform(tinyxml2::XMLElement *elem, Transform &t){
 			Vector v;
 			read_vector(c->ToElement(), v);
 			t = Transform::translate(v) * t;
-
 		}
 		else if (c->Value() == std::string{"rotate"}){
 			Vector v;
