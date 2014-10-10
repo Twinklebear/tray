@@ -10,7 +10,10 @@ CheckerboardTexture::CheckerboardTexture(const Colorf &a, const Colorf &b,
 	: mapping(std::move(mapping)), a(a), b(b)
 {}
 Colorf CheckerboardTexture::sample(const DifferentialGeometry &dg) const {
-	TextureSample sample = mapping->map(dg);
+	return sample(mapping->map(dg));
+}
+Colorf CheckerboardTexture::sample(const TextureSample &sp) const {
+	TextureSample sample = sp;
 	//Cem considers each check to be 0.5 wide instead of 1 unit wide so scale to match
 	sample.s *= 2;
 	sample.t *= 2;
@@ -44,6 +47,7 @@ Colorf CheckerboardTexture::sample(const DifferentialGeometry &dg) const {
 	}
 	//Interpolate the checks based on how much area each occupies in our sample
 	return (1 - area_b) * a + area_b * b;
+
 }
 float CheckerboardTexture::step_integral(float x) const {
 	float fx = std::floor(x / 2);

@@ -88,11 +88,11 @@ Scene load_scene(const std::string &file, int depth){
 	Texture *background = nullptr, *environment = nullptr;
 	XMLElement *tex = scene_node->FirstChildElement("background");
 	if (tex){
-		background = load_texture(tex, "scene", tcache, file);
+		background = load_texture(tex, "scene_background", tcache, file);
 	}
 	tex = scene_node->FirstChildElement("environment");
 	if (tex){
-		environment = load_texture(tex, "scene", tcache, file);
+		environment = load_texture(tex, "scene_environment", tcache, file);
 	}
 
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),

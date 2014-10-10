@@ -1,20 +1,23 @@
-#ifndef CHECKERBOARD_TEXTURE_H
-#define CHECKERBOARD_TEXTURE_H
+#ifndef REMAPPED_TEXTURE_H
+#define REMAPPED_TEXTURE_H
 
-#include <memory>
 #include "texture.h"
 #include "texture_mapping.h"
 
 /*
- * Displays a checkerboard of the two color values
+ * A bit of a hack, allows for re-using an existing texture but
+ * with a different texture mapping
  */
-class CheckerboardTexture : public Texture {
+class RemappedTexture : public Texture {
+	const Texture &texture;
 	std::unique_ptr<TextureMapping> mapping;
-	Colorf a, b;
 
 public:
-	CheckerboardTexture(const Colorf &a, const Colorf &b,
-		std::unique_ptr<TextureMapping> mapping);
+	/*
+	 * Create the remapped texture to apply sample an existing texture
+	 * with a new mapping scheme
+	 */
+	RemappedTexture(const Texture &texture, std::unique_ptr<TextureMapping> mapping);
 	/*
 	 * Sample the texture color for the piece of geometry being textured
 	 */
@@ -24,13 +27,6 @@ public:
 	 * This method samples the texture directly using the texture sample passed in
 	 */
 	Colorf sample(const TextureSample &sample) const override;
-
-private:
-	/*
-	 * Compute the integral of the checkerboard step function so
-	 * we can interpolate the textures when blending between them
-	 */
-	float step_integral(float x) const;
 };
 
 #endif

@@ -4,6 +4,9 @@
 #include "linalg/transform.h"
 #include "texture_mapping.h"
 
+/*
+ * A mapping that maps the object's uv coordinates to s,t in texture space
+ */
 class UVMapping : public TextureMapping {
 	Transform transform;
 

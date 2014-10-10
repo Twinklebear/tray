@@ -18,12 +18,13 @@ ImageTexture::ImageTexture(const std::string &file, std::unique_ptr<TextureMappi
 	}
 }
 Colorf ImageTexture::sample(const DifferentialGeometry &dg) const {
+	return sample(mapping->map(dg));
+}
+Colorf ImageTexture::sample(const TextureSample &sample) const {
+	static const float inv = 1.f / 255.f;
 	if (width == 0){
 		return Colorf{0, 0, 0};
 	}
-	static float inv = 1.f / 255.f;
-	TextureSample sample = mapping->map(dg);
-	//TODO: No filtering for now
 	int ts = static_cast<int>(sample.s * width);
 	int tt = static_cast<int>(sample.t * height);
 	switch (wrap_mode){

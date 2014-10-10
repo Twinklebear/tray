@@ -135,11 +135,11 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 			color = Colorf{0.4, 0.4, 0.4};
 		}
 	}
-	/*
-	else {
-		color = Colorf{0, 0, 0.2};
+	else if (scene.get_environment()){
+		DifferentialGeometry dg;
+		dg.point = Point{ray.d.x, ray.d.y, ray.d.z};
+		color = scene.get_environment()->sample(dg);
 	}
-	*/
 	return color;
 }
 bool Worker::intersect_nodes(Node &node, Ray &ray, DifferentialGeometry &diff_geom){

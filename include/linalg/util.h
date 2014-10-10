@@ -8,6 +8,8 @@
 
 const float PI = 3.14159;
 const float TAU = 6.28318;
+const float INV_PI = 1.f / PI;
+const float INV_TAU = 1.f / TAU;
 
 /*
  * Enum for storing x/y/z axis ids
@@ -43,6 +45,13 @@ inline float log_2(float x){
 template<typename T>
 constexpr int sign(T x){
 	return (T{0} < x) - (x < T{0});
+}
+constexpr inline float spherical_theta(const Vector &v){
+	return std::acos(clamp(v.z, -1.f, 1.f));
+}
+inline float spherical_phi(const Vector &v){
+	float p = std::atan2(v.y, v.x);
+	return p < 0.f ? p + TAU : p;
 }
 /*
  * Round x up to the nearest power of 2
