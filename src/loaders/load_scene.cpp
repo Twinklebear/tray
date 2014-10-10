@@ -19,6 +19,7 @@
 #include "loaders/load_light.h"
 #include "loaders/load_sampler.h"
 #include "loaders/load_scene.h"
+#include "loaders/load_texture.h"
 #include "scene.h"
 
 /*
@@ -82,9 +83,25 @@ Scene load_scene(const std::string &file, int depth){
 		filter = std::make_unique<BoxFilter>(0.5, 0.5);
 		sampler = std::make_unique<UniformSampler>(0, w, 0, h);
 	}
+	//See if we have any background or environment textures
+	TextureCache tcache;
+	Texture *background = nullptr, *environment = nullptr;
+	XMLElement *tex = scene_node->FirstChildElement("background");
+	if (tex){
+		background = load_texture(tex, "scene", tcache, file);
+	}
+	tex = scene_node->FirstChildElement("environment");
+	if (tex){
+		environment = load_texture(tex, "scene", tcache, file);
+	}
+
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
 		std::move(filter)};
-	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), depth};
+	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), depth,
+		background, environment};
+	//Set the scene to use the texture cache we started setting up with the background and
+	//environment textures
+	scene.get_tex_cache() = std::move(tcache);
 	
 	//Run a pre-pass to load the materials so they're available when loading the objects
 	XMLElement *mats = scene_node->FirstChildElement("material");

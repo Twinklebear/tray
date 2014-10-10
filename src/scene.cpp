@@ -5,11 +5,13 @@
 #include "render/render_target.h"
 #include "render/camera.h"
 #include "samplers/sampler.h"
+#include "textures/texture.h"
 #include "scene.h"
 
-Scene::Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, int depth)
+Scene::Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, int depth,
+	const Texture *background, const Texture *environment)
 	: camera(std::move(camera)), render_target(std::move(target)), sampler(std::move(sampler)),
-	root(nullptr, nullptr, Transform{}, "root"), max_depth(depth)
+	root(nullptr, nullptr, Transform{}, "root"), max_depth(depth), background(background), environment(environment)
 {}
 GeometryCache& Scene::get_geom_cache(){
 	return geom_cache;
@@ -40,5 +42,11 @@ Node& Scene::get_root(){
 }
 int Scene::get_max_depth() const {
 	return max_depth;
+}
+const Texture* Scene::get_background() const {
+	return background;
+}
+const Texture* Scene::get_environment() const {
+	return environment;
 }
 

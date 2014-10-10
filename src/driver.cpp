@@ -37,12 +37,13 @@ void Worker::render(){
 				RayDifferential ray = camera.generate_raydifferential(s[0], s[1]);
 				Colorf color = shade_ray(ray, scene.get_root());
 				color.normalize();
-				Color24 c = color;
-				/*
-				if (c.r == 0 && c.g == 0 && c.b == 0){
-					std::cout << "DEAD COLOR\n";
+				//If we didn't hit anything and the scene has a background use that
+				if (scene.get_background() && color == Colorf{0, 0, 0}){
+					DifferentialGeometry dg;
+					dg.u = s[0] / target.get_width();
+					dg.v = s[1] / target.get_height();
+					color = scene.get_background()->sample(dg);
 				}
-				*/
 				target.write_pixel(s[0], s[1], color);
 				target.write_depth(s[0], s[1], ray.max_t);
 

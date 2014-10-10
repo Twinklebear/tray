@@ -10,6 +10,7 @@
 #include "render/render_target.h"
 #include "render/camera.h"
 #include "samplers/sampler.h"
+#include "textures/texture.h"
 
 /*
  * Describes a scene that we're rendering
@@ -25,6 +26,7 @@ class Scene {
 	Node root;
 	//The max recursion depth for reflected/refracted rays
 	int max_depth;
+	const Texture *background, *environment;
 
 public:
 	/*
@@ -33,7 +35,7 @@ public:
 	 * and selecting from or adding to the geometry cache
 	 */
 	Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler,
-		int depth);
+		int depth, const Texture *background = nullptr, const Texture *environment = nullptr);
 	GeometryCache& get_geom_cache();
 	MaterialCache& get_mat_cache();
 	TextureCache& get_tex_cache();
@@ -44,6 +46,8 @@ public:
 	const Sampler& get_sampler() const;
 	Node& get_root();
 	int get_max_depth() const;
+	const Texture* get_background() const;
+	const Texture* get_environment() const;
 };
 
 #endif
