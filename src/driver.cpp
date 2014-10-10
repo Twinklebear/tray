@@ -38,7 +38,7 @@ void Worker::render(){
 				Colorf color = shade_ray(ray, scene.get_root());
 				color.normalize();
 				//If we didn't hit anything and the scene has a background use that
-				if (scene.get_background() && color == Colorf{0, 0, 0}){
+				if (scene.get_background() && ray.max_t == std::numeric_limits<float>::infinity()){
 					DifferentialGeometry dg;
 					dg.u = s[0] / target.get_width();
 					dg.v = s[1] / target.get_height();
