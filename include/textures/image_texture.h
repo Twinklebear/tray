@@ -6,14 +6,7 @@
 #include <memory>
 #include "texture.h"
 #include "texture_mapping.h"
-
-/*
- * Enum to select the wrapping mode for out of bound texture coordinates
- * REPEAT: coords will be wrapped around the image via abs(x) % dim
- * CLAMP: coords will be clamped into range via clamp(x, 0, dim)
- * BLACK: out of bounds coords return black
- */
-enum class WRAP_MODE {REPEAT, CLAMP, BLACK};
+#include "mipmap.h"
 
 /*
  * A 2D image to be used as a texture
@@ -23,10 +16,9 @@ enum class WRAP_MODE {REPEAT, CLAMP, BLACK};
  */
 class ImageTexture : public Texture {
 	std::unique_ptr<TextureMapping> mapping;
-	WRAP_MODE wrap_mode;
 	//Image width, height and number of components per pixel
 	int width, height, ncomp;
-	std::vector<uint8_t> pixels;
+	MipMap mipmap;
 
 public:
 	/*
@@ -49,15 +41,15 @@ private:
 	/*
 	 * Load a texture from an image file and return the status of the load
 	 */
-	bool load_image(const std::string &file);
+	bool load_image(const std::string &file, std::vector<uint8_t> &texels);
 	/*
 	 * Load a texture from a ppm file and return the status of the load
 	 */
-	bool load_ppm(const std::string &file);
+	bool load_ppm(const std::string &file, std::vector<uint8_t> &texels);
 	/*
 	 * Load a texture using stb_image and return the status of the load
 	 */
-	bool load_stb(const std::string &file);
+	bool load_stb(const std::string &file, std::vector<uint8_t> &texels);
 };
 
 #endif
