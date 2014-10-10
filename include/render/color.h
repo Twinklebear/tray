@@ -35,6 +35,7 @@ struct Colorf {
 	Colorf& operator-=(const Colorf &c);
 	Colorf& operator*=(float s);
 	Colorf& operator/=(float s);
+	float& operator[](int i);
 	/*
 	 * Easily convert to the 8-bit/channel color representation
 	 */
