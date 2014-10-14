@@ -39,6 +39,11 @@ if (BUILD_PREVIEWER)
 	add_subdirectory(previewer)
 endif()
 
+# If user has request trilinear texture filtering
+if (TEX_TRILINEAR)
+	add_definitions(-DTEX_TRILINEAR)
+endif()
+
 find_package(Threads)
 add_subdirectory(src)
 

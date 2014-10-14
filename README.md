@@ -15,7 +15,8 @@ Textures
 -
 The ray tracer supports PNG (8bit channel only), BMP (non-1bpp, non-RLE), and PPM image formats for textures.
 Note that texture names beginning with \_\_ are reserved for generated texture names the ray tracer may need to create
-and should not be used.
+and should not be used. If you want to compare trilinear filtering to EWA filtering for textures you can pass
+`-DTEX_TRILINEAR=1` to indicate that trilinear filtering should be used for texture sampling instead of the default (EWA).
 
 Extras
 -
