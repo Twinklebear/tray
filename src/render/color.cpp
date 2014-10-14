@@ -3,6 +3,16 @@
 #include "render/color.h"
 
 Color24::Color24(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+uint8_t& Color24::operator[](int i){
+	switch (i){
+		case 0:
+			return r;
+		case 1:
+			return g;
+		default:
+			return b;
+	}
+}
 
 Colorf::Colorf(float c) : r(c), g(c), b(c){}
 Colorf::Colorf(float r, float g, float b) : r(r), g(g), b(b){}
@@ -34,9 +44,9 @@ Colorf& Colorf::operator/=(float s){
 }
 float& Colorf::operator[](int i){
 	switch (i){
-		case 1:
+		case 0:
 			return r;
-		case 2:
+		case 1:
 			return g;
 		default:
 			return b;
