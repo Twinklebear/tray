@@ -29,6 +29,8 @@ class MipMap {
 		MipLevel(int width, int height, const std::vector<uint8_t> &texels = std::vector<uint8_t>{});
 	};
 	std::vector<MipLevel> pyramid;
+	const static int WEIGHT_LUT_SIZE = 128;
+	static std::array<float, WEIGHT_LUT_SIZE> weight_table;
 
 public:
 	/*
@@ -65,6 +67,22 @@ private:
 	 * using a triangle filter
 	 */
 	Colorf triangle_filter(int lvl, float s, float t) const;
+	/*
+	 * Perform elliptically weighted average filtering to find the color
+	 * for the sample
+	 */
+	Colorf sample_ewa(const TextureSample &samp, std::array<float, 2> ds,
+		std::array<float, 2> dt) const;
+	/*
+	 * Compute the elliptically weighted average color at the sample position
+	 */
+	Colorf ewa_filter(int lvl, float s, float t, std::array<float, 2> ds,
+		std::array<float, 2> dt) const;
+	/*
+	 * Initialize the precomputed weight lookup table for EWA filtering used
+	 * by all the mip-maps
+	 */
+	static void init_weight_table();
 };
 
 #endif
