@@ -91,11 +91,11 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 		det = 1 / det;
 		std::array<Vector, 2> dp{a - c, b - c};
 		diff_geom.dp_du = (dv[1] * dp[0] - dv[0] * dp[1]) * det;
-		diff_geom.dp_dv = (-du[1] * dp[0] - du[0] * dp[1]) * det;
+		diff_geom.dp_dv = (-du[1] * dp[0] + du[0] * dp[1]) * det;
 
 		std::array<Normal, 2> dn{na - nc, nb - nc};
 		diff_geom.dn_du = (dv[1] * dn[0] - dv[0] * dn[1]) * det;
-		diff_geom.dn_dv = (-du[1] * dn[0] - du[0] * dn[1]) * det;
+		diff_geom.dn_dv = (-du[1] * dn[0] + du[0] * dn[1]) * det;
 	}
 	diff_geom.u = bary[2] * ta.x + bary[0] * tb.x + bary[1] * tc.x;
 	diff_geom.v = bary[2] * ta.y + bary[0] * tb.y + bary[1] * tc.y;
