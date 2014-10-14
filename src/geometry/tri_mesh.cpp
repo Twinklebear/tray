@@ -22,9 +22,12 @@ static std::array<int, 3> capture_vertex(const std::string &s);
 
 Triangle::Triangle(int a, int b, int c, const TriMesh *mesh) : a(a), b(b), c(c), mesh(mesh){}
 bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+	const Point &pa = mesh->vertex(a);
+	const Point &pb = mesh->vertex(b);
+	const Point &pc = mesh->vertex(c);
 	const std::array<Vector, 2> e{
-		mesh->vertex(b) - mesh->vertex(a),
-		mesh->vertex(c) - mesh->vertex(a)
+		pb - pa,
+		pc - pa
 	};
 	std::array<Vector, 2> s;
 	s[0] = ray.d.cross(e[1]);
@@ -89,7 +92,7 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
 	}
 	else {
 		det = 1 / det;
-		std::array<Vector, 2> dp{a - c, b - c};
+		std::array<Vector, 2> dp{pa - pc, pb - pc};
 		diff_geom.dp_du = (dv[1] * dp[0] - dv[0] * dp[1]) * det;
 		diff_geom.dp_dv = (-du[1] * dp[0] + du[0] * dp[1]) * det;
 
