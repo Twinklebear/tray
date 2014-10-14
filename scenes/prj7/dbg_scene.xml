@@ -1,38 +1,12 @@
 <xml>
   <scene>
-	  <!--
-	<background r="1" g="1" b="1" texture="../textures/clouds.ppm">
-      <scale y="0.4"/>
-      <translate y="-0.1"/>
-    </background>
-	<environment value="0.3" texture="../textures/clouds.ppm"/>
- 	-->    
-
-    <!-- Objects -->
-	<!--
-    <object type="plane" name="groundPlane" material="ground">
-      <scale value="1000"/>
-      <rotate angle="30" z="1"/>
-    </object>
-	-->
+	<!-- Objects -->
 	<object type="obj" name="../models/plane.obj" material="bricks">
-      <scale value="4"/>
-	  <!--<rotate angle="-50" z="1"/>-->
-	  <rotate angle="30" x="1"/>
-      <translate x="2" y="-5" z="0"/>
+      <scale value="10"/>
+	  <rotate angle="74" x="1"/>
     </object>
-	<!--
-    <object type="sphere" name="sphere1" material="checkerMtl">
-      <scale value="6"/>
-      <translate x="15" y="2" z="6"/>
-    </object>
-    <object type="sphere" name="sphere2" material="refractive">
-      <scale value="5"/>
-      <translate x="-8" y="-16" z="5"/>
-    </object>
-	-->
- 
-    <!-- Materials -->
+
+	<!-- Materials -->
     <material type="blinn" name="ground">
       <diffuse r="1" g="1" b="1" texture="checkerboard">
         <color1 r="0.2" g="0.2" b="0.2"/>
@@ -71,17 +45,13 @@
     </light>
     <light type="direct" name="directLight">
       <intensity value="0.6"/>
-      <direction x="-1" y="0.2" z="-1"/>
-    </light>
-    <light type="direct" name="directLight2">
-      <intensity value="0.4"/>
-      <direction x="1" y="0.3" z="-1"/>
+      <direction x="0" y="1" z="0"/>
     </light>
   </scene>
  
   <camera>
-    <position x="0" y="-70" z="15"/>
-    <target x="2" y="0" z="3"/>
+    <position x="0" y="-40" z="0"/>
+    <target x="0" y="0" z="0"/>
     <up x="0" y="0" z="1"/>
     <fov value="30"/>
     <width value="800"/>
