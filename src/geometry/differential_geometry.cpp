@@ -41,8 +41,6 @@ void DifferentialGeometry::compute_differentials(const RayDifferential &r){
 			axes[0] = AXIS::X;
 			axes[1] = AXIS::Y;
 		}
-		axes[0] = AXIS::X;
-		axes[1] = AXIS::Y;
 		std::array<float, 4> mat{
 			dp_du[axes[0]], dp_dv[axes[0]],
 			dp_du[axes[1]], dp_dv[axes[1]]
