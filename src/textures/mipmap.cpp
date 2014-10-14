@@ -24,8 +24,10 @@ MipMap::MipMap(const std::vector<uint8_t> &texels, int width, int height, int nc
 		img.resize(w * h * ncomp);
 		for (int t = 0; t < h; ++t){
 			for (int s = 0; s < w; ++s){
-				Colorf c = 0.25 * (texel(i - 1, 2 * s, 2 * t) + texel(i - 1, 2 * s + 1, 2 * t)
+				Colorf cf = 0.25 * (texel(i - 1, 2 * s, 2 * t) + texel(i - 1, 2 * s + 1, 2 * t)
 					+ texel(i - 1, 2 * s, 2 * t + 1) + texel(i - 1, 2 * s + 1, 2 * t + 1));
+				cf.normalize();
+				Color24 c{cf};
 				//Write the number of components that we have only
 				for (int j = 0; j < ncomp; ++j){
 					img[t * w * ncomp + s * ncomp + j] = c[j];
@@ -67,6 +69,34 @@ Colorf MipMap::texel(int level, int s, int t) const {
 	}
 }
 Colorf MipMap::sample(const TextureSample &samp) const {
-	return texel(0, samp.s * width, samp.t * height);
+	return sample_trilinear(samp, 2 * std::max(std::max(std::abs(samp.ds_dx), std::abs(samp.dt_dx)),
+		std::max(std::abs(samp.ds_dy), std::abs(samp.dt_dy))));
+}
+Colorf MipMap::sample_trilinear(const TextureSample &samp, float w) const {
+	float level = pyramid.size() - 1 + std::log2(std::max(w, 1e-8f));
+	if (level < 0){
+		return triangle_filter(0, samp.s, samp.t);
+	}
+	if (level >= pyramid.size() - 1){
+		return triangle_filter(pyramid.size() - 1, 0, 0);
+	}
+	//Find integer coord of the level and the percentage we're in each
+	int lvl = static_cast<int>(level);
+	float a = level - lvl;
+	return (1 - a) * triangle_filter(lvl, samp.s, samp.t)
+		+ a * triangle_filter(lvl + 1, samp.s, samp.t);
+}
+Colorf MipMap::triangle_filter(int lvl, float s, float t) const {
+	lvl = clamp(lvl, 0, static_cast<int>(pyramid.size() - 1));
+	s = s * pyramid[lvl].width - 0.5f;
+	t = t * pyramid[lvl].height - 0.5f;
+	int si = static_cast<int>(s);
+	int ti = static_cast<int>(t);
+	float ds = s - si;
+	float dt = t - ti;
+	return (1 - ds) * (1 - dt) * texel(lvl, si, ti)
+		+ (1 - ds) * dt * texel(lvl, si, ti + 1)
+		+ ds * (1 - dt) * texel(lvl, si + 1, ti)
+		+ ds * dt * texel(lvl, si + 1, ti + 1);
 }
 

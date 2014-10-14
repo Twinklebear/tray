@@ -53,6 +53,18 @@ public:
 	 * color value for the sample
 	 */
 	Colorf sample(const TextureSample &samp) const;
+
+private:
+	/*
+	 * Perform trilinear filtering selecting the mipmap levels based
+	 * on the filter width
+	 */
+	Colorf sample_trilinear(const TextureSample &samp, float w) const;
+	/*
+	 * Compute the bilinearly interpolated color at the sample positions
+	 * using a triangle filter
+	 */
+	Colorf triangle_filter(int lvl, float s, float t) const;
 };
 
 #endif
