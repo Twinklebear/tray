@@ -3,7 +3,7 @@
 	  <environment value="0.3" texture="../textures/clouds.ppm"/>
      
     <!-- Objects -->
-    <object type="plane" name="groundPlane" material="ground">
+    <object type="plane" name="groundPlane" material="bricks">
       <scale value="1000"/>
     </object>
 	<!--
@@ -15,7 +15,7 @@
 -->
     <object type="plane" name="sphere1" material="pure_reflective">
       <scale value="10"/>
-	  <rotate angle="80" x="1"/>
+	  <rotate angle="95" x="1"/>
       <translate x="0" y="1" z="8"/>
     </object>
 	<!--
@@ -24,8 +24,8 @@
       <translate x="-8" y="-16" z="5"/>
     </object>
 -->
-	<object type="sphere" name="dbg_sph" material="dbg_test">
-		<scale value="3"/>
+	<object type="sphere" name="dbg_sph" material="ground">
+		<scale value="5"/>
 		<translate x="0" y="-35" z="3"/>
 	</object>
  
@@ -44,10 +44,10 @@
 
 
     <material type="blinn" name="ground">
-      <diffuse r="1" g="0" b="0.5" texture="checkerboard">
+      <diffuse texture="checkerboard">
         <color1 r="0.2" g="0.2" b="0.2"/>
         <color2 r="0.6" g="0.6" b="0.6"/>
-        <scale value="0.01"/>
+        <scale value="0.25"/>
       </diffuse>
       <specular value="0"/>
 	  <!--<reflection value="0.5"/>-->
@@ -64,6 +64,7 @@
     </material>
     <material type="blinn" name="bricks">
       <diffuse texture="../textures/bricks.ppm">
+		  <scale value="0.01"/>
       </diffuse>
       <specular value="0.3"/>
       <glossiness value="10"/>
@@ -90,8 +91,8 @@
   </scene>
  
   <camera>
-    <position x="0" y="-50" z="15"/>
-    <target x="0" y="0" z="3"/>
+    <position x="0" y="-45" z="15"/>
+    <target x="0" y="10" z="5"/>
     <up x="0" y="0" z="1"/>
     <fov value="30"/>
     <width value="800"/>
