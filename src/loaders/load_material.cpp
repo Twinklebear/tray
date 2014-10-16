@@ -25,8 +25,9 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 	const std::string &file)
 {
 	using namespace tinyxml2;
+	using namespace std::literals;
 	for (XMLNode *n = elem; n; n = n->NextSibling()){
-		if (n->Value() == std::string{"material"}){
+		if (n->Value() == "material"s){
 			XMLElement *m = n->ToElement();
 			std::string name = m->Attribute("name");
 			if (cache.get(name)){

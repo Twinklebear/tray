@@ -242,18 +242,19 @@ void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib)
 }
 void read_transform(tinyxml2::XMLElement *elem, Transform &t){
 	using namespace tinyxml2;
+	using namespace std::literals;
 	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
-		if (c->Value() == std::string{"scale"}){
+		if (c->Value() == "scale"s){
 			Vector v{1, 1, 1};
 			read_vector(c->ToElement(), v);
 			t = Transform::scale(v.x, v.y, v.z) * t;
 		}
-		else if (c->Value() == std::string{"translate"}){
+		else if (c->Value() == "translate"s){
 			Vector v;
 			read_vector(c->ToElement(), v);
 			t = Transform::translate(v) * t;
 		}
-		else if (c->Value() == std::string{"rotate"}){
+		else if (c->Value() == "rotate"s){
 			Vector v;
 			float d = 0;
 			read_vector(c->ToElement(), v);

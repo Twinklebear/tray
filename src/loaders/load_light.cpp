@@ -25,8 +25,9 @@ static std::unique_ptr<Light> load_pointl(tinyxml2::XMLElement *elem);
 
 void load_lights(tinyxml2::XMLElement *elem, LightCache &cache){
 	using namespace tinyxml2;
+	using namespace std::literals;
 	for (XMLNode *n = elem; n; n = n->NextSibling()){
-		if (n->Value() == std::string{"light"}){
+		if (n->Value() == "light"s){
 			XMLElement *l = n->ToElement();
 			std::string name = l->Attribute("name");
 			std::cout << "Loading light: " << name << std::endl;
