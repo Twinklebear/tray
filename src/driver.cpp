@@ -72,16 +72,16 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 				//into reflection calculation
 				Colorf fresnel_refl;
 				if (mat->is_transparent()){
-					float n_ratio = 0;
+					float eta = 0;
 					Vector n;
 					//Compute proper refractive index ratio and set normal to be on same side
 					//as indicident ray for refraction computation when entering/exiting material
 					if (diff_geom.hit_side == HITSIDE::FRONT){
-						n_ratio = 1.f / mat->refractive_idx();
+						eta = 1.f / mat->refractive_idx();
 						n = Vector{diff_geom.normal.normalized()};
 					}
 					else {
-						n_ratio = mat->refractive_idx();
+						eta = mat->refractive_idx();
 						n = -Vector{diff_geom.normal.normalized()};
 					}
 					//Compute Schlick's approximation to find amount reflected and transmitted at the surface
@@ -95,14 +95,9 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 					//Compute the contribution from light refracting through the object and check for total
 					//internal reflection
 					float c = -n.dot(ray.d);
-					float root = 1 - n_ratio * n_ratio * (1 - c * c);
+					float root = 1 - eta * eta * (1 - c * c);
 					if (root > 0){
-						root = std::sqrt(root);
-						Vector refr_dir = n_ratio * ray.d + (n_ratio * c - root) * n;
-						RayDifferential refr{diff_geom.point, refr_dir.normalized(), ray, 0.001};
-						//TODO: Properly reflect and refract ray differentials
-						refr.rx = Ray{refr.o, refr.d, ray, 0.001};
-						refr.ry = Ray{refr.o, refr.d, ray, 0.001};
+						RayDifferential refr = ray.refract(diff_geom, n, eta);
 						//Account for absorption by the object if the refraction ray we're casting is entering it
 						Colorf refr_col = shade_ray(refr, scene.get_root()) * mat->refractive(diff_geom) * (1 - r);
 						if (diff_geom.hit_side == HITSIDE::FRONT){
