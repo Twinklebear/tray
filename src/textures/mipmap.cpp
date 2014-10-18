@@ -1,3 +1,4 @@
+#include <cassert>
 #include <vector>
 #include "linalg/util.h"
 #include "render/color.h"
@@ -18,7 +19,11 @@ MipMap::MipMap(const std::vector<uint8_t> &texels, int width, int height, int nc
 	if (weight_table[0] == -1){
 		init_weight_table();
 	}
-	//TODO: Handle non-pow2 image dimensions
+	//We only support power of two textures at the moment
+	if (!(width && !(width & (width - 1))) || !(height && !(height & (height - 1)))){
+		std::cout << "MipMap Error: Only powers of two are supported at the moment\n";
+		assert("Non power of two texture");
+	}
 	int n_levels = 1 + static_cast<int>(log_2(std::max(width, height)));
 	pyramid.reserve(n_levels);
 	pyramid.emplace_back(width, height, texels);
