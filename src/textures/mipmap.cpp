@@ -20,6 +20,7 @@ MipMap::MipMap(const std::vector<uint8_t> &texels, int width, int height, int nc
 		init_weight_table();
 	}
 	//We only support power of two textures at the moment
+	//Determine if pow2 via http://www.graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
 	if (!(width && !(width & (width - 1))) || !(height && !(height & (height - 1)))){
 		std::cout << "MipMap Error: Only powers of two are supported at the moment\n";
 		assert("Non power of two texture");
