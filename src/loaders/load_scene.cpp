@@ -190,12 +190,10 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		return g;
 	}
 	if (type == "sphere"){
-		cache.add(type, std::make_unique<Sphere>());
-		return cache.get(type);
+		return cache.add(type, std::make_unique<Sphere>());
 	}
 	else if (type == "plane"){
-		cache.add(type, std::make_unique<Plane>());
-		return cache.get(type);
+		return cache.add(type, std::make_unique<Plane>());
 	}
 	else if (type == "dbg_mesh"){
 		std::vector<Point> v = {Point{-1, 1, 0}, Point{-1, -1, 0},
@@ -205,14 +203,12 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		std::vector<Normal> n = {Normal{0, 0.5, 0.5}, Normal{0, -0.5, 0.5},
 			Normal{0, -0.5, 0.5}, Normal{0, 0.5, 0.5}};
 		std::vector<int> i = {0, 1, 2, 2, 3, 0};
-		cache.add(type, std::make_unique<TriMesh>(v, t, n, i));
-		return cache.get(type);
+		return cache.add(type, std::make_unique<TriMesh>(v, t, n, i));
 	}
 	else if (type == "obj"){
 		std::string model_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
 		std::cout << "Loading model from file: " << model_file << std::endl;
-		cache.add(name, std::make_unique<TriMesh>(model_file));
-		return cache.get(name);
+		return cache.add(name, std::make_unique<TriMesh>(model_file));
 	}
 	return nullptr;
 }

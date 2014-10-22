@@ -17,8 +17,9 @@ public:
 	/*
 	 * Add some T to the cache
 	 */
-	void add(const std::string &name, std::unique_ptr<T> t){
-		cache[name] = std::move(t);
+	T* add(const std::string &name, std::unique_ptr<T> t){
+		auto it = cache.emplace(std::make_pair(name, std::move(t)));
+		return it.first->second.get();
 	}
 	/*
 	 * Get a non-owning pointer to some T in the cache
