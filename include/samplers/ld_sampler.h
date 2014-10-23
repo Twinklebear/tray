@@ -13,7 +13,7 @@
  */
 class LDSampler : public Sampler {
 	const int spp;
-	std::mt19937 rng;
+	std::mt19937_64 rng;
 	std::uniform_int_distribution<uint32_t> distrib;
 
 public:
