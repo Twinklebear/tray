@@ -17,7 +17,7 @@ class AdaptiveSampler : public Sampler {
 	const int min_spp, max_spp;
 	//If the current pixel we're sampling needs super sampling
 	bool supersample_px;
-	std::mt19937_64 rng;
+	std::minstd_rand rng;
 	std::uniform_int_distribution<uint32_t> distrib;
 
 public:
