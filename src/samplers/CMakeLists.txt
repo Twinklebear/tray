@@ -1,2 +1,3 @@
-add_library(samplers sampler.cpp uniform_sampler.cpp stratified_sampler.cpp ld_sampler.cpp)
+add_library(samplers sampler.cpp uniform_sampler.cpp stratified_sampler.cpp
+	ld_sampler.cpp adaptive_sampler.cpp)
 
