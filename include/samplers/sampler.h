@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 #include <memory>
+#include "linalg/ray.h"
+#include "render/color.h"
 
 /*
  * A basic sampler that samples the centers of each
@@ -25,6 +27,14 @@ public:
 	 * If the sampler has finished sampling samples will be empty
 	 */
 	virtual void get_samples(std::vector<std::array<float, 2>> &samples) = 0;
+	/*
+	 * Report the results we got from sampling the scene using the samples
+	 * provided by the sampler. The results should be discarded and a new
+	 * set of samples taken if false is returned
+	 * The default implementation simply returns true
+	 */
+	virtual bool report_results(const std::vector<std::array<float, 2>> &samples,
+		const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors);
 	/*
 	 * Returns true if we haven't exhausted the sample space for
 	 * the sampler yet

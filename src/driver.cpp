@@ -31,21 +31,23 @@ void Worker::render(){
 			break;
 		}
 		std::vector<std::array<float, 2>> samples;
+		std::vector<RayDifferential> rays;
+		std::vector<Colorf> colors;
 		while (sampler->has_samples()){
 			sampler->get_samples(samples);
+			rays.reserve(samples.size());
+			colors.reserve(samples.size());
 			for (const auto &s : samples){
-				RayDifferential ray = camera.generate_raydifferential(s[0], s[1]);
-				Colorf color = shade_ray(ray, scene.get_root());
-				color.normalize();
+				rays.push_back(camera.generate_raydifferential(s[0], s[1]));
+				colors.push_back(shade_ray(rays.back(), scene.get_root()));
 				//If we didn't hit anything and the scene has a background use that
-				if (scene.get_background() && ray.max_t == std::numeric_limits<float>::infinity()){
+				if (scene.get_background() && rays.back().max_t == std::numeric_limits<float>::infinity()){
 					DifferentialGeometry dg;
 					dg.u = s[0] / target.get_width();
 					dg.v = s[1] / target.get_height();
-					color = scene.get_background()->sample(dg);
+					colors.back() = scene.get_background()->sample(dg);
 				}
-				target.write_pixel(s[0], s[1], color);
-				target.write_depth(s[0], s[1], ray.max_t);
+				colors.back().normalize();
 
 				++check_cancel;
 				if (check_cancel >= 32){
@@ -56,6 +58,14 @@ void Worker::render(){
 					}
 				}
 			}
+			if (sampler->report_results(samples, rays, colors)){
+				for (size_t i = 0; i < samples.size(); ++i){
+					target.write_pixel(samples[i][0], samples[i][1], colors[i]);
+					target.write_depth(samples[i][0], samples[i][1], rays[i].max_t);
+				}
+			}
+			rays.clear();
+			colors.clear();
 		}
 	}
 	status.store(STATUS::DONE, std::memory_order_release);
