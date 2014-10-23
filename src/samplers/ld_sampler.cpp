@@ -24,7 +24,7 @@ void LDSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 		return;
 	}
 	samples.resize(spp);
-	sample2d(samples);
+	sample2d(samples, distrib(rng), distrib(rng));
 	for (auto &s : samples){
 		s[0] += x;
 		s[1] += y;
@@ -66,8 +66,8 @@ std::vector<std::unique_ptr<Sampler>> LDSampler::get_subsamplers(int w, int h) c
 	}
 	return samplers;
 }
-void LDSampler::sample2d(std::vector<std::array<float, 2>> &samples){
-	std::array<uint32_t, 2> scramble{distrib(rng), distrib(rng)};
+void LDSampler::sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y){
+	std::array<uint32_t, 2> scramble{x, y};
 	for (uint32_t i = 0; i < samples.size(); ++i){
 		sample02(i, scramble, samples[i]);
 	}

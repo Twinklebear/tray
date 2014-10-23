@@ -29,30 +29,28 @@ public:
 	 * section of the original sampler
 	 */
 	std::vector<std::unique_ptr<Sampler>> get_subsamplers(int w, int h) const override;
-
-private:
 	/*
 	 * Generate a 2d pattern of low discrepancy samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
-	void sample2d(std::vector<std::array<float, 2>> &samples);
+	static void sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y);
 	/*
 	 * Generate a sample from a scrambled (0, 2) sequence
 	 */
-	void sample02(uint32_t n, const std::array<uint32_t, 2> &scramble,
+	static void sample02(uint32_t n, const std::array<uint32_t, 2> &scramble,
 		std::array<float, 2> &sample);
 	/*
 	 * Generate a Van der Corput low discrepancy sequence value
 	 * and scramble as described by Kollig & Keller (2002)
 	 * This method is specialized for base 2
 	 */
-	float van_der_corput(uint32_t n, uint32_t scramble);
+	static float van_der_corput(uint32_t n, uint32_t scramble);
 	/*
 	 * Generate a Sobol low discrepancy sequence value
 	 * and scramble as described by Kollig & Keller (2002)
 	 * This method is specialized for base 2
 	 */
-	float sobol2(uint32_t n, uint32_t scramble);
+	static float sobol2(uint32_t n, uint32_t scramble);
 };
 
 #endif
