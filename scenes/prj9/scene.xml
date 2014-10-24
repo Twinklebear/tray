@@ -105,7 +105,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" spp="64" min="32" max="128"/>
+	  <sampler type="adaptive" min="32" max="128"/>
   </config>
 </xml>
 

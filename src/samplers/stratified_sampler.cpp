@@ -18,9 +18,16 @@ void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 		return;
 	}
 	samples.resize(spp * spp);
+	std::vector<std::array<float, 2>> pos(spp * spp), lens(spp * spp);
 	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
-	sample2d(samples);
-	std::shuffle(samples.begin(), samples.end(), rng);
+	sample2d(pos);
+	sample2d(lens);
+	std::shuffle(pos.begin(), pos.end(), rng);
+	std::shuffle(lens.begin(), lens.end(), rng);
+	std::transform(pos.begin(), pos.end(), lens.begin(), samples.begin(),
+		[](const auto &p, const auto &l){
+			return Sample{p, l};
+		});
 	for (auto &s : samples){
 		s.img[0] += x;
 		s.img[1] += y;
@@ -61,15 +68,13 @@ std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, 
 	}
 	return samplers;
 }
-void StratifiedSampler::sample2d(std::vector<Sample> &samples){
+void StratifiedSampler::sample2d(std::vector<std::array<float, 2>> &samples){
 	float ds = 1.f / spp;
 	for (int i = 0; i < samples.size(); ++i){
 		int x = i % spp;
 		int y = i / spp;
-		samples[i].img[0] = (x + distrib(rng)) * ds;
-		samples[i].img[1] = (y + distrib(rng)) * ds;
-		samples[i].lens[0] = (x + distrib(rng)) * ds;
-		samples[i].lens[1] = (y + distrib(rng)) * ds;
+		samples[i][0] = (x + distrib(rng)) * ds;
+		samples[i][1] = (y + distrib(rng)) * ds;
 	}
 }
 

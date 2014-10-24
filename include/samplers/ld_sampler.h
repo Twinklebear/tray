@@ -33,7 +33,7 @@ public:
 	 * Generate a 2d pattern of low discrepancy samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
-	static void sample2d(std::vector<Sample> &samples, uint32_t x, uint32_t y);
+	static void sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y);
 	/*
 	 * Generate a sample from a scrambled (0, 2) sequence
 	 */

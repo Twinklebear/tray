@@ -29,12 +29,19 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	}
 	int spp = supersample_px ? max_spp : min_spp;
 	samples.resize(spp);
-	LDSampler::sample2d(samples, distrib(rng), distrib(rng));
+	std::vector<std::array<float, 2>> pos(spp), lens(spp);
+	LDSampler::sample2d(pos, distrib(rng), distrib(rng));
+	LDSampler::sample2d(lens, distrib(rng), distrib(rng));
+	std::shuffle(pos.begin(), pos.end(), rng);
+	std::shuffle(lens.begin(), lens.end(), rng);
+	std::transform(pos.begin(), pos.end(), lens.begin(), samples.begin(),
+		[](const auto &p, const auto &l){
+			return Sample{p, l};
+		});
 	for (auto &s : samples){
 		s.img[0] += x;
 		s.img[1] += y;
 	}
-	std::shuffle(samples.begin(), samples.end(), rng);
 }
 bool AdaptiveSampler::report_results(const std::vector<Sample> &samples,
 	const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors)
