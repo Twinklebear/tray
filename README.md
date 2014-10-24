@@ -32,6 +32,10 @@ parameters are listed below by the type string that selects them.
 	- spp - number of samples to be taken per pixel in x & y, eg. sampler takes spp\*spp samples per pixel
 - lowdiscrepancy - Selects a low-discrepancy which uses a (0, 2) sequence to generate sample positions
 	- spp - number of samples to be taken per pixel
+- adaptive - Selects the number of samples to take based on variance of the luminance of a lower number of samples. Uses
+	(0, 2) sequence to pick sample positions.
+	- min - number of samples to take when determining variance in luminance
+	- max - number of samples to take in high-variance regions
 
 Filters
 -
