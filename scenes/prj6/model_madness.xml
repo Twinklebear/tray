@@ -219,7 +219,7 @@
 
   <!-- Extra config options specific to my ray tracer -->
   <config>
-	  <sampler type="lowdiscrepancy" spp="16"/>
+	  <sampler type="adaptive" min="8" max="32"/>
   </config>
 </xml>
 

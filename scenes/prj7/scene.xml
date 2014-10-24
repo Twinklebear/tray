@@ -80,4 +80,8 @@
     <width value="800"/>
     <height value="600"/>
   </camera>
+
+  <config>
+	  <sampler type="adaptive" min="8" max="64"/>
+  </config>
 </xml>

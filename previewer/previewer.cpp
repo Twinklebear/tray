@@ -144,7 +144,7 @@ bool render_with_preview(Driver &driver){
 	driver.render();
 	//We also track if we're done so we can stop updating the textures after doing a last
 	//update
-	bool quit = false, color_done = false, depth_done = false;
+	bool quit = false, color_done = false, depth_done = false, heat_map = false;
 	int shown_tex = 0;
 	while (!quit){
 		SDL_Event e;
@@ -158,10 +158,19 @@ bool render_with_preview(Driver &driver){
 					case SDLK_d:
 						shown_tex = 1;
 						glUniform1i(tex_unif, shown_tex);
+						depth_done = false;
+						break;
+					case SDLK_h:
+						shown_tex = 0;
+						glUniform1i(tex_unif, shown_tex);
+						color_done = false;
+						heat_map = true;
 						break;
 					case SDLK_c:
 						shown_tex = 0;
 						glUniform1i(tex_unif, shown_tex);
+						color_done = false;
+						heat_map = false;
 						break;
 					default:
 						break;
@@ -175,10 +184,16 @@ bool render_with_preview(Driver &driver){
 		//work than I want to put into this
 		if (!color_done && shown_tex == 0){
 			color_done = driver.done();
-			target.get_colorbuf(color_buf);
 			glActiveTexture(GL_TEXTURE0);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
-				GL_UNSIGNED_BYTE, color_buf.data());
+			if (heat_map){
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
+					GL_UNSIGNED_BYTE, target.generate_heat_img().data());
+			}
+			else {
+				target.get_colorbuf(color_buf);
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
+					GL_UNSIGNED_BYTE, color_buf.data());
+			}
 		}
 		else if (!depth_done){
 			depth_done = driver.done();
