@@ -13,7 +13,7 @@
  */
 class StratifiedSampler : public Sampler {
 	const int spp;
-	std::mt19937 rng;
+	std::minstd_rand rng;
 	std::uniform_real_distribution<float> distrib;
 
 public:
