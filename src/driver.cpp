@@ -3,8 +3,7 @@
 #include <thread>
 #include <atomic>
 #include "scene.h"
-#include "samplers/uniform_sampler.h"
-#include "samplers/stratified_sampler.h"
+#include "samplers/sampler.h"
 #include "render/render_target.h"
 #include "render/camera.h"
 #include "geometry/geometry.h"

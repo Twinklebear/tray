@@ -4,7 +4,6 @@
 #include <tinyxml2.h>
 #include "loaders/load_sampler.h"
 #include "samplers/sampler.h"
-#include "samplers/uniform_sampler.h"
 #include "samplers/stratified_sampler.h"
 #include "samplers/ld_sampler.h"
 #include "samplers/adaptive_sampler.h"
@@ -12,13 +11,9 @@
 std::unique_ptr<Sampler> load_sampler(tinyxml2::XMLElement *elem, size_t w, size_t h){
 	tinyxml2::XMLElement *s = elem->FirstChildElement("sampler");
 	if (!s){
-		return std::make_unique<UniformSampler>(0, w, 0, h);
+		return std::make_unique<StratifiedSampler>(0, w, 0, h, 1);
 	}
 	std::string type = s->Attribute("type");
-	if (type == "uniform"){
-		std::cout << "Using UniformSampler\n";
-		return std::make_unique<UniformSampler>(0, w, 0, h);
-	}
 	if (type == "stratified"){
 		int spp = s->IntAttribute("spp");
 		std::cout << "Using StratifiedSampler with " << spp * spp << " samples per pixel\n";
@@ -36,7 +31,8 @@ std::unique_ptr<Sampler> load_sampler(tinyxml2::XMLElement *elem, size_t w, size
 			<< " and max: " << max_spp << " samples per pixel\n";
 		return std::make_unique<AdaptiveSampler>(0, w, 0, h, min_spp, max_spp);
 	}
-	std::cout << "Error: unrecognized sampler type, defaulting to UniformSampler\n";
-	return std::make_unique<UniformSampler>(0, w, 0, h);
+	std::cout << "Error: unrecognized sampler type, defaulting to StratifiedSampler"
+		<< " with 1 sampler per pixel\n";
+	return std::make_unique<StratifiedSampler>(0, w, 0, h, 1);
 }
 

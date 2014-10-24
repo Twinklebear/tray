@@ -13,7 +13,7 @@
 #include "geometry/plane.h"
 #include "geometry/tri_mesh.h"
 #include "filters/box_filter.h"
-#include "samplers/uniform_sampler.h"
+#include "samplers/stratified_sampler.h"
 #include "loaders/load_filter.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
@@ -81,7 +81,7 @@ Scene load_scene(const std::string &file, int depth){
 	}
 	else {
 		filter = std::make_unique<BoxFilter>(0.5, 0.5);
-		sampler = std::make_unique<UniformSampler>(0, w, 0, h);
+		sampler = std::make_unique<StratifiedSampler>(0, w, 0, h, 1);
 	}
 	//See if we have any background or environment textures
 	TextureCache tcache;
