@@ -7,6 +7,7 @@
 #include "samplers/sampler.h"
 
 class Camera {
+	const float dof, focal_dist;
 	//Transform to go from camera to world space, eg. camera look at matrix
 	Transform cam_world;
 	//Transforms from raster to camera space
@@ -20,7 +21,8 @@ public:
 	 * the z axis but this can be changed with the cam_world transformation
 	 * xres & yres correspond to the render target resolution
 	 */
-	Camera(const Transform &cam_world, float fov, int xres, int yres);
+	Camera(const Transform &cam_world, float fov, float dof, float focal_dist,
+		int xres, int yres);
 	/*
 	 * Generate a ray to sample the scene through x,y. Pixel coordinates should be
 	 * in raster space
