@@ -12,7 +12,7 @@ StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_
 	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
 {}
-void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
 	if (!has_samples()){
 		return;
@@ -22,8 +22,8 @@ void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	sample2d(samples);
 	std::shuffle(samples.begin(), samples.end(), rng);
 	for (auto &s : samples){
-		s[0] += x;
-		s[1] += y;
+		s.img[0] += x;
+		s.img[1] += y;
 	}
 	++x;
 	if (x == x_end){
@@ -61,13 +61,15 @@ std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, 
 	}
 	return samplers;
 }
-void StratifiedSampler::sample2d(std::vector<std::array<float, 2>> &samples){
+void StratifiedSampler::sample2d(std::vector<Sample> &samples){
 	float ds = 1.f / spp;
 	for (int i = 0; i < samples.size(); ++i){
 		int x = i % spp;
 		int y = i / spp;
-		samples[i][0] = (x + distrib(rng)) * ds;
-		samples[i][1] = (y + distrib(rng)) * ds;
+		samples[i].img[0] = (x + distrib(rng)) * ds;
+		samples[i].img[1] = (y + distrib(rng)) * ds;
+		samples[i].lens[0] = (x + distrib(rng)) * ds;
+		samples[i].lens[1] = (y + distrib(rng)) * ds;
 	}
 }
 

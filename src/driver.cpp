@@ -30,7 +30,7 @@ void Worker::render(){
 		if (!sampler){
 			break;
 		}
-		std::vector<std::array<float, 2>> samples;
+		std::vector<Sample> samples;
 		std::vector<RayDifferential> rays;
 		std::vector<Colorf> colors;
 		while (sampler->has_samples()){
@@ -38,13 +38,13 @@ void Worker::render(){
 			rays.reserve(samples.size());
 			colors.reserve(samples.size());
 			for (const auto &s : samples){
-				rays.push_back(camera.generate_raydifferential(s[0], s[1]));
+				rays.push_back(camera.generate_raydifferential(s));
 				colors.push_back(shade_ray(rays.back(), scene.get_root()));
 				//If we didn't hit anything and the scene has a background use that
 				if (scene.get_background() && rays.back().max_t == std::numeric_limits<float>::infinity()){
 					DifferentialGeometry dg;
-					dg.u = s[0] / target.get_width();
-					dg.v = s[1] / target.get_height();
+					dg.u = s.img[0] / target.get_width();
+					dg.v = s.img[1] / target.get_height();
 					colors.back() = scene.get_background()->sample(dg);
 				}
 				colors.back().normalize();
@@ -60,8 +60,8 @@ void Worker::render(){
 			}
 			if (sampler->report_results(samples, rays, colors)){
 				for (size_t i = 0; i < samples.size(); ++i){
-					target.write_pixel(samples[i][0], samples[i][1], colors[i]);
-					target.write_float(samples[i][0], samples[i][1], samples.size());
+					target.write_pixel(samples[i].img[0], samples[i].img[1], colors[i]);
+					target.write_float(samples[i].img[0], samples[i].img[1], samples.size());
 				}
 			}
 			rays.clear();

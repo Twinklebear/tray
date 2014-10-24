@@ -20,7 +20,7 @@ public:
 	 * Get some {x, y} positions to sample in the space being sampled
 	 * If the sampler has finished sampling samples will be empty
 	 */
-	void get_samples(std::vector<std::array<float, 2>> &samples) override;
+	void get_samples(std::vector<Sample> &samples) override;
 	/*
 	 * Get subsamplers that divide the space to be sampled
 	 * into count disjoint subsections where each samples a w x h

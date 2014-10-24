@@ -4,6 +4,7 @@
 #include <array>
 #include "linalg/ray.h"
 #include "linalg/transform.h"
+#include "samplers/sampler.h"
 
 class Camera {
 	//Transform to go from camera to world space, eg. camera look at matrix
@@ -24,13 +25,13 @@ public:
 	 * Generate a ray to sample the scene through x,y. Pixel coordinates should be
 	 * in raster space
 	 */
-	Ray generate_ray(float x, float y) const;
+	Ray generate_ray(const Sample &sample) const;
 	/*
 	 * Generate a ray with differentials to sample the scene through x,y.
 	 * The differentials will be +1 in x and y, pixel coords passed should
 	 * be in raster space
 	 */
-	RayDifferential generate_raydifferential(float x, float y) const;
+	RayDifferential generate_raydifferential(const Sample &sample) const;
 };
 
 #endif

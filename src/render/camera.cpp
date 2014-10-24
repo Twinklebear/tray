@@ -29,9 +29,9 @@ Camera::Camera(const Transform &cam_world, float fov, int xres, int yres) : cam_
 	dx = raster_cam(Point{1, 0, 0}) - raster_cam(Point{0, 0, 0});
 	dy = raster_cam(Point{0, 1, 0}) - raster_cam(Point{0, 0, 0});
 }
-Ray Camera::generate_ray(float x, float y) const {
+Ray Camera::generate_ray(const Sample &sample) const {
 	//Take the raster space position -> camera space
-	Point px_pos{x, y, 0};
+	Point px_pos{sample.img[0], sample.img[1], 0};
 	raster_cam(px_pos, px_pos);
 	//Shoot ray from origin (camera pos) through the point
 	Ray ray{Point{0}, Vector{px_pos}.normalized()};
@@ -39,9 +39,9 @@ Ray Camera::generate_ray(float x, float y) const {
 	cam_world(ray, ray);
 	return ray;
 }
-RayDifferential Camera::generate_raydifferential(float x, float y) const {
+RayDifferential Camera::generate_raydifferential(const Sample &sample) const {
 	//Take the raster space position -> camera space
-	Point px_pos{x, y, 0};
+	Point px_pos{sample.img[0], sample.img[1], 0};
 	raster_cam(px_pos, px_pos);
 	//Shoot ray from origin (camera pos) through the point
 	RayDifferential ray{Point{0}, Vector{px_pos}.normalized()};

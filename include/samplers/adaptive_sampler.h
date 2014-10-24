@@ -30,14 +30,14 @@ public:
 	 * Get some {x, y} positions to sample in the space being sampled
 	 * If the sampler has finished sampling samples will be empty
 	 */
-	void get_samples(std::vector<std::array<float, 2>> &samples) override;
+	void get_samples(std::vector<Sample> &samples) override;
 	/*
 	 * Report the results we got from sampling the scene using the samples
 	 * provided by the sampler. The results should be discarded and a new
 	 * set of samples taken if false is returned
 	 * The default implementation simply returns true
 	 */
-	bool report_results(const std::vector<std::array<float, 2>> &samples,
+	bool report_results(const std::vector<Sample> &samples,
 		const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors) override;
 	/*
 	 * Get subsamplers that divide the space to be sampled
@@ -51,7 +51,7 @@ private:
 	 * Determine if the pixel we've sampled needs supersampling by inspecting the contrast
 	 * between the samples. Returns true if more samples should be taken
 	 */
-	bool needs_supersampling(const std::vector<std::array<float, 2>> &samples,
+	bool needs_supersampling(const std::vector<Sample> &samples,
 		const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors);
 };
 

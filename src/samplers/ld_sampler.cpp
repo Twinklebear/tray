@@ -17,7 +17,7 @@ LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp)
 			<< " Rounded spp up to " << spp << std::endl;
 	}
 }
-void LDSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+void LDSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
 	if (!has_samples()){
 		return;
@@ -25,8 +25,8 @@ void LDSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	samples.resize(spp);
 	sample2d(samples, distrib(rng), distrib(rng));
 	for (auto &s : samples){
-		s[0] += x;
-		s[1] += y;
+		s.img[0] += x;
+		s.img[1] += y;
 	}
 	std::shuffle(samples.begin(), samples.end(), rng);
 	++x;
@@ -65,10 +65,11 @@ std::vector<std::unique_ptr<Sampler>> LDSampler::get_subsamplers(int w, int h) c
 	}
 	return samplers;
 }
-void LDSampler::sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y){
+void LDSampler::sample2d(std::vector<Sample> &samples, uint32_t x, uint32_t y){
 	std::array<uint32_t, 2> scramble{x, y};
 	for (uint32_t i = 0; i < samples.size(); ++i){
-		sample02(i, scramble, samples[i]);
+		sample02(i, scramble, samples[i].img);
+		sample02(i, scramble, samples[i].lens);
 	}
 }
 void LDSampler::sample02(uint32_t n, const std::array<uint32_t, 2> &scramble,

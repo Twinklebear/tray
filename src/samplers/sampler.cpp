@@ -7,7 +7,7 @@ Sampler::Sampler(int x_start, int x_end, int y_start, int y_end)
 	: x(x_start), y(y_start), x_start(x_start), x_end(x_end),
 	y_start(y_start), y_end(y_end)
 {}
-bool Sampler::report_results(const std::vector<std::array<float, 2>>&,
+bool Sampler::report_results(const std::vector<Sample>&,
 	const std::vector<RayDifferential>&, const std::vector<Colorf>&)
 {
 	return true;

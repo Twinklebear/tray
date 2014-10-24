@@ -22,7 +22,7 @@ AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end,
 			<< " Rounded max_spp up to " << max_spp << std::endl;
 	}
 }
-void AdaptiveSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
 	if (!has_samples()){
 		return;
@@ -31,12 +31,12 @@ void AdaptiveSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	samples.resize(spp);
 	LDSampler::sample2d(samples, distrib(rng), distrib(rng));
 	for (auto &s : samples){
-		s[0] += x;
-		s[1] += y;
+		s.img[0] += x;
+		s.img[1] += y;
 	}
 	std::shuffle(samples.begin(), samples.end(), rng);
 }
-bool AdaptiveSampler::report_results(const std::vector<std::array<float, 2>> &samples,
+bool AdaptiveSampler::report_results(const std::vector<Sample> &samples,
 	const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors)
 {
 	if (supersample_px || !needs_supersampling(samples, rays, colors)){
@@ -82,7 +82,7 @@ std::vector<std::unique_ptr<Sampler>> AdaptiveSampler::get_subsamplers(int w, in
 	}
 	return samplers;
 }
-bool AdaptiveSampler::needs_supersampling(const std::vector<std::array<float, 2>>&,
+bool AdaptiveSampler::needs_supersampling(const std::vector<Sample>&,
 	const std::vector<RayDifferential>&, const std::vector<Colorf> &colors)
 {
 	const static float max_contrast = 0.5f;
