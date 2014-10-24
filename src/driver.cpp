@@ -61,7 +61,7 @@ void Worker::render(){
 			if (sampler->report_results(samples, rays, colors)){
 				for (size_t i = 0; i < samples.size(); ++i){
 					target.write_pixel(samples[i][0], samples[i][1], colors[i]);
-					target.write_depth(samples[i][0], samples[i][1], rays[i].max_t);
+					target.write_depth(samples[i][0], samples[i][1], samples.size());
 				}
 			}
 			rays.clear();

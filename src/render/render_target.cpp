@@ -47,8 +47,6 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	//Compute the discrete pixel coordinates which the sample hits
 	float img_x = x - 0.5f;
 	float img_y = y - 0.5f;
-	//Using the defaults for the box filter in PBR, TODO take a filter param
-	//and use it
 	std::array<int, 2> x_range = {static_cast<int>(std::ceil(img_x - filter->w)),
 		static_cast<int>(std::floor(img_x + filter->w))};
 	std::array<int, 2> y_range = {static_cast<int>(std::ceil(img_y - filter->h)),
