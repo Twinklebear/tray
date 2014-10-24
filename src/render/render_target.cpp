@@ -63,16 +63,16 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	for (int iy = y_range[0]; iy <= y_range[1]; ++iy){
 		for (int ix = x_range[0]; ix <= x_range[1]; ++ix){
 			//Compute location of this sample in the pre-computed filter values
-			float fx = std::abs(x - width) * filter->inv_w * FILTER_TABLE_SIZE;
+			float fx = std::abs(x - img_x) * filter->inv_w * FILTER_TABLE_SIZE;
 			int fx_idx = std::min(static_cast<int>(fx), FILTER_TABLE_SIZE - 1);
-			float fy = std::abs(y - height) * filter->inv_h * FILTER_TABLE_SIZE;
+			float fy = std::abs(y - img_y) * filter->inv_h * FILTER_TABLE_SIZE;
 			int fy_idx = std::min(static_cast<int>(fy), FILTER_TABLE_SIZE - 1);
-			float filter = filter_table[fy_idx * FILTER_TABLE_SIZE + fx_idx];
-			Pixel &p = pixels[iy * width + x];
-			atomic_addf(p.r, filter * c.r);
-			atomic_addf(p.g, filter * c.g);
-			atomic_addf(p.b, filter * c.b);
-			atomic_addf(p.weight, filter);
+			float fweight = filter_table[fy_idx * FILTER_TABLE_SIZE + fx_idx];
+			Pixel &p = pixels[static_cast<int>(y) * width + static_cast<int>(x)];
+			atomic_addf(p.r, fweight * c.r);
+			atomic_addf(p.g, fweight * c.g);
+			atomic_addf(p.b, fweight * c.b);
+			atomic_addf(p.weight, fweight);
 		}
 	}
 }
