@@ -32,7 +32,7 @@ Pixel::Pixel(const Pixel &p) : r(p.r.load(std::memory_order_consume)), g(p.g.loa
 
 RenderTarget::RenderTarget(size_t width, size_t height, std::unique_ptr<Filter> f)
 	: width(width), height(height), filter(std::move(f)), pixels(width * height),
-	depth(width * height, std::numeric_limits<float>::infinity())
+	float_buf(width * height, std::numeric_limits<float>::infinity())
 {
 	//Pre-compute the filter table values
 	for (int y = 0; y < FILTER_TABLE_SIZE; ++y){
@@ -76,8 +76,8 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 		}
 	}
 }
-void RenderTarget::write_depth(size_t x, size_t y, float d){
-	depth[y * width + x] = d;
+void RenderTarget::write_float(size_t x, size_t y, float d){
+	float_buf[y * width + x] = d;
 }
 bool RenderTarget::save_image(const std::string &file) const {
 	//Compute the correct image from the saved pixel data
@@ -101,6 +101,10 @@ bool RenderTarget::save_image(const std::string &file) const {
 bool RenderTarget::save_depth(const std::string &file) const {
 	std::vector<uint8_t> depth_norm = generate_depth_img();
 	return save_pgm(file, depth_norm.data());
+}
+bool RenderTarget::save_heat(const std::string &file) const {
+	std::vector<Color24> heat_map = generate_heat_img();
+	return save_ppm(file, &heat_map[0].r);
 }
 size_t RenderTarget::get_width() const {
 	return width;
@@ -126,8 +130,8 @@ void RenderTarget::get_colorbuf(std::vector<Color24> &img) const {
 		}
 	}
 }
-const std::vector<float>& RenderTarget::get_depthbuf() const {
-	return depth;
+const std::vector<float>& RenderTarget::get_floatbuf() const {
+	return float_buf;
 }
 std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 	std::vector<uint8_t> depth_norm(width * height);
@@ -135,7 +139,7 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 	//them into 0-255 range
 	float zmin = std::numeric_limits<float>::infinity();
 	float zmax = std::numeric_limits<float>::min();
-	for (const float &f : depth){
+	for (const auto &f : float_buf){
 		if (f == std::numeric_limits<float>::infinity()){
 			continue;
 		}
@@ -146,16 +150,62 @@ std::vector<uint8_t> RenderTarget::generate_depth_img() const {
 			zmax = f;
 		}
 	}
-	for (size_t i = 0; i < depth.size(); ++i){
-		if (depth[i] == std::numeric_limits<float>::infinity()){
+	for (size_t i = 0; i < float_buf.size(); ++i){
+		if (float_buf[i] == std::numeric_limits<float>::infinity()){
 			depth_norm[i] = 0;
 		}
 		else {
-			depth_norm[i] = static_cast<uint8_t>((zmax - depth[i]) / (zmax - zmin) * 255);
+			depth_norm[i] = static_cast<uint8_t>((zmax - float_buf[i]) / (zmax - zmin) * 255);
 			depth_norm[i] = clamp(depth_norm[i], uint8_t{0}, uint8_t{255});
 		}
 	}
 	return depth_norm;
+}
+std::vector<Color24> RenderTarget::generate_heat_img() const {
+	//We use HSV to generate the heat map taking H = 240 as our min value (coolest)
+	//and H = 0 as our max (hottest)
+	std::vector<Color24> heat_map(width * height);
+	float min = std::numeric_limits<float>::infinity();
+	float max = std::numeric_limits<float>::min();
+	for (const auto &f : float_buf){
+		if (f == std::numeric_limits<float>::infinity()){
+			continue;
+		}
+		if (f < min){
+			min = f;
+		}
+		if (f > max){
+			max = f;
+		}
+	}
+	for (size_t i = 0; i < float_buf.size(); ++i){
+		float hue = 240;
+		if (float_buf[i] != std::numeric_limits<float>::infinity()){
+			hue = (float_buf[i] - max) / (max - min) * -240.f;
+			hue = clamp(hue, 0.f, 240.f);
+		}
+		hue /= 60;
+		float x = 1 - std::abs(static_cast<int>(hue) % 2 - 1);
+		if (hue >= 0 && hue < 1){
+			heat_map[i] = Colorf{1, x, 0};
+		}
+		else if (hue < 2){
+			heat_map[i] = Colorf{x, 1, 0};
+		}
+		else if (hue < 3){
+			heat_map[i] = Colorf{0, 1, x};
+		}
+		else if (hue < 4){
+			heat_map[i] = Colorf{0, x, 1};
+		}
+		else if (hue < 5){
+			heat_map[i] = Colorf{x, 0, 1};
+		}
+		else if (hue < 6){
+			heat_map[i] = Colorf{1, 0, x};
+		}
+	}
+	return heat_map;
 }
 bool RenderTarget::save_ppm(const std::string &file, const uint8_t *data) const {
 	FILE *fp = fopen(file.c_str(), "wb");
@@ -163,7 +213,7 @@ bool RenderTarget::save_ppm(const std::string &file, const uint8_t *data) const 
 		std::cerr << "RenderTarget::save_ppm Error: failed to open file " << file << std::endl;
 		return false;
 	}
-	fprintf(fp, "P6\n%d %d\n255\n", width, height);
+	fprintf(fp, "P6\n%d %d\n255\n", static_cast<int>(width), static_cast<int>(height));
 	fwrite(data, 1, 3 * width * height, fp);
 	fclose(fp);
 	return true;
@@ -174,7 +224,7 @@ bool RenderTarget::save_pgm(const std::string &file, const uint8_t * data) const
 		std::cerr << "RenderTarget::save_pgm Error: failed to open file " << file << std::endl;
 		return false;
 	}
-	fprintf(fp, "P5\n%d %d\n255\n", width, height);
+	fprintf(fp, "P5\n%d %d\n255\n", static_cast<int>(width), static_cast<int>(height));
 	fwrite(data, 1, width * height, fp);
 	fclose(fp);
 	return true;

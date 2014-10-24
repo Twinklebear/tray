@@ -31,7 +31,7 @@ class RenderTarget {
 	size_t width, height;
 	std::unique_ptr<Filter> filter;
 	std::vector<Pixel> pixels;
-	std::vector<float> depth;
+	std::vector<float> float_buf;
 	//Pre-computed filter values to save time when storing pixels
 	std::array<float, FILTER_TABLE_SIZE * FILTER_TABLE_SIZE> filter_table;
 
@@ -47,12 +47,13 @@ public:
 	 */
 	void write_pixel(float x, float y, const Colorf &c);
 	/*
-	 * Write a depth value to the depth buffer at pixel(x, y)
+	 * Write a float value to the float buffer at pixel(x, y)
 	 */
-	void write_depth(size_t x, size_t y, float d);
+	void write_float(size_t x, size_t y, float d);
 	//Save the image or depth buffer to the desired file
 	bool save_image(const std::string &file) const;
 	bool save_depth(const std::string &file) const;
+	bool save_heat(const std::string &file) const;
 	size_t get_width() const;
 	size_t get_height() const;
 	/*
@@ -60,11 +61,15 @@ public:
 	 * stored in img
 	 */
 	void get_colorbuf(std::vector<Color24> &img) const;
-	const std::vector<float>& get_depthbuf() const;
+	const std::vector<float>& get_floatbuf() const;
 	/*
-	 * Generate a normalized luminosity image of the depth buffer
+	 * Generate a normalized luminosity image of the float buffer
 	 */
 	std::vector<uint8_t> generate_depth_img() const;
+	/*
+	 * Generate a heatmap image from the float buffer
+	 */
+	std::vector<Color24> generate_heat_img() const;
 
 private:
 	/*
