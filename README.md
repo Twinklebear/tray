@@ -27,7 +27,6 @@ Samplers
 The type of sampler used to render the scene can be configured by the `<sampler type="">` tag. Available samplers and their
 parameters are listed below by the type string that selects them.
 
-- uniform - Selects a basic uniform sampler. A single ray is fired through the center of each pixel in the image. (Default)
 - stratified - Selects a stratified sampler which renders the image using some desired number of jittered samples per pixel.
 	- spp - number of samples to be taken per pixel in x & y, eg. sampler takes spp\*spp samples per pixel
 - lowdiscrepancy - Selects a low-discrepancy which uses a (0, 2) sequence to generate sample positions
