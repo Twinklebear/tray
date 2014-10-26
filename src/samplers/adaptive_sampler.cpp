@@ -25,7 +25,7 @@ AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end,
 }
 void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
-	if (!has_samples()){
+	if (!supersample_px && !has_samples()){
 		return;
 	}
 	int spp = supersample_px ? max_spp : min_spp;
