@@ -9,8 +9,9 @@ TextureSample CemEnvMapping::map(const DifferentialGeometry &dg) const {
 	Vector d = Vector{transform(dg.point)}.normalized();
 	//Cem's wierd mapping
 	float z = std::asin(-d.z) / PI + 0.5f;
-	float x = d.x / (std::abs(d.x) + std::abs(d.y));
-	float y = d.y / (std::abs(d.x) + std::abs(d.y));
+	float den = 1.f / (std::sqrt(d.x * d.x + d.y * d.y) + 1e-10f);
+	float x = d.x / den;
+	float y = d.y / den;
 	Point sp = Point{0.5, 0.5, 0} + z * (x * Point{0.5, 0.5, 0} + y * Point{-0.5, 0.5, 0});
 	sample.s = sp.x;
 	sample.t = sp.y;
