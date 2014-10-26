@@ -1,3 +1,4 @@
+#include <iostream>
 #include <array>
 #include <chrono>
 #include <vector>
@@ -42,6 +43,9 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 		s.img[0] += x;
 		s.img[1] += y;
 	}
+}
+int AdaptiveSampler::get_max_spp() const {
+	return max_spp;
 }
 bool AdaptiveSampler::report_results(const std::vector<Sample> &samples,
 	const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors)

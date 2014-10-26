@@ -38,6 +38,7 @@ void Worker::render(){
 			colors.reserve(samples.size());
 			for (const auto &s : samples){
 				rays.push_back(camera.generate_raydifferential(s));
+				rays.back().scale_differentials(1.f / std::sqrt(sampler->get_max_spp()));
 				colors.push_back(shade_ray(rays.back(), scene.get_root()));
 				//If we didn't hit anything and the scene has a background use that
 				if (scene.get_background() && rays.back().max_t == std::numeric_limits<float>::infinity()){

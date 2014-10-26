@@ -24,6 +24,10 @@ public:
 	 */
 	void get_samples(std::vector<Sample> &samples) override;
 	/*
+	 * Get the max number of samples this sampler will take per pixel
+	 */
+	int get_max_spp() const override;
+	/*
 	 * Get subsamplers that divide the space to be sampled
 	 * into count disjoint subsections where each samples a w x h
 	 * section of the original sampler

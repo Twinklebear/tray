@@ -32,6 +32,10 @@ public:
 	 */
 	void get_samples(std::vector<Sample> &samples) override;
 	/*
+	 * Get the max number of samples this sampler will take per pixel
+	 */
+	int get_max_spp() const override;
+	/*
 	 * Report the results we got from sampling the scene using the samples
 	 * provided by the sampler. The results should be discarded and a new
 	 * set of samples taken if false is returned

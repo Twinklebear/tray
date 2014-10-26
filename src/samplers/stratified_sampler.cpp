@@ -38,6 +38,9 @@ void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 		++y;
 	}
 }
+int StratifiedSampler::get_max_spp() const {
+	return spp;
+}
 std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, int h) const {
 	int x_dim = x_end - x_start;
 	int y_dim = y_end - y_start;
