@@ -82,20 +82,7 @@ void RenderTarget::write_float(size_t x, size_t y, float d){
 bool RenderTarget::save_image(const std::string &file) const {
 	//Compute the correct image from the saved pixel data
 	std::vector<Color24> img(width * height);
-	for (size_t y = 0; y < height; ++y){
-		for (size_t x = 0; x < width; ++x){
-			const Pixel &p = pixels[y * width + x];
-			float weight = p.weight.load(std::memory_order_consume);
-			if (weight != 0){
-				Colorf c{p.r.load(std::memory_order_consume),
-					p.g.load(std::memory_order_consume),
-					p.b.load(std::memory_order_consume)};
-				c /= weight;
-				c.normalize();
-				img[y * width + x] = c;
-			}
-		}
-	}
+	get_colorbuf(img);
 	return save_ppm(file, &img[0].r);
 }
 bool RenderTarget::save_depth(const std::string &file) const {
