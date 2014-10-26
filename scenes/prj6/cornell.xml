@@ -92,7 +92,6 @@
 
   <config>
 	  <sampler type="adaptive" min="8" max="64"/>
-	  <filter type="mitchell" w="1.5" h="1.5" b="0.33" c="0.33"/>
   </config>
 </xml>
 

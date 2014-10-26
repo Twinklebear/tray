@@ -131,6 +131,7 @@ int main(int argc, char **argv){
 	}
 	RenderTarget &target = scene.get_render_target();
 	target.save_image(out_file + ".ppm");
+	target.save_heat(out_file + "_heat.ppm");
 	target.save_depth(out_file + ".pgm");
 	return 0;
 }
