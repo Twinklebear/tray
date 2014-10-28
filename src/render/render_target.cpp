@@ -61,10 +61,11 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	}
 	//Filter this sample to apply it to the pixels in the image affected by it
 	for (int iy = y_range[0]; iy <= y_range[1]; ++iy){
+		//Compute y location of this sample in the pre-computed filter values
 		float fy = std::abs(iy - img_y) * filter->inv_h * FILTER_TABLE_SIZE;
 		int fy_idx = std::min(static_cast<int>(fy), FILTER_TABLE_SIZE - 1);
 		for (int ix = x_range[0]; ix <= x_range[1]; ++ix){
-			//Compute location of this sample in the pre-computed filter values
+			//Compute x location of this sample in the pre-computed filter values
 			float fx = std::abs(ix - img_x) * filter->inv_w * FILTER_TABLE_SIZE;
 			int fx_idx = std::min(static_cast<int>(fx), FILTER_TABLE_SIZE - 1);
 			float fweight = filter_table[fy_idx * FILTER_TABLE_SIZE + fx_idx];
