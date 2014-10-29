@@ -14,9 +14,12 @@ Colorf Renderer::illumination(RayDifferential &ray, const Scene &scene) const {
 		dg.compute_differentials(ray);
 		return surface_integrator->illumination(scene, *this, ray, dg);
 	}
-	else {
+	else if (scene.get_environment()){
 		//TODO: Compute light along the ray coming from lights
-		return Colorf{0};
+		DifferentialGeometry dg;
+		dg.point = Point{ray.d.x, ray.d.y, ray.d.z};
+		return scene.get_environment()->sample(dg);
 	}
+	return Colorf{0};
 }
 
