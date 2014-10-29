@@ -134,7 +134,9 @@ Colorf Worker::shade_ray(RayDifferential &ray, Node &node){
 				}
 			}
 			std::vector<Light*> lights = visible_lights(diff_geom.point, diff_geom.normal);
-			color += mat->shade(ray, diff_geom, lights);
+			for (const auto &l : lights){
+				color += mat->shade(ray, diff_geom, *l);
+			}
 		}
 		else {
 			color = Colorf{0.4, 0.4, 0.4};

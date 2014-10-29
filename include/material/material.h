@@ -14,7 +14,7 @@ public:
 	 * Apply the material shading properties to the hit object
 	 */
 	virtual Colorf shade(const Ray &r, const DifferentialGeometry &diff_geom,
-		const std::vector<Light*> &lights) const = 0;
+		const Light &light) const = 0;
 	/*
 	 * Check if the material is reflective
 	 */
