@@ -78,7 +78,8 @@ void RenderTarget::write_pixel(float x, float y, const Colorf &c){
 	}
 }
 void RenderTarget::write_float(size_t x, size_t y, float d){
-	float_buf[y * width + x] = d;
+	size_t i = clamp(y * width + x, size_t{0}, float_buf.size());
+	float_buf[i] = d;
 }
 bool RenderTarget::save_image(const std::string &file) const {
 	//Compute the correct image from the saved pixel data

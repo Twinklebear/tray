@@ -215,11 +215,13 @@
     <fov value="30"/>
     <width value="1280"/>
     <height value="960"/>
+	<focaldist value="60"/>
+	<dof value="1.0"/>
   </camera>
 
   <!-- Extra config options specific to my ray tracer -->
   <config>
-	  <sampler type="adaptive" min="8" max="64"/>
+	  <sampler type="adaptive" min="32" max="128"/>
   </config>
 </xml>
 
