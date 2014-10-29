@@ -5,7 +5,7 @@
 #include "linalg/ray.h"
 #include "linalg/util.h"
 #include "linalg/transform.h"
-#include "render/camera.h"
+#include "film/camera.h"
 
 Camera::Camera(const Transform &cam_world, float fov, float dof, float focal_dist, int xres, int yres)
 	: dof(dof), focal_dist(focal_dist), cam_world(cam_world)

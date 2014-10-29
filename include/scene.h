@@ -7,8 +7,8 @@
 #include "material/material.h"
 #include "textures/texture.h"
 #include "lights/light.h"
-#include "render/render_target.h"
-#include "render/camera.h"
+#include "film/render_target.h"
+#include "film/camera.h"
 #include "samplers/sampler.h"
 #include "textures/texture.h"
 

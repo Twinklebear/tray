@@ -1,4 +1,3 @@
-#include "render/color.h"
 #include "linalg/point.h"
 #include "lights/point_light.h"
 

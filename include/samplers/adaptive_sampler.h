@@ -6,7 +6,7 @@
 #include <memory>
 #include <random>
 #include "linalg/ray.h"
-#include "render/color.h"
+#include "film/color.h"
 #include "sampler.h"
 
 /*

@@ -1,5 +1,5 @@
 add_subdirectory(linalg)
-add_subdirectory(render)
+add_subdirectory(film)
 add_subdirectory(geometry)
 add_subdirectory(samplers)
 add_subdirectory(material)
@@ -10,7 +10,7 @@ add_subdirectory(filters)
 add_subdirectory(textures)
 add_subdirectory(integrator)
 add_subdirectory(renderer)
-set(RAY_LIBS loaders lights integrator renderer linalg render geometry samplers
+set(RAY_LIBS loaders lights integrator renderer linalg film geometry samplers
 	material accelerators filters textures)
 
 add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp

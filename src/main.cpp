@@ -3,7 +3,7 @@
 #include <chrono>
 #include "args.h"
 #include "loaders/load_scene.h"
-#include "render/render_target.h"
+#include "film/render_target.h"
 #include "mesh_preprocess.h"
 #include "driver.h"
 

@@ -4,7 +4,7 @@
 #include <vector>
 #include "linalg/ray.h"
 #include "geometry/differential_geometry.h"
-#include "render/color.h"
+#include "film/color.h"
 #include "lights/light.h"
 #include "cache.h"
 

@@ -2,7 +2,7 @@
 #define MIPMAP_H
 
 #include <vector>
-#include "render/color.h"
+#include "film/color.h"
 #include "texture_mapping.h"
 
 /*

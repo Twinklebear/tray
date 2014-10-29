@@ -1,7 +1,6 @@
 #include <cassert>
 #include <vector>
 #include "linalg/util.h"
-#include "render/color.h"
 #include "textures/texture_mapping.h"
 #include "textures/mipmap.h"
 

@@ -1,7 +1,7 @@
 #ifndef POINT_LIGHT_H
 #define POINT_LIGHT_H
 
-#include "render/color.h"
+#include "film/color.h"
 #include "linalg/point.h"
 #include "light.h"
 

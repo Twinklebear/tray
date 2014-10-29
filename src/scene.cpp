@@ -2,8 +2,6 @@
 #include "geometry/geometry.h"
 #include "material/material.h"
 #include "lights/light.h"
-#include "render/render_target.h"
-#include "render/camera.h"
 #include "samplers/sampler.h"
 #include "textures/texture.h"
 #include "scene.h"

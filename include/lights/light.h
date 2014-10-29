@@ -4,7 +4,7 @@
 #include "cache.h"
 #include "linalg/point.h"
 #include "linalg/vector.h"
-#include "render/color.h"
+#include "film/color.h"
 
 /*
  * Light types

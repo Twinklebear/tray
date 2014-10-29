@@ -7,7 +7,7 @@
 #include <memory>
 #include <cstdio>
 #include "linalg/util.h"
-#include "render/render_target.h"
+#include "film/render_target.h"
 
 /*
  * Perform an atomic addition to the float via spin-locking

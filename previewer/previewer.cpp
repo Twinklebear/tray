@@ -2,7 +2,7 @@
 #include <string>
 #include <SDL.h>
 #include "gl_core_3_3.h"
-#include "render/render_target.h"
+#include "film/render_target.h"
 #include "driver.h"
 #include "util.h"
 

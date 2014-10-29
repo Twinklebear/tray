@@ -3,7 +3,7 @@
 
 #include "cache.h"
 #include "geometry/differential_geometry.h"
-#include "render/color.h"
+#include "film/color.h"
 #include "texture_mapping.h"
 
 /*

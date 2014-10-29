@@ -1,6 +1,6 @@
 #include <ostream>
 #include "linalg/util.h"
-#include "render/color.h"
+#include "film/color.h"
 
 Color24::Color24(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
 uint8_t& Color24::operator[](int i){

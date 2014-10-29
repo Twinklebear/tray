@@ -1,7 +1,7 @@
 #ifndef DIRECT_LIGHT_H
 #define DIRECT_LIGHT_H
 
-#include "render/color.h"
+#include "film/color.h"
 #include "linalg/vector.h"
 #include "light.h"
 
