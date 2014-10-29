@@ -40,7 +40,9 @@ Sampler* BlockQueue::get_block(){
 	}
 	int s = sampler_idx.fetch_add(1, std::memory_order_acq_rel);
 	if (s % (samplers.size() / 10) == 0){
-		std::cout << "starting work on block " << s << " of " << samplers.size() << std::endl;
+		std::cout << "starting work on block " << s << " of " << samplers.size()
+			<< " : " << 100.f * static_cast<float>(s) / samplers.size() << "% of pixels completed"
+			<< std::endl;
 	}
 	//Potential race condition if we would have gotten the last block but some other
 	//thread beat us from the cmp_exg to the fetch_add, so we need to double check
