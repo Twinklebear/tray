@@ -33,20 +33,6 @@ public:
 	Worker(Scene &scene, BlockQueue &queue);
 	Worker(Worker &&w);
 	void render();
-	/*
-	 * Find the color coming back along some ray
-	 */
-	Colorf shade_ray(RayDifferential &ray, Node &node);
-	/*
-	 * Run intersecton tests on a node and its children and report back the results
-	 */
-	static bool intersect_nodes(Node &node, Ray &ray, DifferentialGeometry &diff_geom);
-	/*
-	 * Get the list of lights visible from some point in the scene
-	 * The normal is used to test if the light would even contribute to this
-	 * surface so we can skip lights on the back of the surface
-	 */
-	std::vector<Light*> visible_lights(const Point &p, const Normal &n);
 };
 
 /*

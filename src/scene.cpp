@@ -25,6 +25,9 @@ TextureCache& Scene::get_tex_cache(){
 LightCache& Scene::get_light_cache(){
 	return light_cache;
 }
+const LightCache& Scene::get_light_cache() const {
+	return light_cache;
+}
 Camera& Scene::get_camera(){
 	return camera;
 }
@@ -38,6 +41,9 @@ const Sampler& Scene::get_sampler() const {
 	return *sampler;
 }
 Node& Scene::get_root(){
+	return root;
+}
+const Node& Scene::get_root() const {
 	return root;
 }
 int Scene::get_max_depth() const {
