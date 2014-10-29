@@ -23,7 +23,7 @@ class Triangle : public Geometry {
 
 public:
 	Triangle(int a = 0, int b = 0, int c = 0, const TriMesh *mesh = nullptr);
-	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) override;
+	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const override;
 	BBox bound() const override;
 	void refine(std::vector<Geometry*> &prims) override;
 };
@@ -62,7 +62,7 @@ public:
 	 */
 	TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 		const std::vector<Normal> &norm, const std::vector<int> vert_idx);
-	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) override;
+	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const override;
 	BBox bound() const override;
 	void refine(std::vector<Geometry*> &prims) override;
 	/*

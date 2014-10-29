@@ -21,7 +21,7 @@ static std::vector<std::string> capture_face(const std::string &s);
 static std::array<int, 3> capture_vertex(const std::string &s);
 
 Triangle::Triangle(int a, int b, int c, const TriMesh *mesh) : a(a), b(b), c(c), mesh(mesh){}
-bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	const Point &pa = mesh->vertex(a);
 	const Point &pb = mesh->vertex(b);
 	const Point &pc = mesh->vertex(c);
@@ -129,7 +129,7 @@ TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
 	refine(ref_tris);
 	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 32};
 }
-bool TriMesh::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+bool TriMesh::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	return bvh.intersect(ray, diff_geom);
 }
 BBox TriMesh::bound() const {

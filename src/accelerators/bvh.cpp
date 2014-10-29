@@ -55,7 +55,7 @@ BVH::BVH(const std::vector<Geometry*> &geom, SPLIT_METHOD split, unsigned max_ge
 BBox BVH::bounds() const {
 	return !flat_nodes.empty() ? flat_nodes[0].bounds : BBox{};
 }
-bool BVH::intersect(Ray &r, DifferentialGeometry &diff_geom){
+bool BVH::intersect(Ray &r, DifferentialGeometry &diff_geom) const {
 	if (flat_nodes.empty()){
 		return false;
 	}
@@ -67,7 +67,7 @@ bool BVH::intersect(Ray &r, DifferentialGeometry &diff_geom){
 	int todo_offset = 0, current = 0;
 	//Step through the BVH visiting the current node and pushing on nodes that need to be visited
 	while (true){
-		FlatNode &fnode = flat_nodes[current];
+		const FlatNode &fnode = flat_nodes[current];
 		//Check if we hit this node, fast_box_interesect is a faster specialized intersection
 		//for this traversal
 		if (fast_box_intersect(fnode.bounds, r, inv_dir, neg_dir)){

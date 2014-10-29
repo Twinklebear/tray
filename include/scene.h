@@ -40,11 +40,13 @@ public:
 	MaterialCache& get_mat_cache();
 	TextureCache& get_tex_cache();
 	LightCache& get_light_cache();
+	const LightCache& get_light_cache() const;
 	Camera& get_camera();
 	RenderTarget& get_render_target();
 	const RenderTarget& get_render_target() const;
 	const Sampler& get_sampler() const;
 	Node& get_root();
+	const Node& get_root() const;
 	int get_max_depth() const;
 	const Texture* get_background() const;
 	const Texture* get_environment() const;

@@ -3,7 +3,7 @@
 #include "linalg/ray.h"
 #include "geometry/plane.h"
 
-bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	//If the ray is perpindicular to the normal there's no
 	//way for it to hit the plane
 	if (std::abs(ray.d.z) < 1e-8){

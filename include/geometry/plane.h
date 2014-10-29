@@ -9,7 +9,7 @@
  */
 class Plane : public Geometry {
 public:
-	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) override;
+	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const override;
 	BBox bound() const override;
 	void refine(std::vector<Geometry*> &prims) override;
 };

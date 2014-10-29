@@ -4,7 +4,7 @@
 #include "linalg/vector.h"
 #include "geometry/sphere.h"
 
-bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	//Compute quadratic sphere coefficients
 	Vector ray_orig{ray.o};
 	float a = ray.d.length_sqr();

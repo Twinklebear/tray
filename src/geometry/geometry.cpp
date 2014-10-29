@@ -26,7 +26,7 @@ void Node::flatten_children(){
 	refine(prims);
 	bvh = std::make_unique<BVH>(prims, SPLIT_METHOD::SAH, 8);
 }
-bool Node::intersect(Ray &ray, DifferentialGeometry &diff_geom){
+bool Node::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	if (bvh){
 		return bvh->intersect(ray, diff_geom);
 	}

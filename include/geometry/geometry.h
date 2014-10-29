@@ -23,7 +23,7 @@ public:
 	 * Data stored in diff_geom will be returned in object space
 	 * If no hit occurs the ray and hitinfo are left unmodified
 	 */
-	virtual bool intersect(Ray &ray, DifferentialGeometry &diff_geom) = 0;
+	virtual bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const = 0;
 	/*
 	 * Get the object-space AABB for the object
 	 */
@@ -67,7 +67,7 @@ public:
 	/*
 	 * Test the ray for intersection agains this node and its children
 	 */
-	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) override;
+	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const override;
 	/*
 	 * Get the world space bound for the object
 	 * Returns degenerate box if the node doesn't have geometry attached
