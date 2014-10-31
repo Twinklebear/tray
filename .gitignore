@@ -8,6 +8,7 @@ bin/
 *.bobj
 external/
 scenes/textures/
+*.png
 
 # Ignored ycm compiled python file
 *.pyc
