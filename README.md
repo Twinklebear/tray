@@ -22,7 +22,7 @@ Extras
 -
 The ray tracer also supports some extra scene options that can be specified within a <config> block in the scene file.
 
-Moving Objects
+Objects in Motion
 -
 Objects can be specified to be in motion during the rendering, resulting in motion blur. To do this you can specify the
 start and end transformations along with their time points and specify the camera shutter open and close times.
