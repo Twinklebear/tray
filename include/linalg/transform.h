@@ -11,10 +11,9 @@
 /*
  * A transformation, also stores its inverse since we need it frequenctly
  */
-class Transform {
+struct Transform {
 	Matrix4 mat, inv;
 
-public:
 	Transform();
 	Transform(const Matrix4 &mat);
 	Transform(const Matrix4 &mat, const Matrix4 &inv);

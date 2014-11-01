@@ -24,12 +24,16 @@ struct Quaternion {
 	{}
 	Quaternion(const Transform &t);
 	/*
+	 * Spherically interpolate between this quaternion and another
+	 */
+	Quaternion slerp(const Quaternion &q, float t) const;
+	/*
 	 * Compute the dot product of two quaternions
 	 */
-	inline float dot(const Quaternion &b){
+	inline float dot(const Quaternion &b) const {
 		return v.dot(b.v) + w * b.w;
 	}
-	inline Quaternion normalized(){
+	inline Quaternion normalized() const {
 		return *this / std::sqrt(dot(*this));
 	}
 	Transform to_transform() const;
