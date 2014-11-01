@@ -33,11 +33,14 @@ public:
 	Matrix4 operator+(const Matrix4 &m) const;
 	Matrix4 operator-(const Matrix4 &m) const;
 	Matrix4 operator*(const Matrix4 &m) const;
+	Matrix4 operator*(float s) const;
 	Matrix4& operator+=(const Matrix4 &m);
 	Matrix4& operator-=(const Matrix4 &m);
 	Matrix4& operator*=(const Matrix4 &m);
 	void print(std::ostream &os) const;
 };
+
+Matrix4 operator*(float s, const Matrix4 &m);
 std::ostream& operator<<(std::ostream &os, const Matrix4 &m);
 
 #endif

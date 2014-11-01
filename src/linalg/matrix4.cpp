@@ -180,6 +180,13 @@ Matrix4 Matrix4::operator*(const Matrix4 &m) const {
 	}
 	return res;
 }
+Matrix4 Matrix4::operator*(float s) const {
+	Matrix4 m{mat};
+	for (auto &f : m.mat){
+		f *= s;
+	}
+	return m;
+}
 Matrix4& Matrix4::operator+=(const Matrix4 &m){
 	for (size_t i = 0; i < 16; ++i){
 		mat[i] += m.mat[i];
@@ -209,6 +216,9 @@ void Matrix4::print(std::ostream &os) const {
 		os << "], ";
 	}
 	os << "}";
+}
+Matrix4 operator*(float s, const Matrix4 &m){
+	return m * s;
 }
 std::ostream& operator<<(std::ostream &os, const Matrix4 &m){
 	m.print(os);
