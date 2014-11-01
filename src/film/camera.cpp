@@ -7,8 +7,9 @@
 #include "linalg/transform.h"
 #include "film/camera.h"
 
-Camera::Camera(const Transform &cam_world, float fov, float dof, float focal_dist, int xres, int yres)
-	: dof(dof), focal_dist(focal_dist), cam_world(cam_world)
+Camera::Camera(const Transform &cam_world, float fov, float dof, float focal_dist,
+	float open, float close, int xres, int yres)
+	: dof(dof), focal_dist(focal_dist), open(open), close(close), cam_world(cam_world)
 {
 	//Compute x & y dimensions of image plane in screen space, in this
 	//space the image size is normalized so that the shorter axis has
@@ -38,6 +39,7 @@ Ray Camera::generate_ray(const Sample &sample) const {
 	raster_cam(px_pos, px_pos);
 	//Shoot ray from origin (camera pos) through the point
 	Ray ray{Point{0}, Vector{px_pos}.normalized()};
+	ray.time = (sample.time - open) / (close - open);
 	if (dof > 0){
 		auto lens = concentric_sample_disk(sample.lens);
 		lens[0] *= dof;
@@ -57,6 +59,7 @@ RayDifferential Camera::generate_raydifferential(const Sample &sample) const {
 	raster_cam(px_pos, px_pos);
 	//Shoot ray from origin (camera pos) through the point
 	RayDifferential ray{Point{0}, Vector{px_pos}.normalized()};
+	ray.time = (sample.time - open) / (close - open);
 	ray.rx = Ray{ray.o, (Vector{px_pos} + dx).normalized()};
 	ray.ry = Ray{ray.o, (Vector{px_pos} + dy).normalized()};
 	if (dof > 0){

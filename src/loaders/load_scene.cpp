@@ -119,7 +119,7 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 	using namespace tinyxml2;
 	Point pos, target;
 	Vector up;
-	float fov, dof = -1, focal_dist = 0;
+	float fov, dof = -1, focal_dist = 0, open = 0, close = 0;
 	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
 		std::string val = c->Value();
 		if (val == "position"){
@@ -146,8 +146,13 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 		else if (val == "dof"){
 			read_float(c->ToElement(), dof);
 		}
+		else if (val == "shutter"){
+			read_float(c->ToElement(), open, "open");
+			read_float(c->ToElement(), close, "close");
+		}
 	}
-	return Camera{Transform::look_at(pos, target, up), fov, dof, focal_dist, w, h};
+	return Camera{Transform::look_at(pos, target, up), fov, dof, focal_dist,
+		open, close, w, h};
 }
 void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::string &file){
 	using namespace tinyxml2;
