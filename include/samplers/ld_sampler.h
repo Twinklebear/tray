@@ -34,6 +34,11 @@ public:
 	 */
 	std::vector<std::unique_ptr<Sampler>> get_subsamplers(int w, int h) const override;
 	/*
+	 * Generate a 1d pattern of low discrepancy samples and return them
+	 * sample values will be normalized between [0, 1)
+	 */
+	static void sample1d(std::vector<float> &samples, uint32_t scramble);
+	/*
 	 * Generate a 2d pattern of low discrepancy samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */

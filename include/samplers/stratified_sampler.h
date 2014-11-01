@@ -36,6 +36,11 @@ public:
 
 private:
 	/*
+	 * Generate a 1d pattern of stratified samples and return them
+	 * samples will be normalized between [0, 1)
+	 */
+	void sample1d(std::vector<float> &samples);
+	/*
 	 * Generate a 2d pattern of stratified samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
