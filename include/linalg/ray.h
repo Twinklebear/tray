@@ -18,10 +18,11 @@ struct Ray {
 	float min_t, max_t;
 	//recursion depth of this ray, needed for some algorithms
 	int depth;
+	float time;
 
 	inline Ray(const Point &o = Point{}, const Vector &d = Vector{}, float min_t = 0,
-		float max_t = std::numeric_limits<float>::infinity(), int depth = 0)
-		: o(o), d(d), min_t(min_t), max_t(max_t), depth(depth)
+		float max_t = std::numeric_limits<float>::infinity(), int depth = 0, float time = 0)
+		: o(o), d(d), min_t(min_t), max_t(max_t), depth(depth), time(time)
 	{}
 	/*
 	 * Use to indicate that some ray has spawned this one,
@@ -29,7 +30,7 @@ struct Ray {
 	 */
 	inline Ray(const Point &o, const Vector &d, const Ray &parent, float min_t = 0,
 		float max_t = std::numeric_limits<float>::infinity())
-		: o(o), d(d), min_t(min_t), max_t(max_t), depth(parent.depth + 1)
+		: o(o), d(d), min_t(min_t), max_t(max_t), depth(parent.depth + 1), time(parent.time)
 	{}
 	//Get a point at some t along the ray
 	inline Point operator()(float t) const {
@@ -50,9 +51,9 @@ struct RayDifferential : Ray {
 	//Rays one sample over in x/y
 	Ray rx, ry;
 
-	inline RayDifferential(const Point &o = Point{}, const Vector &d = Vector{},
-		float min_t = 0, float max_t = std::numeric_limits<float>::infinity(), int depth = 0)
-		: Ray(o, d, min_t, max_t, depth)
+	inline RayDifferential(const Point &o = Point{}, const Vector &d = Vector{}, float min_t = 0,
+		float max_t = std::numeric_limits<float>::infinity(), int depth = 0, float time = 0)
+		: Ray(o, d, min_t, max_t, depth, time)
 	{}
 	/*
 	 * Use to indicate that some ray has spawned this one,
