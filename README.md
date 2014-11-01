@@ -22,6 +22,33 @@ Extras
 -
 The ray tracer also supports some extra scene options that can be specified within a <config> block in the scene file.
 
+Moving Objects
+-
+Objects can be specified to be in motion during the rendering, resulting in motion blur. To do this you can specify the
+start and end transformations along with their time points and specify the camera shutter open and close times.
+
+The object transformation should look like:
+```XML
+<start time="1.5">
+    <scale value="1.5"/>
+	<rotate angle="45" x="1" y="0" z="0"/>
+	<translate x="2" y="1" z="0"/>
+</start>
+<end time="5.5">
+    <scale value="2"/>
+	<rotate angle="0" x="1" y="0" z="0"/>
+	<translate x="0" y="3" z="0"/>
+</end>
+```
+
+The camera shutter open and close times can be specified as:
+```XML
+<camera>
+    <!-- Your other camera properties -->
+	<shutter open="0.5" close="5.5"/>
+</camera>
+```
+
 Samplers
 -
 The type of sampler used to render the scene can be configured by the `<sampler type="">` tag. Available samplers and their
