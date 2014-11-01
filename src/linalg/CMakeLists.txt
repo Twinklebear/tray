@@ -1,2 +1,2 @@
-add_library(linalg matrix4.cpp transform.cpp ray.cpp quaternion.cpp)
+add_library(linalg matrix4.cpp transform.cpp ray.cpp quaternion.cpp animated_transform.cpp)
 
