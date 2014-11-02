@@ -10,8 +10,9 @@ add_subdirectory(filters)
 add_subdirectory(textures)
 add_subdirectory(integrator)
 add_subdirectory(renderer)
+add_subdirectory(monte_carlo)
 set(RAY_LIBS loaders lights integrator renderer linalg film geometry samplers
-	material accelerators filters textures)
+	material accelerators filters textures monte_carlo)
 
 add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp
 	${tinyxml2_DIR}/tinyxml2.cpp)
