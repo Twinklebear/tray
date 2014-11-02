@@ -21,11 +21,12 @@ public:
 	/*
 	 * Compute the hemispherical-directional reflectance function using the samples passed
 	 */
-	Colorf rho_hd(const Vector &wo, const std::vector<float> &samples) const override;
+	Colorf rho_hd(const Vector &wo, const std::vector<std::array<float, 2>> &samples) const override;
 	/*
 	 * Compute the hemispherical-hemispherical reflectance function using the samples passed
 	 */
-	Colorf rho_hh(const std::vector<float> &samples_a, const std::vector<float> &samples_b) const override;
+	Colorf rho_hh(const std::vector<std::array<float, 2>> &samples_a,
+		const std::vector<std::array<float, 2>> &samples_b) const override;
 };
 
 #endif
