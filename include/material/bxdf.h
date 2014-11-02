@@ -46,7 +46,7 @@ public:
 	 * Sample the BxDFs value for some outgoing direction using the random values
 	 * passed and returning the incident light direction
 	 */
-	virtual Colorf sample(const Vector &wo, Vector &wi, const std::array<float, 2> &samples, float &pdf) const;
+	virtual Colorf sample(const Vector &wo, Vector &wi, const std::array<float, 2> &samples, float &pdf_val) const;
 	/*
 	 * Compute the hemispherical-directional reflectance function using the samples passed
 	 */
