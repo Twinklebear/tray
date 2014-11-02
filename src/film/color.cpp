@@ -74,6 +74,9 @@ Colorf operator*(const Colorf &a, float s){
 Colorf operator*(float s, const Colorf &a){
 	return Colorf{a.r * s, a.g * s, a.b * s};
 }
+Colorf operator/(const Colorf &a, const Colorf &b){
+	return Colorf{a.r / b.r, a.g / b.g, a.b / b.b};
+}
 Colorf operator/(const Colorf &c, float s){
 	float inv_s = 1.f / s;
 	return c * inv_s;
