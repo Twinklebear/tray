@@ -144,6 +144,9 @@ struct Normal {
 	inline float dot(const Normal &n) const {
 		return x * n.x + y * n.y + z * n.z;
 	}
+	inline Vector cross(const Vector &v) const {
+		return Vector{y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x};
+	}
 	inline float length_sqr() const {
 		return x * x + y * y + z * z;
 	}

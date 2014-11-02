@@ -14,7 +14,6 @@
 class StratifiedSampler : public Sampler {
 	const int spp;
 	std::minstd_rand rng;
-	std::uniform_real_distribution<float> distrib;
 
 public:
 	StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp);
@@ -33,18 +32,16 @@ public:
 	 * section of the original sampler
 	 */
 	std::vector<std::unique_ptr<Sampler>> get_subsamplers(int w, int h) const override;
-
-private:
 	/*
 	 * Generate a 1d pattern of stratified samples and return them
 	 * samples will be normalized between [0, 1)
 	 */
-	void sample1d(std::vector<float> &samples);
+	static void sample1d(std::vector<float> &samples, std::minstd_rand &rng);
 	/*
 	 * Generate a 2d pattern of stratified samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
-	void sample2d(std::vector<std::array<float, 2>> &samples);
+	static void sample2d(std::vector<std::array<float, 2>> &samples, std::minstd_rand &rng);
 };
 
 #endif
