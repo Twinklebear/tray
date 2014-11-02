@@ -3,7 +3,9 @@
 
 #include <array>
 #include <vector>
+#include <cmath>
 #include "linalg/vector.h"
+#include "linalg/util.h"
 #include "film/color.h"
 
 /*
@@ -57,6 +59,33 @@ public:
 	 * Compute the probability density function for sampling the directions passed
 	 */
 	virtual float pdf(const Vector &wo, const Vector &wi) const;
+	/*
+	 * Quicker utilities for computing cos and sin the shading coordinate system
+	 */
+	static inline float cos_theta(const Vector &v){
+		return v.z;
+	}
+	//TODO: Will we ever use this function?
+	static inline float sin_theta2(const Vector &v){
+		return std::max(0.f, 1.f - v.z * v.z);
+	}
+	static inline float sin_theta(const Vector &v){
+		return std::sqrt(sin_theta2(v));
+	}
+	static inline float cos_phi(const Vector &v){
+		float sintheta = sin_theta(v);
+		if (sintheta == 0){
+			return 1;
+		}
+		return clamp(v.x / sintheta, -1.f, 1.f);
+	}
+	static inline float sin_phi(const Vector &v){
+		float sintheta = sin_theta(v);
+		if (sintheta == 0){
+			return 0;
+		}
+		return clamp(v.y / sintheta, -1.f, 1.f);
+	}
 };
 
 #endif
