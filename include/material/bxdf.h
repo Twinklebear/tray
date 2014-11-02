@@ -66,7 +66,6 @@ public:
 	static inline float cos_theta(const Vector &v){
 		return v.z;
 	}
-	//TODO: Will we ever use this function?
 	static inline float sin_theta2(const Vector &v){
 		return std::max(0.f, 1.f - v.z * v.z);
 	}
