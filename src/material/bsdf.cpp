@@ -1,8 +1,8 @@
 #include "samplers/stratified_sampler.h"
 #include "material/bsdf.h"
 
-BSDF::BSDF(const DifferentialGeometry &dg, const Normal &ng, float eta)
-	: ns(dg.normal), ng(ng), s(dg.dp_du.normalized()), t(ns.cross(s)), dg(dg), eta(eta)
+BSDF::BSDF(const DifferentialGeometry &dg, float eta)
+	: ns(dg.normal), ng(dg.geom_normal), s(dg.dp_du.normalized()), t(ns.cross(s)), dg(dg), eta(eta)
 {}
 void BSDF::add(std::unique_ptr<BxDF> b){
 	bxdfs.push_back(std::move(b));

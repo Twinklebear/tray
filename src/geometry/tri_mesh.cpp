@@ -65,6 +65,8 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	const Normal &nc = mesh->normal(c);
 	diff_geom.normal = bary[2] * na + bary[0] * nb + bary[1] * nc;
 	diff_geom.normal = diff_geom.normal.normalized();
+	//Compute the geometric normal of the triangle
+	diff_geom.geom_normal = Normal{e[0].cross(e[1]).normalized()};
 	if (ray.d.dot(diff_geom.normal) < 0){
 		diff_geom.hit_side = HITSIDE::FRONT;
 	}

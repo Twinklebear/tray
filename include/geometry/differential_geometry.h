@@ -16,7 +16,9 @@ enum HITSIDE { NONE, FRONT, BACK };
  */
 struct DifferentialGeometry {
 	Point point;
-	Normal normal;
+	//normal is the surface normal to be used for shading while
+	//geom_normal is the true normal of the original geometry we hit
+	Normal normal, geom_normal;
 	const Node *node;
 	HITSIDE hit_side;
 	//Various derivatives and info we need for texture mapping and filtering
@@ -26,8 +28,8 @@ struct DifferentialGeometry {
 
 	DifferentialGeometry();
 	DifferentialGeometry(const Point &point, const Vector &dp_du, const Vector &dp_dv,
-		const Normal &dn_du, const Normal &dn_dv, const Normal &normal, float u, float v,
-		const Node *node, HITSIDE hit_side);
+		const Normal &dn_du, const Normal &dn_dv, const Normal &normal, const Normal &geom_normal,
+	   	float u, float v, const Node *node, HITSIDE hit_side);
 	/*
 	 * Compute the (u, v) derivatives using information about the
 	 * change in pixel position from the ray differential

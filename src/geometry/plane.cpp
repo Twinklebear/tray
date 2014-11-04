@@ -22,6 +22,7 @@ bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 		ray.max_t = t;
 		diff_geom.point = hit;
 		diff_geom.normal = Normal{0, 0, 1};
+		diff_geom.geom_normal = diff_geom.normal;
 		if (ray.d.dot(diff_geom.normal) < 0){
 			diff_geom.hit_side = HITSIDE::FRONT;
 		}

@@ -33,6 +33,7 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	diff_geom.point = ray(t_hit);
 	//For a unit sphere the normal is the same as the point hit
 	diff_geom.normal = Normal{diff_geom.point};
+	diff_geom.geom_normal = diff_geom.normal;
 	if (ray.d.dot(diff_geom.normal) < 0){
 		diff_geom.hit_side = HITSIDE::FRONT;
 	}
