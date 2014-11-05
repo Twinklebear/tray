@@ -53,6 +53,7 @@ public:
 	virtual Colorf rho_hd(const Vector &wo, const std::vector<std::array<float, 2>> &samples) const;
 	/*
 	 * Compute the hemispherical-hemispherical reflectance function using the samples passed
+	 * samples_a and samples_b should contain the same number of samples
 	 */
 	virtual Colorf rho_hh(const std::vector<std::array<float, 2>> &samples_a,
 		const std::vector<std::array<float, 2>> &samples_b) const;
