@@ -61,5 +61,16 @@ public:
 	Colorf operator()(float cos_i) const override;
 };
 
+/*
+ * No-op Fresnel, simply returns 1
+ */
+class FresnelNoOp : public Fresnel {
+public:
+	/*
+	 * Evaluate the Fresnel reflectance term for light incident along some angle
+	 */
+	Colorf operator()(float cos_i) const override;
+};
+
 #endif
 
