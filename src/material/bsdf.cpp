@@ -45,9 +45,9 @@ Colorf BSDF::operator()(const Vector &wo_world, const Vector &wi_world, BxDFTYPE
 	}
 	return color;
 }
-Colorf BSDF::rho_hd(const Vector &wo, std::minstd_rand &rng, BxDFTYPE flags, int sqrt_samples) const {
+Colorf BSDF::rho_hd(const Vector &wo, Sampler &sampler, BxDFTYPE flags, int sqrt_samples) const {
 	std::vector<std::array<float, 2>> samples(sqrt_samples * sqrt_samples);
-	StratifiedSampler::sample2d(samples, rng);
+	sampler.get_samples(samples);
 	Colorf color;
 	for (const auto &b : bxdfs){
 		if (b->matches(flags)){
@@ -56,11 +56,11 @@ Colorf BSDF::rho_hd(const Vector &wo, std::minstd_rand &rng, BxDFTYPE flags, int
 	}
 	return color;
 }
-Colorf BSDF::rho_hh(std::minstd_rand &rng, BxDFTYPE flags, int sqrt_samples) const {
+Colorf BSDF::rho_hh(Sampler &sampler, BxDFTYPE flags, int sqrt_samples) const {
 	std::vector<std::array<float, 2>> samples_a(sqrt_samples * sqrt_samples);
 	std::vector<std::array<float, 2>> samples_b(sqrt_samples * sqrt_samples);
-	StratifiedSampler::sample2d(samples_a, rng);
-	StratifiedSampler::sample2d(samples_b, rng);
+	sampler.get_samples(samples_a);
+	sampler.get_samples(samples_b);
 	Colorf color;
 	for (const auto &b : bxdfs){
 		if (b->matches(flags)){

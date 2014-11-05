@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include "linalg/vector.h"
+#include "samplers/sampler.h"
 #include "geometry/differential_geometry.h"
 #include "film/color.h"
 #include "bxdf.h"
@@ -52,11 +53,11 @@ public:
 	 * Sample the hemispherical-directional reflectance function of the BxDFs
 	 * sqrt_samples is the square root of the number of samples to take
 	 */
-	Colorf rho_hd(const Vector &wo, std::minstd_rand &rng, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
+	Colorf rho_hd(const Vector &wo, Sampler &sampler, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Sample the hemispherical-hemispherical reflectance function of the BxDFs
 	 */
-	Colorf rho_hh(std::minstd_rand &rng, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
+	Colorf rho_hh(Sampler &sampler, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Compute the probability density function for BxDFs for the directions passed
 	 */
