@@ -19,12 +19,9 @@ void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 	std::vector<std::array<float, 2>> pos(spp * spp), lens(spp * spp);
 	std::vector<float> time(spp * spp);
 	//Get a set of random samples in the range [0, 1) and scale them into pixel coords
-	sample2d(pos, rng);
-	sample2d(lens, rng);
-	sample1d(time, rng);
-	std::shuffle(pos.begin(), pos.end(), rng);
-	std::shuffle(lens.begin(), lens.end(), rng);
-	std::shuffle(time.begin(), time.end(), rng);
+	get_samples(pos);
+	get_samples(lens);
+	get_samples(time);
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -44,6 +41,10 @@ void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 }
 void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	sample2d(samples, rng);
+	std::shuffle(samples.begin(), samples.end(), rng);
+}
+void StratifiedSampler::get_samples(std::vector<float> &samples){
+	sample1d(samples, rng);
 	std::shuffle(samples.begin(), samples.end(), rng);
 }
 int StratifiedSampler::get_max_spp() const {

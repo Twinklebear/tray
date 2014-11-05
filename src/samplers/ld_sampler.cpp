@@ -23,12 +23,9 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 	samples.resize(spp);
 	std::vector<std::array<float, 2>> pos(spp), lens(spp);
 	std::vector<float> time(spp);
-	sample2d(pos, distrib(rng), distrib(rng));
-	sample2d(lens, distrib(rng), distrib(rng));
-	sample1d(time, distrib(rng));
-	std::shuffle(pos.begin(), pos.end(), rng);
-	std::shuffle(lens.begin(), lens.end(), rng);
-	std::shuffle(time.begin(), time.end(), rng);
+	get_samples(pos);
+	get_samples(lens);
+	get_samples(time);
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -48,6 +45,10 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 }
 void LDSampler::get_samples(std::vector<std::array<float, 2>> &samples){
 	sample2d(samples, distrib(rng), distrib(rng));
+	std::shuffle(samples.begin(), samples.end(), rng);
+}
+void LDSampler::get_samples(std::vector<float> &samples){
+	sample1d(samples, distrib(rng));
 	std::shuffle(samples.begin(), samples.end(), rng);
 }
 int LDSampler::get_max_spp() const {
