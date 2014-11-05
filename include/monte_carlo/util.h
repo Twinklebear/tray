@@ -16,6 +16,17 @@ constexpr float uniform_hemisphere_pdf(){
 	return INV_TAU;
 }
 /*
+ * Sample a hemisphere using a cosine distribution to produce cosine weighted samples
+ * input samples should be in range [0, 1)
+ */
+Vector cos_sample_hemisphere(const std::array<float, 2> &u);
+/*
+ * Compute the PDF of the cosine weighted hemisphere sampling
+ */
+constexpr float cos_hemisphere_pdf(float cos_theta){
+	return cos_theta * INV_PI;
+}
+/*
  * Uniformly sample a sphere given input random variables in range [0, 1)
  */
 Vector uniform_sample_sphere(const std::array<float, 2> &u);
@@ -25,6 +36,11 @@ Vector uniform_sample_sphere(const std::array<float, 2> &u);
 constexpr float uniform_sphere_pdf(){
 	return 1.f / (4.f * PI);
 }
+/*
+ * Uniformly sample positions on a triangle, this assumes an isoscles right-triangle
+ * sample positions should be [0, 1)
+ */
+std::array<float, 2> uniform_sample_tri(const std::array<float, 2> &u);
 /*
  * Compute concentric sample positions on a unit disk mapping input from range [0, 1)
  * to sample positions on a disk

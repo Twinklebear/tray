@@ -7,11 +7,21 @@ Vector uniform_sample_hemisphere(const std::array<float, 2> &u){
 	float phi = TAU * u[1];
 	return Vector{std::cos(phi) * r, std::sin(phi) * r, u[0]};
 }
+Vector cos_sample_hemisphere(const std::array<float, 2> &u){
+	//We use Malley's method here, generate samples on a disk then project
+	//them up to the hemisphere
+	std::array<float, 2> d = concentric_sample_disk(u);
+	return Vector{d[0], d[1], std::sqrt(std::max(0.f, 1.f - d[0] * d[0] - d[1] * d[1]))};
+}
 Vector uniform_sample_sphere(const std::array<float, 2> &u){
 	float z = 1 - 2 * u[0];
 	float r = std::sqrt(std::max(0.f, 1.f - z * z));
 	float phi = TAU * u[1];
 	return Vector{std::cos(phi) * r, std::sin(phi) * r, z};
+}
+std::array<float, 2> uniform_sample_tri(const std::array<float, 2> &u){
+	float su = std::sqrt(u[0]);
+	return {1 - su, u[1] * su};
 }
 std::array<float, 2> concentric_sample_disk(const std::array<float, 2> &u){
 	std::array<float, 2> s{2 * u[0] - 1, 2 * u[1] - 1};
