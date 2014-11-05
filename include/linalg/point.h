@@ -25,10 +25,10 @@ struct Point {
 
 	inline Point(float x = 0) : x(x), y(x), z(x) {}
 	inline Point(float x, float y, float z) : x(x), y(y), z(z) {}
-	inline float distance_sqr(const Point &p){
+	inline float distance_sqr(const Point &p) const {
 		return (*this - p).length_sqr();
 	}
-	inline float distance(const Point &p){
+	inline float distance(const Point &p) const {
 		return (*this - p).length();
 	}
 	inline const float& operator[](size_t i) const {
