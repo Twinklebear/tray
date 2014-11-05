@@ -36,6 +36,10 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 			illum += c * li * std::abs(wi.dot(bsdf.dg.normal)) / pdf_val;
 		}
 	}
+	if (ray.depth < max_depth){
+		Colorf refl = spec_reflect(ray, dg, bsdf, renderer, scene, sampler);
+		illum += refl;
+	}
 	/*
 	if (ray.depth < max_depth){
 		//TODO: This should be cleaned up similar to what PBR does with specular reflect & transmit
