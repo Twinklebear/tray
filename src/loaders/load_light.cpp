@@ -57,7 +57,6 @@ void load_lights(tinyxml2::XMLElement *elem, PBRLightCache &cache){
 std::unique_ptr<Light> load_ambientl(tinyxml2::XMLElement *elem){
 	Colorf color{1, 1, 1};
 	read_color(elem->FirstChildElement("intensity"), color);
-	color.normalize();
 	return std::make_unique<AmbientLight>(color);
 }
 std::unique_ptr<Light> load_directl(tinyxml2::XMLElement *elem){
@@ -65,7 +64,6 @@ std::unique_ptr<Light> load_directl(tinyxml2::XMLElement *elem){
 	Vector dir{0, 0, 0};
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_vector(elem->FirstChildElement("direction"), dir);
-	color.normalize();
 	return std::make_unique<DirectLight>(color, dir);
 }
 std::unique_ptr<PBRLight> load_pointl(tinyxml2::XMLElement *elem){
@@ -73,7 +71,6 @@ std::unique_ptr<PBRLight> load_pointl(tinyxml2::XMLElement *elem){
 	Vector pos{0, 0, 0};
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_vector(elem->FirstChildElement("position"), pos);
-	color.normalize();
 	return std::make_unique<PBRPointLight>(Transform::translate(pos), color);
 }
 
