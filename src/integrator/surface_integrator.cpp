@@ -30,11 +30,11 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const Differe
 			float ddn_dy = dd_dy.dot(n) + wo.dot(dn_dy);
 			refl.rx.d = wi - dd_dx + 2 * Vector{wo.dot(n) * dn_dx + Vector{ddn_dx * n}};
 			refl.ry.d = wi - dd_dy + 2 * Vector{wo.dot(n) * dn_dy + Vector{ddn_dy * n}};
-			refl.rx.d = refl.rx.d.normalized();
-			refl.ry.d = refl.ry.d.normalized();
 		}
 		Colorf li = renderer.illumination(refl, scene, sampler);
 		reflected = f * li * std::abs(wi.dot(dg.normal)) / pdf_val;
+		reflected = Colorf{refl.d.x, refl.d.y, refl.d.z};
+		reflected = (reflected + Colorf{1}) / 2;
 	}
 	return reflected;
 }
