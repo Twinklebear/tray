@@ -67,7 +67,7 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 		return Colorf{0};
 	}
 	if (sampled_type){
-		sampled_type = bxdf->type;
+		*sampled_type = bxdf->type;
 	}
 	wi_world = from_shading(wi);
 
@@ -75,9 +75,9 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 	//since they contain a delta distribution which would make this incorrect
 	if (!(bxdf->type & BxDFTYPE::SPECULAR) && n_matching > 1){
 		pdf_val = pdf(wo_world, wi_world, flags);
+		//Compute the total contribution from all BxDFs matching the flags along this direction
+		f = (*this)(wo_world, wi_world, flags);
 	}
-	//Compute the total contribution from all BxDFs matching the flags along this direction
-	f = (*this)(wo_world, wi_world, flags);
 	return f;
 }
 Colorf BSDF::rho_hd(const Vector &wo, Sampler &sampler, BxDFTYPE flags, int sqrt_samples) const {
@@ -119,9 +119,8 @@ float BSDF::pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags) 
 	return n_comps > 0 ? pdf_val / n_comps : 0;
 }
 const BxDF* BSDF::matching_at(int i, BxDFTYPE flags) const {
-	int j = 0;
 	for (const auto &b : bxdfs){
-		if (b->matches(flags) && j-- == 0){
+		if (b->matches(flags) && i-- == 0){
 			return b.get();
 		}
 	}
