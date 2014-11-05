@@ -27,7 +27,7 @@ public:
 	/*
 	 * Construct the BSDF for the differential geometry being shaded
 	 */
-	BSDF(const DifferentialGeometry &dg, float eta);
+	BSDF(const DifferentialGeometry &dg, float eta = 1);
 	/*
 	 * Add a BxDF to the set of BxDFs used by this BSDF
 	 */

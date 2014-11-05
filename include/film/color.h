@@ -32,6 +32,7 @@ struct Colorf {
 	 * Normalize the floating point color values to be clamped between 0-1
 	 */
 	void normalize();
+	Colorf normalized() const;
 	/*
 	 * Compute the luminance of the  color
 	 */

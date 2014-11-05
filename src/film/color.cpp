@@ -21,6 +21,9 @@ void Colorf::normalize(){
 	g = clamp(g, 0.f, 1.f);
 	b = clamp(b, 0.f, 1.f);
 }
+Colorf Colorf::normalized() const {
+	return Colorf{clamp(r, 0.f, 1.f), clamp(g, 0.f, 1.f), clamp(b, 0.f, 1.f)};
+}
 float Colorf::luminance() const {
 	return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 }
