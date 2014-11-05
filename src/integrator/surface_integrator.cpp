@@ -3,7 +3,7 @@
 Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const DifferentialGeometry &dg,
 	const BSDF &bsdf, const Renderer &renderer, const Scene &scene, Sampler &sampler)
 {
-	Vector wo = ray.d;
+	Vector wo = -ray.d;
 	Vector wi;
 	float pdf_val = 0;
 	std::vector<std::array<float, 2>> u_sample(1);
