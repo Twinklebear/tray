@@ -2,7 +2,7 @@
 #define RENDERER_H
 
 #include <memory>
-#include <random>
+#include "samplers/sampler.h"
 #include "linalg/ray.h"
 #include "scene.h"
 
@@ -22,8 +22,7 @@ public:
 	 * The default implementation simply calls the surface integrator on
 	 * the hit geometry to compute the illumination
 	 */
-	virtual Colorf illumination(RayDifferential &ray, const Scene &scene,
-		std::minstd_rand &rng) const;
+	virtual Colorf illumination(RayDifferential &ray, const Scene &scene, Sampler &sampler) const;
 };
 
 #endif

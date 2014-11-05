@@ -25,8 +25,6 @@ void Worker::render(){
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
 	auto renderer = std::make_unique<Renderer>(std::make_unique<WhittedIntegrator>(scene.get_max_depth()));
-	std::minstd_rand rng{static_cast<unsigned>(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count())};
 	//Counter so we can check if we've been canceled, check after every 32 pixels rendered
 	int check_cancel = 0;
 	while (true){
@@ -44,7 +42,7 @@ void Worker::render(){
 			for (const auto &s : samples){
 				rays.push_back(camera.generate_raydifferential(s));
 				rays.back().scale_differentials(1.f / std::sqrt(sampler->get_max_spp()));
-				colors.push_back(renderer->illumination(rays.back(), scene, rng));
+				colors.push_back(renderer->illumination(rays.back(), scene, *sampler));
 				//If we didn't hit anything and the scene has a background use that
 				if (scene.get_background() && rays.back().max_t == std::numeric_limits<float>::infinity()){
 					DifferentialGeometry dg;
