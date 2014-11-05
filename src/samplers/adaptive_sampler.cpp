@@ -102,7 +102,7 @@ std::vector<std::unique_ptr<Sampler>> AdaptiveSampler::get_subsamplers(int w, in
 bool AdaptiveSampler::needs_supersampling(const std::vector<Sample>&,
 	const std::vector<RayDifferential>&, const std::vector<Colorf> &colors)
 {
-	const static float max_contrast = 0.5f;
+	const static float max_contrast = 0.3f;
 	float lum_avg = 0;
 	for (const auto &c : colors){
 		lum_avg += c.luminance();
