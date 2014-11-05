@@ -6,8 +6,8 @@
 #include "integrator/whitted_integrator.h"
 
 WhittedIntegrator::WhittedIntegrator(int max_depth) : max_depth(max_depth){}
-Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer&,
-	const RayDifferential &ray, const DifferentialGeometry &dg) const
+Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
+		const DifferentialGeometry &dg, std::minstd_rand &rng) const
 {
 	const PBRMaterial *mat = dg.node->get_material();
 	if (!mat){
