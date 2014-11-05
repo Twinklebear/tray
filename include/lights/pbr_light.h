@@ -13,6 +13,7 @@
  * and the number of samples that should be taken when sampling this light
  */
 class PBRLight {
+protected:
 	//Transforms from light to world space and world to light space
 	const Transform to_world, to_light;
 	const int n_samples;
@@ -22,7 +23,7 @@ public:
 	 * Create the light with some transformation to world space
 	 * and desired number of samples to be taken
 	 */
-	PBRLight(const Transform &to_world, int n_samples);
+	PBRLight(const Transform &to_world, int n_samples = 1);
 	/*
 	 * Sample the illumination from the light arriving at the point
 	 * returns the color along with the incident light direction for the point,
