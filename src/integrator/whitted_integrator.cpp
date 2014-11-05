@@ -22,8 +22,8 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 		Vector wi;
 		float pdf_val = 0;
 		OcclusionTester occlusion;
-		//TODO: Need actual random samples here for light samples
-		Colorf li = l.second->sample(bsdf.dg.point, {0, 0}, wi, pdf_val, occlusion);
+		Colorf li = l.second->sample(bsdf.dg.point, {sampler.random_float(), sampler.random_float()},
+			wi, pdf_val, occlusion);
 		//If there's no light or no probability for this sample there's no illumination
 		if (li.luminance() == 0 || pdf_val == 0){
 			continue;
