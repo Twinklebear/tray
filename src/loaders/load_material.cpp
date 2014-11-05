@@ -62,7 +62,7 @@ std::unique_ptr<PBRMaterial> load_blinnphong(tinyxml2::XMLElement *elem, Texture
 	using namespace tinyxml2;
 	Texture *diff = nullptr, *spec = nullptr, *refl = nullptr,
 		*refrc = nullptr, *absorp = nullptr;
-	float gloss = 1, refr_index = -1;
+	float gloss = 0, refr_index = -1;
 	std::string name = elem->Attribute("name");
 	XMLElement *e = elem->FirstChildElement("diffuse");
 	if (e){
@@ -90,6 +90,6 @@ std::unique_ptr<PBRMaterial> load_blinnphong(tinyxml2::XMLElement *elem, Texture
 		absorp = load_texture(e, name, tcache, file);
 	}
 	//TODO: This should be plastic material?
-	return std::make_unique<MatteMaterial>(diff, 0);
+	return std::make_unique<MatteMaterial>(diff, gloss);
 }
 

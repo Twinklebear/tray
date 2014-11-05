@@ -1,7 +1,18 @@
 #include <cmath>
-#include "linalg/util.h"
 #include "monte_carlo/util.h"
 
+
+Vector uniform_sample_hemisphere(const std::array<float, 2> &u){
+	float r = std::sqrt(std::max(0.f, 1.f - u[0] * u[0]));
+	float phi = TAU * u[1];
+	return Vector{std::cos(phi) * r, std::sin(phi) * r, u[0]};
+}
+Vector uniform_sample_sphere(const std::array<float, 2> &u){
+	float z = 1 - 2 * u[0];
+	float r = std::sqrt(std::max(0.f, 1.f - z * z));
+	float phi = TAU * u[1];
+	return Vector{std::cos(phi) * r, std::sin(phi) * r, z};
+}
 std::array<float, 2> concentric_sample_disk(const std::array<float, 2> &u){
 	std::array<float, 2> s{2 * u[0] - 1, 2 * u[1] - 1};
 	float radius, theta;
