@@ -3,7 +3,8 @@
 
 #include "linalg/point.h"
 #include "linalg/ray.h"
-#include "scene.h"
+
+class Scene;
 
 /*
  * A structure used to setup and test lights for occlusion

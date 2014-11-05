@@ -1,3 +1,5 @@
+#include "scene.h"
+#include "geometry/differential_geometry.h"
 #include "lights/occlusion_tester.h"
 
 void OcclusionTester::set_points(const Point &a, const Point &b){

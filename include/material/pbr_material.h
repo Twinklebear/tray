@@ -18,5 +18,7 @@ public:
 	virtual BSDF get_bsdf(const DifferentialGeometry &dg) const = 0;
 };
 
+typedef Cache<PBRMaterial> PBRMaterialCache;
+
 #endif
 

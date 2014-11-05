@@ -1,34 +1,39 @@
+#include "material/pbr_material.h"
+#include "lights/pbr_light.h"
+#include "lights/occlusion_tester.h"
+#include "material/bsdf.h"
 #include "renderer/renderer.h"
 #include "integrator/whitted_integrator.h"
 
 WhittedIntegrator::WhittedIntegrator(int max_depth) : max_depth(max_depth){}
-Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &renderer,
+Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer&,
 	const RayDifferential &ray, const DifferentialGeometry &dg) const
 {
-	const Material *mat = dg.node->get_material();
+	const PBRMaterial *mat = dg.node->get_material();
 	if (!mat){
 		return Colorf{0.4};
 	}
+	BSDF bsdf = mat->get_bsdf(dg);
+
 	Colorf illum;
+	Vector wo = -ray.d;
+	//Compute the incident light from all lights in the scene
 	for (const auto &l : scene.get_light_cache()){
-		if (l.second->type() == LIGHT::AMBIENT){
-			illum += mat->shade(ray, dg, *l.second);
+		Vector wi;
+		float pdf_val = 0;
+		OcclusionTester occlusion;
+		//TODO: Need actual random samples here for light samples
+		Colorf li = l.second->sample(bsdf.dg.point, {0, 0}, wi, pdf_val, occlusion);
+		//If there's no light or no probability for this sample there's no illumination
+		if (li.luminance() == 0 || pdf_val == 0){
+			continue;
 		}
-		//Need the occlusion tester to clean this up some and proper light sampling code
-		if (dg.normal.dot(-l.second->direction(dg.point)) > 0.f){
-			DifferentialGeometry dummy;
-			Ray r{dg.point, -l.second->direction(dg.point), 0.001};
-			if (l.second->type() == LIGHT::DIRECT && !scene.get_root().intersect(r, dummy)){
-				illum += mat->shade(ray, dg, *l.second);
-			}
-			else if (l.second->type() == LIGHT::POINT){
-				r.max_t = 1;
-				if (!scene.get_root().intersect(r, dummy)){
-					illum += mat->shade(ray, dg, *l.second);
-				}
-			}
+		Colorf c = bsdf(wo, wi);
+		if (c.luminance() != 0 && !occlusion.occluded(scene)){
+			illum += c * li * std::abs(wi.dot(bsdf.dg.normal)) / pdf_val;
 		}
 	}
+	/*
 	if (ray.depth < max_depth){
 		//TODO: This should be cleaned up similar to what PBR does with specular reflect & transmit
 		//Track reflection contribution from Fresnel term to be incorporated
@@ -86,6 +91,7 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 			illum += renderer.illumination(refl, scene) * refl_col;
 		}
 	}
+	*/
 	return illum;
 }
 

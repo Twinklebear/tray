@@ -170,7 +170,7 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 				geom = get_geometry(type, name, scene, file);
 			}
 			const char *m = e->Attribute("material");
-			Material *mat = nullptr;
+			PBRMaterial *mat = nullptr;
 			if (m){
 				std::string mat_name = m;
 				std::cout << "Setting material: " << mat_name << std::endl;

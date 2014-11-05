@@ -14,16 +14,16 @@ Scene::Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sample
 GeometryCache& Scene::get_geom_cache(){
 	return geom_cache;
 }
-MaterialCache& Scene::get_mat_cache(){
+PBRMaterialCache& Scene::get_mat_cache(){
 	return mat_cache;
 }
 TextureCache& Scene::get_tex_cache(){
 	return tex_cache;
 }
-LightCache& Scene::get_light_cache(){
+PBRLightCache& Scene::get_light_cache(){
 	return light_cache;
 }
-const LightCache& Scene::get_light_cache() const {
+const PBRLightCache& Scene::get_light_cache() const {
 	return light_cache;
 }
 Camera& Scene::get_camera(){

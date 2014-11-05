@@ -1,8 +1,7 @@
 #include <memory>
 #include <string>
 #include <tinyxml2.h>
-#include "material/blinn_phong.h"
-#include "material/flat_material.h"
+#include "material/matte_material.h"
 #include "textures/constant_texture.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_material.h"
@@ -12,16 +11,16 @@
  * Load the FlatMaterial properties and return the material
  * elem should be root of the flat material being loaded
  */
-static std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem, TextureCache &tcache,
+static std::unique_ptr<PBRMaterial> load_flatmat(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file);
 /*
  * Load the BlinnPhong material properties and return the material
  * elem should be the root of the blinn material being loaded
  */
-static std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem, TextureCache &tcache,
+static std::unique_ptr<PBRMaterial> load_blinnphong(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file);
 
-void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache,
+void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, TextureCache &tcache,
 	const std::string &file)
 {
 	using namespace tinyxml2;
@@ -34,7 +33,7 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 				continue;
 			}
 			std::cout << "Loading material: " << name << std::endl;
-			std::unique_ptr<Material> material;
+			std::unique_ptr<PBRMaterial> material;
 			std::string type = m->Attribute("type");
 			if (type == "blinn"){
 				material = load_blinnphong(m, tcache, file);
@@ -51,13 +50,13 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 		}
 	}
 }
-std::unique_ptr<Material> load_flatmat(tinyxml2::XMLElement *elem, TextureCache &tcache,
+std::unique_ptr<PBRMaterial> load_flatmat(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file)
 {
 	Texture *tex = load_texture(elem->FirstChildElement("color"), elem->Attribute("name"), tcache, file);
-	return std::make_unique<FlatMaterial>(tex);
+	return std::make_unique<MatteMaterial>(tex, 0);
 }
-std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem, TextureCache &tcache,
+std::unique_ptr<PBRMaterial> load_blinnphong(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file)
 {
 	using namespace tinyxml2;
@@ -90,7 +89,7 @@ std::unique_ptr<Material> load_blinnphong(tinyxml2::XMLElement *elem, TextureCac
 	if (e){
 		absorp = load_texture(e, name, tcache, file);
 	}
-	return std::make_unique<BlinnPhong>(diff, spec, gloss,
-		refl, refrc, absorp, refr_index);
+	//TODO: This should be plastic material?
+	return std::make_unique<MatteMaterial>(diff, 0);
 }
 

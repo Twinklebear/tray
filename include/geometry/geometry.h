@@ -6,7 +6,7 @@
 #include <memory>
 #include "linalg/ray.h"
 #include "linalg/transform.h"
-#include "material/material.h"
+#include "material/pbr_material.h"
 #include "accelerators/bvh.h"
 #include "cache.h"
 #include "differential_geometry.h"
@@ -46,7 +46,7 @@ class Node : public Geometry {
 	//Non-owning reference to some geometry in the cache
 	Geometry *geometry;
 	//Non-owning reference to some material in the cache
-	Material *material;
+	PBRMaterial *material;
 	Transform transform, inv_transform;
 	std::string name;
 	//BVH is created for the root node of the scene only
@@ -57,7 +57,7 @@ public:
 	 * Create a node in the scene graph, placing some named geometry in
 	 * the scene
 	 */
-	Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name);
+	Node(Geometry *geom, PBRMaterial *mat, const Transform &t, const std::string &name);
 	/*
 	 * Instruct the node to flatten its children into a vector and build a BVH for them
 	 * to accelerate intersection tests. Child transforms will also be brought up into
@@ -91,8 +91,8 @@ public:
 	/*
 	 * Get the material for the node, or null if it has none associated with it
 	 */
-	const Material* get_material() const;
-	Material* get_material();
+	const PBRMaterial* get_material() const;
+	PBRMaterial* get_material();
 	/*
 	 * Get the transform of the inverse of the node's transform
 	 */

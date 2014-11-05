@@ -2,10 +2,10 @@
 #define PBR_LIGHT_H
 
 #include <array>
+#include "cache.h"
 #include "linalg/transform.h"
 #include "film/color.h"
 #include "occlusion_tester.h"
-#include "scene.h"
 
 /*
  * TODO: Replace Light with this
@@ -45,6 +45,8 @@ public:
 	 */
 	virtual float pdf(const Point &p, const Vector &wi) const = 0;
 };
+
+typedef Cache<PBRLight> PBRLightCache;
 
 #endif
 

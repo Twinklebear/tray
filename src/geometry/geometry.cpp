@@ -8,7 +8,7 @@
 #include "geometry/differential_geometry.h"
 #include "geometry/geometry.h"
 
-Node::Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name)
+Node::Node(Geometry *geom, PBRMaterial *mat, const Transform &t, const std::string &name)
 	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name)
 {}
 void Node::flatten_children(){
@@ -76,10 +76,10 @@ std::vector<std::shared_ptr<Node>>& Node::get_children(){
 const Geometry* Node::get_geometry() const {
 	return geometry;
 }
-const Material* Node::get_material() const {
+const PBRMaterial* Node::get_material() const {
 	return material;
 }
-Material* Node::get_material(){
+PBRMaterial* Node::get_material(){
 	return material;
 }
 const Transform& Node::get_transform() const {
