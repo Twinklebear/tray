@@ -25,6 +25,6 @@ Colorf BxDF::rho_hh(const std::vector<std::array<float, 2>> &samples_a,
 }
 float BxDF::pdf(const Vector &wo, const Vector &wi) const {
 	//If wo and wi are not in the same hemisphere there's no chance of sampling
-	return wo.z * wi.z > 0 ? std::abs(cos_theta(wi)) * INV_PI : 0;
+	return same_hemisphere(wo, wi) ? std::abs(cos_theta(wi)) * INV_PI : 0;
 }
 

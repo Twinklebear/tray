@@ -86,6 +86,12 @@ public:
 		}
 		return clamp(v.y / sintheta, -1.f, 1.f);
 	}
+	/*
+	 * Check if two vectors are in the same hemisphere in shading space
+	 */
+	static inline bool same_hemisphere(const Vector &a, const Vector &b){
+		return a.z * b.z > 0;
+	}
 };
 
 #endif
