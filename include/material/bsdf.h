@@ -50,6 +50,14 @@ public:
 	 */
 	Colorf operator()(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags = BxDFTYPE::ALL) const;
 	/*
+	 * Sample a BxDF in the BSDF, comp is used to randomly select the BxDF and u is used to sample
+	 * the BxDF itself
+	 * Returns information about the sampled color, incident direction, pdf and optionally the
+	 * sampled type of the sampled BxDF
+	 */
+	Colorf sample(const Vector &wo_world, Vector &wi_world, const std::array<float, 2> &u, float comp,
+		float &pdf_val, BxDFTYPE flags = BxDFTYPE::ALL, BxDFTYPE *sampled_type = nullptr) const;
+	/*
 	 * Sample the hemispherical-directional reflectance function of the BxDFs
 	 * sqrt_samples is the square root of the number of samples to take
 	 */
@@ -62,6 +70,13 @@ public:
 	 * Compute the probability density function for BxDFs for the directions passed
 	 */
 	float pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags = BxDFTYPE::ALL) const;
+
+private:
+	/*
+	 * Find the ith BxDF matching the desired flags, returns nullptr if no matches
+	 * or i >= num_bxdfs(flags)
+	 */
+	const BxDF* matching_at(int i, BxDFTYPE flags) const;
 };
 
 #endif
