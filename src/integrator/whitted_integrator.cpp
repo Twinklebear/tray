@@ -1,3 +1,5 @@
+#include <vector>
+#include <array>
 #include "material/pbr_material.h"
 #include "lights/pbr_light.h"
 #include "lights/occlusion_tester.h"
@@ -17,13 +19,14 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 
 	Colorf illum;
 	Vector wo = -ray.d;
+	std::vector<std::array<float, 2>> light_sample(1);
 	//Compute the incident light from all lights in the scene
 	for (const auto &l : scene.get_light_cache()){
+		sampler.get_samples(light_sample);
 		Vector wi;
 		float pdf_val = 0;
 		OcclusionTester occlusion;
-		Colorf li = l.second->sample(bsdf.dg.point, {sampler.random_float(), sampler.random_float()},
-			wi, pdf_val, occlusion);
+		Colorf li = l.second->sample(bsdf.dg.point, light_sample[0], wi, pdf_val, occlusion);
 		//If there's no light or no probability for this sample there's no illumination
 		if (li.luminance() == 0 || pdf_val == 0){
 			continue;

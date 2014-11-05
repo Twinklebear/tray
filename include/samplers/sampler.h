@@ -36,14 +36,15 @@ public:
 	 */
 	Sampler(int x_start, int x_end, int y_start, int y_end);
 	/*
-	 * Get some {x, y} positions to sample in the space being sampled
+	 * Get some 5D samples to sample the image plane, lens and time dimensions
 	 * If the sampler has finished sampling samples will be empty
 	 */
 	virtual void get_samples(std::vector<Sample> &samples) = 0;
 	/*
-	 * Get a single random float in [0, 1) from the sampler
+	 * Get a set of 2D samples in range [0, 1)
+	 * samples should already be allocated to contain the number of samples desired
 	 */
-	virtual float random_float();
+	virtual void get_samples(std::vector<std::array<float, 2>> &samples) = 0;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */

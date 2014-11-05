@@ -48,6 +48,10 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 		s.img[1] += y;
 	}
 }
+void AdaptiveSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+	LDSampler::sample2d(samples, distrib(rng), distrib(rng));
+	std::shuffle(samples.begin(), samples.end(), rng);
+}
 int AdaptiveSampler::get_max_spp() const {
 	return max_spp;
 }

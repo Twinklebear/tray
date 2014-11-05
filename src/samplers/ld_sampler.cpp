@@ -46,6 +46,10 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 		++y;
 	}
 }
+void LDSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+	sample2d(samples, distrib(rng), distrib(rng));
+	std::shuffle(samples.begin(), samples.end(), rng);
+}
 int LDSampler::get_max_spp() const {
 	return spp;
 }

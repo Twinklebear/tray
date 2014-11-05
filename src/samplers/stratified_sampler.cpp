@@ -42,6 +42,10 @@ void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 		++y;
 	}
 }
+void StratifiedSampler::get_samples(std::vector<std::array<float, 2>> &samples){
+	sample2d(samples, rng);
+	std::shuffle(samples.begin(), samples.end(), rng);
+}
 int StratifiedSampler::get_max_spp() const {
 	return spp;
 }
