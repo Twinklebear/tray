@@ -2,6 +2,7 @@
 #define SAMPLER_H
 
 #include <array>
+#include <random>
 #include <vector>
 #include <memory>
 #include "linalg/ray.h"
@@ -25,6 +26,8 @@ struct Sample {
 class Sampler {
 protected:
 	int x, y;
+	std::minstd_rand rng;
+	std::uniform_real_distribution<float> float_distrib;
 
 public:
 	const int x_start, x_end, y_start, y_end;
@@ -37,6 +40,10 @@ public:
 	 * If the sampler has finished sampling samples will be empty
 	 */
 	virtual void get_samples(std::vector<Sample> &samples) = 0;
+	/*
+	 * Get a single random float in [0, 1) from the sampler
+	 */
+	virtual float random_float();
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */

@@ -13,7 +13,6 @@
  */
 class LDSampler : public Sampler {
 	const int spp;
-	std::minstd_rand rng;
 	std::uniform_int_distribution<uint32_t> distrib;
 
 public:

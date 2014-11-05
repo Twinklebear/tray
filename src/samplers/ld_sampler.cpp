@@ -8,9 +8,7 @@
 #include "samplers/ld_sampler.h"
 
 LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp)
-	: Sampler(x_start, x_end, y_start, y_end), spp(round_up_pow2(sp)),
-	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+	: Sampler(x_start, x_end, y_start, y_end), spp(round_up_pow2(sp))
 {
 	if (sp % 2 != 0){
 		std::cout << "Warning: LDSampler requires power of 2 samples per pixel."

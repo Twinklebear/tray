@@ -13,7 +13,6 @@
  */
 class StratifiedSampler : public Sampler {
 	const int spp;
-	std::minstd_rand rng;
 
 public:
 	StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp);

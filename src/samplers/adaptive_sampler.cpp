@@ -10,9 +10,7 @@
 
 AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp)
 	: Sampler{x_start, x_end, y_start, y_end}, min_spp(round_up_pow2(min_sp)), max_spp(round_up_pow2(max_sp)),
-	supersample_px(false),
-	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+	supersample_px(false)
 {
 	if (min_sp % 2 != 0){
 		std::cout << "Warning: AdaptiveSampler requires power of 2 samples per pixel."

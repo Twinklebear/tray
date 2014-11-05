@@ -8,9 +8,7 @@
 #include "samplers/stratified_sampler.h"
 
 StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp)
-	: Sampler(x_start, x_end, y_start, y_end), spp(spp),
-	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+	: Sampler(x_start, x_end, y_start, y_end), spp(spp)
 {}
 void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
