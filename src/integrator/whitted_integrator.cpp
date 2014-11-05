@@ -37,68 +37,9 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 		}
 	}
 	if (ray.depth < max_depth){
-		Colorf refl = spec_reflect(ray, dg, bsdf, renderer, scene, sampler);
-		illum += refl;
+		illum += spec_reflect(ray, dg, bsdf, renderer, scene, sampler);
+		illum += spec_transmit(ray, dg, bsdf, renderer, scene, sampler);
 	}
-	/*
-	if (ray.depth < max_depth){
-		//TODO: This should be cleaned up similar to what PBR does with specular reflect & transmit
-		//Track reflection contribution from Fresnel term to be incorporated
-		//into reflection calculation
-		Colorf fresnel_refl;
-		if (mat->is_transparent()){
-			float eta = 0;
-			Vector n;
-			//Compute proper refractive index ratio and set normal to be on same side
-			//as indicident ray for refraction computation when entering/exiting material
-			if (dg.hit_side == HITSIDE::FRONT){
-				eta = 1.f / mat->refractive_idx();
-				n = Vector{dg.normal.normalized()};
-			}
-			else {
-				eta = mat->refractive_idx();
-				n = -Vector{dg.normal.normalized()};
-			}
-			//Compute Schlick's approximation to find amount reflected and transmitted at the surface
-			//Note that we use -ray.d here since V should be from point -> camera and we use
-			//refl_dir as the "light" direction since that's the light reflection we're interested in
-			Vector refl_dir = ray.d - 2 * n.dot(ray.d) * n;
-			Vector h = (refl_dir - ray.d).normalized();
-			float r = std::pow((mat->refractive_idx() - 1) / (mat->refractive_idx() + 1), 2.f);
-			r = r + (1 - r) * std::pow(1 - h.dot(-ray.d), 5);
-
-			//Compute the contribution from light refracting through the object and check for total
-			//internal reflection
-			float c = -n.dot(ray.d);
-			float root = 1 - eta * eta * (1 - c * c);
-			if (root > 0){
-				RayDifferential refr = ray.refract(dg, n, eta);
-				//Account for absorption by the object if the refraction ray we're casting is entering it
-				Colorf refr_col = renderer.illumination(refr, scene) * mat->refractive(dg) * (1 - r);
-				if (dg.hit_side == HITSIDE::FRONT){
-					Colorf absorbed = mat->absorbed(dg);
-					illum += refr_col * Colorf{std::exp(-refr.max_t * absorbed.r),
-						std::exp(-refr.max_t * absorbed.g), std::exp(-refr.max_t * absorbed.b)};
-				}
-				else {
-					illum += refr_col;
-				}
-			}
-			//In the case of total internal reflection all the contribution is from the reflected term
-			else {
-				r = 1;
-			}
-			//Add Fresnel reflection contribution to be used when computing reflection
-			fresnel_refl = mat->refractive(dg) * r;
-		}
-		if (mat->is_reflective() || fresnel_refl != Colorf{0, 0, 0}){
-			Colorf refl_col = mat->reflective(dg) + fresnel_refl;
-			//Reflect and cast ray
-			RayDifferential refl = ray.reflect(dg);
-			illum += renderer.illumination(refl, scene) * refl_col;
-		}
-	}
-	*/
 	return illum;
 }
 

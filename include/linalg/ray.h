@@ -79,7 +79,7 @@ struct RayDifferential : Ray {
 	 * n: the surface normal corrected to face towards the incident ray
 	 * eta: incident index of refraction / transmitted index of refraction
 	 */
-	RayDifferential refract(const DifferentialGeometry &dg, const Vector &n, float eta) const;
+	RayDifferential refract(const DifferentialGeometry &dg, float eta) const;
 	inline bool has_differentials() const {
 		return rx.d.length_sqr() > 0 && ry.d.length_sqr() > 0;
 	}

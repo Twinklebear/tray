@@ -18,6 +18,7 @@ BSDF MatteMaterial::get_bsdf(const DifferentialGeometry &dg) const {
 	}
 	else {
 		bsdf.add(std::make_unique<OrenNayer>(kd, roughness));
+		bsdf.add(std::make_unique<SpecularReflection>(kd, std::make_unique<FresnelNoOp>()));
 	}
 	return bsdf;
 }

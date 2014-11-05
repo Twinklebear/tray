@@ -25,7 +25,8 @@ RayDifferential RayDifferential::reflect(const DifferentialGeometry &dg) const {
 	}
 	return refl;
 }
-RayDifferential RayDifferential::refract(const DifferentialGeometry &dg, const Vector &n, float eta) const {
+RayDifferential RayDifferential::refract(const DifferentialGeometry &dg, float eta) const {
+	Vector n{dg.normal.normalized()};
 	float c = -n.dot(d);
 	float root = std::sqrt(1 - eta * eta * (1 - c * c));
 	Vector refr_dir = eta * d + (eta * c - root) * n;
