@@ -18,8 +18,6 @@ public:
 	 */
 	virtual Colorf illumination(const Scene &scene, const Renderer &renderer,
 		const RayDifferential &ray, const DifferentialGeometry &dg, Sampler &sampler) const = 0;
-
-private:
 	/*
 	 * Utility function to compute the specularly reflected light off of
 	 * some geometry we hit
