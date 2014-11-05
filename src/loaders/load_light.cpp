@@ -44,8 +44,8 @@ void load_lights(tinyxml2::XMLElement *elem, PBRLightCache &cache){
 			*/
 			if (type == "point"){
 				light = load_pointl(l);
+				cache.add(name, std::move(light));
 			}
-			cache.add(name, std::move(light));
 		}
 		else {
 			//The lights are all passed in a block, so once

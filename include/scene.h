@@ -26,7 +26,7 @@ class Scene {
 	Node root;
 	//The max recursion depth for reflected/refracted rays
 	int max_depth;
-	const Texture *background, *environment;
+	Texture *background, *environment;
 
 public:
 	/*
@@ -34,8 +34,7 @@ public:
 	 * Geometry can be added by adding nodes to the root
 	 * and selecting from or adding to the geometry cache
 	 */
-	Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler,
-		int depth, const Texture *background = nullptr, const Texture *environment = nullptr);
+	Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, int depth);
 	GeometryCache& get_geom_cache();
 	PBRMaterialCache& get_mat_cache();
 	TextureCache& get_tex_cache();
@@ -48,6 +47,8 @@ public:
 	Node& get_root();
 	const Node& get_root() const;
 	int get_max_depth() const;
+	void set_background(Texture *t);
+	void set_environment(Texture *t);
 	const Texture* get_background() const;
 	const Texture* get_environment() const;
 };

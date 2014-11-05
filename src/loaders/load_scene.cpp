@@ -83,25 +83,18 @@ Scene load_scene(const std::string &file, int depth){
 		filter = std::make_unique<BoxFilter>(0.5, 0.5);
 		sampler = std::make_unique<StratifiedSampler>(0, w, 0, h, 1);
 	}
+	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
+		std::move(filter)};
+	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), depth};
 	//See if we have any background or environment textures
-	TextureCache tcache;
-	Texture *background = nullptr, *environment = nullptr;
 	XMLElement *tex = scene_node->FirstChildElement("background");
 	if (tex){
-		background = load_texture(tex, "scene_background", tcache, file);
+		scene.set_background(load_texture(tex, "scene_background", scene.get_tex_cache(), file));
 	}
 	tex = scene_node->FirstChildElement("environment");
 	if (tex){
-		environment = load_texture(tex, "scene_environment", tcache, file);
+		scene.set_environment(load_texture(tex, "scene_environment", scene.get_tex_cache(), file));
 	}
-
-	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
-		std::move(filter)};
-	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), depth,
-		background, environment};
-	//Set the scene to use the texture cache we started setting up with the background and
-	//environment textures
-	scene.get_tex_cache() = std::move(tcache);
 	
 	//Run a pre-pass to load the materials so they're available when loading the objects
 	XMLElement *mats = scene_node->FirstChildElement("material");
