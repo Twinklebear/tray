@@ -18,6 +18,7 @@ constexpr float uniform_hemisphere_pdf(){
 /*
  * Sample a hemisphere using a cosine distribution to produce cosine weighted samples
  * input samples should be in range [0, 1)
+ * directions returned will be in the hemisphere around (0, 0, 1)
  */
 Vector cos_sample_hemisphere(const std::array<float, 2> &u);
 /*
