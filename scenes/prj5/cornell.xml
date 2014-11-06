@@ -1,36 +1,33 @@
 <xml>
   <scene>
     <!-- Objects -->
-	<!--
     <object name="box">
       <translate x="0" y="0" z="12"/>
-      <object type="plane" name="WallBottom" material="wallRefl">
+      <object type="plane" name="WallBottom" material="wall">
         <scale value="32"/>
         <translate z="-12"/>
       </object>
-      <object type="plane" name="WallTop" material="wallRefl">
+      <object type="plane" name="WallTop" material="wall">
         <scale value="32"/>
         <rotate angle="180" x="1"/>
         <translate z="12"/>
       </object>
-      <object type="plane" name="WallBack" material="wallRefl">
+      <object type="plane" name="WallBack" material="wall">
         <scale value="32"/>
         <rotate angle="90" x="1"/>
         <translate y="20"/>
       </object>
-      <object type="plane" name="WallLeft" material="wallRefl">
+      <object type="plane" name="WallLeft" material="wallRed">
         <scale value="32"/>
         <rotate angle="90" y="1"/>
         <translate x="-15"/>
       </object>
-      <object type="plane" name="WallRight" material="wallRefl">
+      <object type="plane" name="WallRight" material="wallBlue">
         <scale value="32"/>
         <rotate angle="-90" y="1"/>
         <translate x="15"/>
       </object>
     </object>
-	-->
-	<!--
 	<object type="obj" name="../models/teapot_hres.obj" material="mtl1">
       <scale value="0.8"/>
       <rotate angle="-30" z="1"/>
@@ -41,7 +38,6 @@
       <rotate angle="-60" z="1"/>
       <translate x="5" y="-6" z="0"/>
     </object>
-	-->
     <object type="sphere" name="sphere2" material="mtl2">
       <scale value="4"/>
       <rotate angle="30" y="1"/>
@@ -53,12 +49,7 @@
       <diffuse  r="1" g="1" b="1"/>
       <specular value="0"/>
     </material>
-    <material type="blinn" name="wallRefl">
-      <diffuse  r="1" g="1" b="1"/>
-	  <glossiness value="20"/>
-      <specular value="0"/>
-    </material>
-    <material type="blinn" name="wallRed">
+	<material type="blinn" name="wallRed">
       <diffuse  r="1.0" g="0.5" b="0.5"/>
       <specular value="0"/>
     </material>
@@ -85,7 +76,7 @@
       <intensity value="0.1"/>
     </light>
     <light type="point" name="pointLight">
-      <intensity value="0.5"/>
+      <intensity value="500"/>
       <position x="0" y="0" z="22"/>
     </light>
   </scene>

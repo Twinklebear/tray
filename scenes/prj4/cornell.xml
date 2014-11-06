@@ -41,7 +41,6 @@
     </material>
     <material type="blinn" name="wallRed">
       <diffuse  r="1.0" g="0.5" b="0.5"/>
-      <glossiness value="10"/>
       <specular value="0"/>
     </material>
     <material type="blinn" name="wallBlue">

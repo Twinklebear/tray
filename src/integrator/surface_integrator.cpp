@@ -17,7 +17,6 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 	//Compute the color reflected off the BSDF
 	Colorf reflected{0};
 	if (pdf_val > 0 && !f.luminance() == 0 && std::abs(wi.dot(n)) != 0){
-		RayDifferential old_refl = ray.reflect(bsdf.dg);
 		RayDifferential refl{p, wi, ray, 0.001};
 		if (ray.has_differentials()){
 			refl.rx = Ray{p + bsdf.dg.dp_dx, wi, ray, 0.001};
@@ -35,9 +34,6 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 		}
 		Colorf li = renderer.illumination(refl, scene, sampler);
 		reflected = f * li * std::abs(wi.dot(n)) / pdf_val;
-		Vector dir = refl.d.normalized();
-		reflected = Colorf{dir.x, dir.y, dir.z};
-		reflected = (reflected + Colorf{1}) / 2;
 	}
 	return reflected;
 }
