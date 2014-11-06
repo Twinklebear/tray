@@ -28,7 +28,7 @@ struct DifferentialGeometry {
 
 	DifferentialGeometry();
 	DifferentialGeometry(const Point &point, const Vector &dp_du, const Vector &dp_dv,
-		const Normal &dn_du, const Normal &dn_dv, const Normal &normal, const Normal &geom_normal,
+		const Normal &dn_du, const Normal &dn_dv, const Normal &geom_normal,
 	   	float u, float v, const Node *node, HITSIDE hit_side);
 	/*
 	 * Compute the (u, v) derivatives using information about the
