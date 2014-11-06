@@ -4,8 +4,11 @@
 
 BSDF::BSDF(const DifferentialGeometry &dg, float eta)
 	: normal(dg.normal), geom_normal(dg.geom_normal), bitangent(dg.dp_du.normalized()),
-	tangent(normal.cross(bitangent)), dg(dg), eta(eta)
-{}
+	tangent(normal.cross(bitangent).normalized()), dg(dg), eta(eta)
+{
+	//Update the bitangent to get a proper coordinate system
+	bitangent = tangent.cross(Vector{normal}).normalized();
+}
 void BSDF::add(std::unique_ptr<BxDF> b){
 	bxdfs.push_back(std::move(b));
 }
