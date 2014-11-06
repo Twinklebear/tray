@@ -4,7 +4,7 @@
 #include "microfacet_distribution.h"
 
 /*
- * Implementation of the microfacet distribution propsed by Blinn
+ * Implementation of the microfacet distribution described by Blinn
  */
 class BlinnDistribution : public MicrofacetDistribution {
 	float exponent;
