@@ -3,7 +3,8 @@
 #include "material/bsdf.h"
 
 BSDF::BSDF(const DifferentialGeometry &dg, float eta)
-	: ns(dg.normal), ng(dg.geom_normal), s(dg.dp_du.normalized()), t(ns.cross(s)), dg(dg), eta(eta)
+	: normal(dg.normal), geom_normal(dg.geom_normal), bitangent(dg.dp_du.normalized()),
+	tangent(normal.cross(bitangent)), dg(dg), eta(eta)
 {}
 void BSDF::add(std::unique_ptr<BxDF> b){
 	bxdfs.push_back(std::move(b));
@@ -21,18 +22,18 @@ int BSDF::num_bxdfs(BxDFTYPE flags) const {
 	return n;
 }
 Vector BSDF::to_shading(const Vector &v) const {
-	return Vector{v.dot(s), v.dot(t), v.dot(ns)};
+	return Vector{v.dot(bitangent), v.dot(tangent), v.dot(normal)};
 }
 Vector BSDF::from_shading(const Vector &v) const {
-	return Vector{s.x * v.x + t.x * v.y + ns.x * v.z,
-		s.y * v.x + t.y * v.y + ns.y * v.z,
-		s.z * v.x + t.z * v.y + ns.z * v.z};
+	return Vector{bitangent.x * v.x + tangent.x * v.y + normal.x * v.z,
+		bitangent.y * v.x + tangent.y * v.y + normal.y * v.z,
+		bitangent.z * v.x + tangent.z * v.y + normal.z * v.z};
 }
 Colorf BSDF::operator()(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags) const {
 	Vector wo = to_shading(wo_world);
 	Vector wi = to_shading(wi_world);
 	//Determine if we should be evaluating reflection or transmission based on the geometry normal
-	if (wo_world.dot(ng) * wi_world.dot(ng) > 0){
+	if (wo_world.dot(geom_normal) * wi_world.dot(geom_normal) > 0){
 		flags = BxDFTYPE(flags & ~BxDFTYPE::TRANSMISSION);
 	}
 	else {

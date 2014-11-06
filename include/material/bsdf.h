@@ -17,8 +17,8 @@ class BSDF {
 	//Vectors forming the shading coordinate system:
 	//shading normal, secondary and primary tangents along with the geometry normal
 	//the coordinate system has the shading normal as z, primary tangent as x and secondary as y
-	Normal ns, ng;
-	Vector s, t;
+	Normal normal, geom_normal;
+	Vector bitangent, tangent;
 	std::vector<std::unique_ptr<BxDF>> bxdfs;
 
 public:
