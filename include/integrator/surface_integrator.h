@@ -22,14 +22,14 @@ public:
 	 * Utility function to compute the specularly reflected light off of
 	 * some geometry we hit
 	 */
-	static Colorf spec_reflect(const RayDifferential &ray, const DifferentialGeometry &dg,
-		const BSDF &bsdf, const Renderer &renderer, const Scene &scene, Sampler &sampler);
+	static Colorf spec_reflect(const RayDifferential &ray, const BSDF &bsdf,
+		const Renderer &renderer, const Scene &scene, Sampler &sampler);
 	/*
 	 * Utility function to compute the specularaly transmitted light coming
 	 * through some geometry we hit
 	 */
-	static Colorf spec_transmit(const RayDifferential &ray, const DifferentialGeometry &dg,
-		const BSDF &bsdf, const Renderer &renderer, const Scene &scene, Sampler &sampler);
+	static Colorf spec_transmit(const RayDifferential &ray, const BSDF &bsdf,
+		const Renderer &renderer, const Scene &scene, Sampler &sampler);
 };
 
 #endif

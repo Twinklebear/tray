@@ -37,8 +37,8 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 		}
 	}
 	if (ray.depth < max_depth){
-		illum = spec_reflect(ray, dg, bsdf, renderer, scene, sampler);
-		illum += spec_transmit(ray, dg, bsdf, renderer, scene, sampler);
+		illum = spec_reflect(ray, bsdf, renderer, scene, sampler);
+		illum += spec_transmit(ray, bsdf, renderer, scene, sampler);
 	}
 	return illum;
 }

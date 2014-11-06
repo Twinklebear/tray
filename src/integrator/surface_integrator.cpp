@@ -1,9 +1,10 @@
 #include "integrator/surface_integrator.h"
 
-Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const DifferentialGeometry &dg,
-	const BSDF &bsdf, const Renderer &renderer, const Scene &scene, Sampler &sampler)
+Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &bsdf,
+	const Renderer &renderer, const Scene &scene, Sampler &sampler)
 {
-	const Normal &n = dg.normal;
+	const Normal &n = bsdf.dg.normal;
+	const Point &p = bsdf.dg.point;
 	Vector wo = -ray.d;
 	Vector wi;
 	float pdf_val = 0;
@@ -16,14 +17,15 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const Differe
 	//Compute the color reflected off the BSDF
 	Colorf reflected{0};
 	if (pdf_val > 0 && !f.luminance() == 0 && std::abs(wi.dot(n)) != 0){
-		RayDifferential refl{dg.point, wi, ray, 0.001};
+		RayDifferential old_refl = ray.reflect(bsdf.dg);
+		RayDifferential refl{p, wi, ray, 0.001};
 		if (ray.has_differentials()){
-			refl.rx = Ray{dg.point + dg.dp_dx, wi, ray, 0.001};
-			refl.ry = Ray{dg.point + dg.dp_dy, wi, ray, 0.001};
+			refl.rx = Ray{p + bsdf.dg.dp_dx, wi, ray, 0.001};
+			refl.ry = Ray{p + bsdf.dg.dp_dy, wi, ray, 0.001};
 			//We compute dn_dx and dn_dy as described in PBR since we're following their differential
 			//geometry method, the rest of the computation is directly from Igehy's paper
-			auto dn_dx = Vector{dg.dn_du * dg.du_dx + dg.dn_dv * dg.dv_dx};
-			auto dn_dy = Vector{dg.dn_du * dg.du_dy + dg.dn_dv * dg.dv_dy};
+			auto dn_dx = Vector{bsdf.dg.dn_du * bsdf.dg.du_dx + bsdf.dg.dn_dv * bsdf.dg.dv_dx};
+			auto dn_dy = Vector{bsdf.dg.dn_du * bsdf.dg.du_dy + bsdf.dg.dn_dv * bsdf.dg.dv_dy};
 			auto dd_dx = -ray.rx.d - wo;
 			auto dd_dy = -ray.ry.d - wo;
 			float ddn_dx = dd_dx.dot(n) + wo.dot(dn_dx);
@@ -32,15 +34,17 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const Differe
 			refl.ry.d = wi - dd_dy + 2 * Vector{wo.dot(n) * dn_dy + Vector{ddn_dy * n}};
 		}
 		Colorf li = renderer.illumination(refl, scene, sampler);
-		reflected = f * li * std::abs(wi.dot(dg.normal)) / pdf_val;
-		reflected = Colorf{refl.d.x, refl.d.y, refl.d.z};
+		reflected = f * li * std::abs(wi.dot(n)) / pdf_val;
+		Vector dir = refl.d.normalized();
+		reflected = Colorf{dir.x, dir.y, dir.z};
 		reflected = (reflected + Colorf{1}) / 2;
 	}
 	return reflected;
 }
-Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const DifferentialGeometry &dg,
-	const BSDF &bsdf, const Renderer &renderer, const Scene &scene, Sampler &sampler)
+Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &bsdf,
+	const Renderer &renderer, const Scene &scene, Sampler &sampler)
 {
+	/*
 	Vector wo = -ray.d;
 	Vector wi;
 	float pdf_val = 0;
@@ -58,5 +62,7 @@ Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const Differ
 		transmitted = f * li * std::abs(wi.dot(dg.normal)) / pdf_val;
 	}
 	return transmitted;
+	*/
+	return Colorf{0};
 }
 
