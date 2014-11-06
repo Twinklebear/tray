@@ -53,6 +53,9 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 	int n_matching = num_bxdfs(flags);
 	if (n_matching == 0){
 		pdf_val = 0;
+		if (sampled_type){
+			*sampled_type = BxDFTYPE(0);
+		}
 		return Colorf{0};
 	}
 	int select = std::min(static_cast<int>(comp * n_matching), n_matching - 1);
@@ -64,6 +67,9 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 	pdf_val = 0;
 	Colorf f = bxdf->sample(wo, wi, u, pdf_val);
 	if (pdf_val == 0){
+		if (sampled_type){
+			*sampled_type = BxDFTYPE(0);
+		}
 		return Colorf{0};
 	}
 	if (sampled_type){
