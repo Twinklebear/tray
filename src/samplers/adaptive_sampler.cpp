@@ -30,9 +30,9 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	samples.resize(spp);
 	std::vector<std::array<float, 2>> pos(spp), lens(spp);
 	std::vector<float> time(spp);
-	get_samples(pos);
-	get_samples(lens);
-	get_samples(time);
+	get_samples(pos.data(), pos.size());
+	get_samples(lens.data(), lens.size());
+	get_samples(time.data(), time.size());
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -45,13 +45,13 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 		s.img[1] += y;
 	}
 }
-void AdaptiveSampler::get_samples(std::vector<std::array<float, 2>> &samples){
-	LDSampler::sample2d(samples, distrib(rng), distrib(rng));
-	std::shuffle(samples.begin(), samples.end(), rng);
+void AdaptiveSampler::get_samples(std::array<float, 2> *samples, int n_samples){
+	LDSampler::sample2d(samples, n_samples, distrib(rng), distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
 }
-void AdaptiveSampler::get_samples(std::vector<float> &samples){
-	LDSampler::sample1d(samples, distrib(rng));
-	std::shuffle(samples.begin(), samples.end(), rng);
+void AdaptiveSampler::get_samples(float *samples, int n_samples){
+	LDSampler::sample1d(samples, n_samples, distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
 }
 int AdaptiveSampler::get_max_spp() const {
 	return max_spp;

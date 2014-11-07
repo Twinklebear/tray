@@ -4,6 +4,7 @@
 #include <random>
 #include <memory>
 #include <vector>
+#include "memory_pool.h"
 #include "linalg/vector.h"
 #include "samplers/sampler.h"
 #include "geometry/differential_geometry.h"
@@ -61,11 +62,12 @@ public:
 	 * Sample the hemispherical-directional reflectance function of the BxDFs
 	 * sqrt_samples is the square root of the number of samples to take
 	 */
-	Colorf rho_hd(const Vector &wo, Sampler &sampler, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
+	Colorf rho_hd(const Vector &wo, Sampler &sampler, MemoryPool &pool,
+		BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Sample the hemispherical-hemispherical reflectance function of the BxDFs
 	 */
-	Colorf rho_hh(Sampler &sampler, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
+	Colorf rho_hh(Sampler &sampler, MemoryPool &pool, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Compute the probability density function for BxDFs for the directions passed
 	 */

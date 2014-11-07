@@ -8,11 +8,11 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 	Vector w_o = -ray.d;
 	Vector w_i;
 	float pdf_val = 0;
-	std::vector<std::array<float, 2>> u_sample(1);
-	std::vector<float> c_sample(1);
-	sampler.get_samples(u_sample);
-	sampler.get_samples(c_sample);
-	Colorf f = bsdf.sample(w_o, w_i, u_sample[0], c_sample[0], pdf_val,
+	std::array<float, 2> u_sample;
+	float c_sample;
+	sampler.get_samples(&u_sample, 1);
+	sampler.get_samples(&c_sample, 1);
+	Colorf f = bsdf.sample(w_o, w_i, u_sample, c_sample, pdf_val,
 		BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::SPECULAR));	
 	//Compute the color reflected off the BSDF
 	Colorf reflected{0};
@@ -45,11 +45,11 @@ Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &
 	Vector w_o = -ray.d;
 	Vector w_i;
 	float pdf_val = 0;
-	std::vector<std::array<float, 2>> u_sample(1);
-	std::vector<float> c_sample(1);
-	sampler.get_samples(u_sample);
-	sampler.get_samples(c_sample);
-	Colorf f = bsdf.sample(w_o, w_i, u_sample[0], c_sample[0], pdf_val,
+	std::array<float, 2> u_sample;
+	float c_sample;
+	sampler.get_samples(&u_sample, 1);
+	sampler.get_samples(&c_sample, 1);
+	Colorf f = bsdf.sample(w_o, w_i, u_sample, c_sample, pdf_val,
 		BxDFTYPE(BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR));	
 	//Compute the color transmitted through the BSDF
 	Colorf transmitted{0};

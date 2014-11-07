@@ -24,14 +24,12 @@ public:
 	void get_samples(std::vector<Sample> &samples) override;
 	/*
 	 * Get a set of 2D samples in range [0, 1)
-	 * samples should already be allocated to contain the number of samples desired
 	 */
-	void get_samples(std::vector<std::array<float, 2>> &samples) override;
+	void get_samples(std::array<float, 2> *samples, int n_samples) override;
 	/*
 	 * Get a set of 1D samples in range [0, 1)
-	 * samples should already be allocated to contain the number of samples desired
 	 */
-	void get_samples(std::vector<float> &samples) override;
+	void get_samples(float *samples, int n_samples) override;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */
@@ -46,12 +44,12 @@ public:
 	 * Generate a 1d pattern of low discrepancy samples and return them
 	 * sample values will be normalized between [0, 1)
 	 */
-	static void sample1d(std::vector<float> &samples, uint32_t scramble);
+	static void sample1d(float *samples, int n_samples, uint32_t scramble);
 	/*
 	 * Generate a 2d pattern of low discrepancy samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
-	static void sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y);
+	static void sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y);
 	/*
 	 * Generate a sample from a scrambled (0, 2) sequence
 	 */

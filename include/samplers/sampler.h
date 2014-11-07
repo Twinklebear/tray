@@ -42,14 +42,12 @@ public:
 	virtual void get_samples(std::vector<Sample> &samples) = 0;
 	/*
 	 * Get a set of 2D samples in range [0, 1)
-	 * samples should already be allocated to contain the number of samples desired
 	 */
-	virtual void get_samples(std::vector<std::array<float, 2>> &samples) = 0;
+	virtual void get_samples(std::array<float, 2> *samples, int n_samples) = 0;
 	/*
 	 * Get a set of 1D samples in range [0, 1)
-	 * samples should already be allocated to contain the number of samples desired
 	 */
-	virtual void get_samples(std::vector<float> &samples) = 0;
+	virtual void get_samples(float *samples, int n_samples) = 0;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */

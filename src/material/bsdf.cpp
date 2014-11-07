@@ -90,26 +90,28 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 	}
 	return f;
 }
-Colorf BSDF::rho_hd(const Vector &wo, Sampler &sampler, BxDFTYPE flags, int sqrt_samples) const {
-	std::vector<std::array<float, 2>> samples(sqrt_samples * sqrt_samples);
-	sampler.get_samples(samples);
+Colorf BSDF::rho_hd(const Vector &wo, Sampler &sampler, MemoryPool &pool, BxDFTYPE flags, int sqrt_samples) const {
+	int n_samples = sqrt_samples * sqrt_samples;
+	std::array<float, 2> *samples = pool.alloc_array<std::array<float, 2>>(n_samples);
+	sampler.get_samples(samples, n_samples);
 	Colorf color;
 	for (const auto &b : bxdfs){
 		if (b->matches(flags)){
-			color += b->rho_hd(wo, samples);
+			color += b->rho_hd(wo, samples, n_samples);
 		}
 	}
 	return color;
 }
-Colorf BSDF::rho_hh(Sampler &sampler, BxDFTYPE flags, int sqrt_samples) const {
-	std::vector<std::array<float, 2>> samples_a(sqrt_samples * sqrt_samples);
-	std::vector<std::array<float, 2>> samples_b(sqrt_samples * sqrt_samples);
-	sampler.get_samples(samples_a);
-	sampler.get_samples(samples_b);
+Colorf BSDF::rho_hh(Sampler &sampler, MemoryPool &pool, BxDFTYPE flags, int sqrt_samples) const {
+	int n_samples = sqrt_samples * sqrt_samples;
+	std::array<float, 2> *samples_a = pool.alloc_array<std::array<float, 2>>(n_samples);
+	std::array<float, 2> *samples_b = pool.alloc_array<std::array<float, 2>>(n_samples);
+	sampler.get_samples(samples_a, n_samples);
+	sampler.get_samples(samples_b, n_samples);
 	Colorf color;
 	for (const auto &b : bxdfs){
 		if (b->matches(flags)){
-			color += b->rho_hh(samples_a, samples_b);
+			color += b->rho_hh(samples_a, samples_b, n_samples);
 		}
 	}
 	return color;

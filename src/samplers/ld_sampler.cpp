@@ -23,9 +23,9 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 	samples.resize(spp);
 	std::vector<std::array<float, 2>> pos(spp), lens(spp);
 	std::vector<float> time(spp);
-	get_samples(pos);
-	get_samples(lens);
-	get_samples(time);
+	get_samples(pos.data(), pos.size());
+	get_samples(lens.data(), lens.size());
+	get_samples(time.data(), time.size());
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -43,13 +43,13 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 		++y;
 	}
 }
-void LDSampler::get_samples(std::vector<std::array<float, 2>> &samples){
-	sample2d(samples, distrib(rng), distrib(rng));
-	std::shuffle(samples.begin(), samples.end(), rng);
+void LDSampler::get_samples(std::array<float, 2> *samples, int n_samples){
+	sample2d(samples, n_samples, distrib(rng), distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
 }
-void LDSampler::get_samples(std::vector<float> &samples){
-	sample1d(samples, distrib(rng));
-	std::shuffle(samples.begin(), samples.end(), rng);
+void LDSampler::get_samples(float *samples, int n_samples){
+	sample1d(samples, n_samples, distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
 }
 int LDSampler::get_max_spp() const {
 	return spp;
@@ -84,14 +84,14 @@ std::vector<std::unique_ptr<Sampler>> LDSampler::get_subsamplers(int w, int h) c
 	}
 	return samplers;
 }
-void LDSampler::sample1d(std::vector<float> &samples, uint32_t scramble){
-	for (uint32_t i = 0; i < samples.size(); ++i){
+void LDSampler::sample1d(float *samples, int n_samples, uint32_t scramble){
+	for (int i = 0; i < n_samples; ++i){
 		samples[i] = van_der_corput(i, scramble);
 	}
 }
-void LDSampler::sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y){
+void LDSampler::sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y){
 	std::array<uint32_t, 2> scramble{x, y};
-	for (uint32_t i = 0; i < samples.size(); ++i){
+	for (int i = 0; i < n_samples; ++i){
 		sample02(i, scramble, samples[i]);
 	}
 }
