@@ -1,4 +1,5 @@
 #include <iostream>
+#include "monte_carlo/util.h"
 #include "linalg/util.h"
 #include "linalg/ray.h"
 #include "linalg/vector.h"
@@ -89,5 +90,42 @@ void Sphere::refine(std::vector<Geometry*> &prims){
 }
 float Sphere::surface_area() const {
 	return 2 * TAU * radius;
+}
+Point Sphere::sample(const std::array<float, 2> &u, Normal &normal) const {
+	Point p = Point{0, 0, 0} + radius * uniform_sample_sphere(u);
+	normal = Normal{p.x, p.y, p.z}.normalized();
+	return p;
+}
+Point Sphere::sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const {
+	//Compute coordinate system for sampling the sphere where z is the vector from the center to the point
+	Vector w_z = Vector{p}.normalized();
+	Vector w_x, w_y;
+	coordinate_system(w_z, w_x, w_y);
+	//If we're inside the sphere we can just sample it uniformly
+	if (p.distance_sqr(Point{0, 0, 0}) - radius * radius < 1e-4){
+		return sample(u, normal);
+	}
+	//Compute angle of cone that we see of the sphere
+	float cos_theta = std::sqrt(std::max(0.f, 1 - radius * radius / p.distance_sqr(Point{0, 0, 0})));
+	DifferentialGeometry dg;
+	Ray ray{p, uniform_sample_cone(u, cos_theta, w_x, w_y, w_z), 0.001};
+	//We might not hit the sphere due to some numerical errors, so make sure it does hit
+	if (!intersect(ray, dg)){
+		ray.max_t = ray.d.normalized().dot(Point{0, 0, 0} - p);
+	}
+	Point ps = ray(ray.max_t);
+	normal = Normal{ps}.normalized();
+	return ps;
+}
+float Sphere::pdf(const Point&) const {
+	return 1 / surface_area();
+}
+float Sphere::pdf(const Point &p, const Vector&) const {
+	//If we're in the sphere the PDF is uniform
+	if (p.distance_sqr(Point{0, 0, 0}) - radius * radius < 1e-4){
+		return 1 / surface_area();
+	}
+	float cos_theta = std::sqrt(std::max(0.f, 1 - radius * radius / p.distance_sqr(Point{0, 0, 0})));
+	return uniform_cone_pdf(cos_theta);
 }
 
