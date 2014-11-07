@@ -31,7 +31,7 @@
 	<object type="obj" name="../models/killeroo.obj" material="mtl1">
       <scale value="18"/>
       <rotate angle="90" x="1"/>
-	  <rotate angle="-140" z="1"/>
+	  <rotate angle="-145" z="1"/>
       <translate x="1" y="5" z="8"/>
     </object>
 	<object type="obj" name="../models/teapot_hres.obj" material="mtl1">
@@ -60,14 +60,14 @@
     </material>
     <material type="blinn" name="mtl1">
       <diffuse  r="0.8" g="0.2" b="0.2"/>
-      <specular r="1.0" g="1.0" b="1.0" value="0.4"/>
+      <specular r="1.0" g="1.0" b="1.0" value="0.9"/>
       <glossiness value="0.05"/>
       <reflection value="0.7"/>
     </material>
     <material type="blinn" name="mtl2">
       <diffuse  r="0.1" g="0.1" b="0.9"/>
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
-      <glossiness value="1"/>
+      <glossiness value="0.1"/>
       <refraction value="0.8" index="1.52"/>
       <absorption r="0.01" g="0.001" b="0.0001"/>
     </material>
@@ -83,7 +83,7 @@
   </scene>
  
   <camera>
-    <position x="0" y="-60" z="12"/>
+    <position x="0" y="-60" z="20"/>
     <target x="0" y="0" z="12"/>
     <up x="0" y="0" z="1"/>
     <fov value="30"/>

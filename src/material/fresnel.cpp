@@ -31,7 +31,7 @@ Colorf FresnelDielectric::operator()(float cos_i) const {
 		return Colorf{1};
 	}
 	float cos_t = std::sqrt(std::max(0.f, 1.f - sin_t * sin_t));
-	return fresnel_dielectric(cos_i, cos_t, ei, et);
+	return fresnel_dielectric(std::abs(cos_i), cos_t, ei, et);
 }
 FresnelConductor::FresnelConductor(const Colorf &eta, const Colorf &k) : eta(eta), k(k){}
 Colorf FresnelConductor::operator()(float cos_i) const {

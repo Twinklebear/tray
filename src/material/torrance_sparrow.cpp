@@ -14,10 +14,14 @@ Colorf TorranceSparrow::operator()(const Vector &w_o, const Vector &w_i) const {
 	if (cos_to == 0 || cos_ti == 0){
 		return Colorf{0};
 	}
-	Vector w_h = (w_i + w_o).normalized();
+	Vector w_h = w_i + w_o;
+	if (w_h.length() == 0){
+		return Colorf{0};
+	}
+	w_h = w_h.normalized();
 	float cos_th = w_i.dot(w_h);
 	return reflectance * (*distribution)(w_h) * distribution->geom_atten(w_o, w_i, w_h) * (*fresnel)(cos_th)
-		/ (4 * cos_to * cos_ti);
+		/ (4 * cos_ti * cos_to);
 }
 Colorf TorranceSparrow::sample(const Vector &w_o, Vector &w_i, const std::array<float, 2> &samples, float &pdf_val) const {
 	distribution->sample(w_o, w_i, samples, pdf_val);
