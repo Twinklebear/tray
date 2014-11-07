@@ -63,7 +63,7 @@ struct Point {
 		z /= s;
 		return *this;
 	}
-	inline Point operator-(){
+	inline Point operator-() const {
 		return Point{-x, -y, -z};
 	}
 };

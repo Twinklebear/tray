@@ -12,7 +12,7 @@ Vector uniform_sample_hemisphere(const std::array<float, 2> &u);
 /*
  * Compute the PDF of the uniform hemisphere sampling
  */
-constexpr float uniform_hemisphere_pdf(){
+inline constexpr float uniform_hemisphere_pdf(){
 	return INV_TAU;
 }
 /*
@@ -24,7 +24,7 @@ Vector cos_sample_hemisphere(const std::array<float, 2> &u);
 /*
  * Compute the PDF of the cosine weighted hemisphere sampling
  */
-constexpr float cos_hemisphere_pdf(float cos_theta){
+inline constexpr float cos_hemisphere_pdf(float cos_theta){
 	return cos_theta * INV_PI;
 }
 /*
@@ -34,7 +34,7 @@ Vector uniform_sample_sphere(const std::array<float, 2> &u);
 /*
  * Compute the PDF of the sphere sampling
  */
-constexpr float uniform_sphere_pdf(){
+inline constexpr float uniform_sphere_pdf(){
 	return 1.f / (4.f * PI);
 }
 /*
@@ -48,6 +48,23 @@ std::array<float, 2> uniform_sample_tri(const std::array<float, 2> &u);
  * See: https://mediatech.aalto.fi/~jaakko/T111-5310/K2013/JGT-97.pdf
  */
 std::array<float, 2> concentric_sample_disk(const std::array<float, 2> &u);
+/*
+ * Uniformly sample a vector on a cone with max angle cos_theta where the
+ * cone is centered about the z axis
+ */
+Vector uniform_sample_cone(const std::array<float, 2> &u, float cos_theta);
+/*
+ * Uniformly sample a vector on a cone with max angle cos_theta where
+ * the cone is centered about the z vector in the coordinate system passed
+ */
+Vector uniform_sample_cone(const std::array<float, 2> &u, float cos_theta, const Vector &x,
+	const Vector &y, const Vector &z);
+/*
+ * Compute the PDF for uniformly sampling a cone with some max angle
+ */
+inline constexpr float uniform_cone_pdf(float cos_theta){
+	return 1 / (TAU * (1 - cos_theta));
+}
 
 #endif
 

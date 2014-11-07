@@ -58,4 +58,18 @@ std::array<float, 2> concentric_sample_disk(const std::array<float, 2> &u){
 	theta *= PI / 4.f;
 	return {radius * std::cos(theta), radius * std::sin(theta)};
 }
+Vector uniform_sample_cone(const std::array<float, 2> &u, float cos_theta){
+	cos_theta = lerp(u[0], cos_theta, 1);
+	float sin_theta = std::sqrt(1 - cos_theta * cos_theta);
+	float phi = u[1] * TAU;
+	return Vector{std::cos(phi) * sin_theta, std::sin(phi) * sin_theta, cos_theta};
+}
+Vector uniform_sample_cone(const std::array<float, 2> &u, float cos_theta, const Vector &x,
+	const Vector &y, const Vector &z)
+{
+	cos_theta = lerp(u[0], cos_theta, 1);
+	float sin_theta = std::sqrt(1 - cos_theta * cos_theta);
+	float phi = u[1] * TAU;
+	return std::cos(phi) * sin_theta * x + std::sin(phi) * sin_theta * y + cos_theta * z;
+}
 
