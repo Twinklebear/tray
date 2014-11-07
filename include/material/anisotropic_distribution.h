@@ -31,6 +31,12 @@ public:
 	 * Sample the PDF of the distribution for some pair of directions
 	 */
 	float pdf(const Vector &w_o, const Vector &w_i) const override;
+
+private:
+	/*
+	 * Sample the first quadrant of the unit hemisphere for the distribution
+	 */
+	void sample_first_quadrant(float u_0, float u_1, float &phi, float &cos_theta) const;
 };
 
 #endif
