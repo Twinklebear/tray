@@ -2,6 +2,7 @@
 #include <string>
 #include <tinyxml2.h>
 #include "material/matte_material.h"
+#include "material/plastic_material.h"
 #include "textures/constant_texture.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_material.h"
@@ -90,6 +91,6 @@ std::unique_ptr<PBRMaterial> load_blinnphong(tinyxml2::XMLElement *elem, Texture
 		absorp = load_texture(e, name, tcache, file);
 	}
 	//TODO: This should be plastic material?
-	return std::make_unique<MatteMaterial>(diff, gloss);
+	return std::make_unique<PlasticMaterial>(diff, spec, gloss);
 }
 
