@@ -98,7 +98,7 @@ Point Sphere::sample(const std::array<float, 2> &u, Normal &normal) const {
 }
 Point Sphere::sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const {
 	//Compute coordinate system for sampling the sphere where z is the vector from the center to the point
-	Vector w_z = Vector{p}.normalized();
+	Vector w_z = Vector{-p}.normalized();
 	Vector w_x, w_y;
 	coordinate_system(w_z, w_x, w_y);
 	//If we're inside the sphere we can just sample it uniformly
