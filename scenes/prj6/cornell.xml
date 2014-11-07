@@ -46,15 +46,15 @@
     </object>
  
     <!-- Materials -->
-    <material type="blinn" name="wall">
+    <material type="flat" name="wall">
       <diffuse  r="1" g="1" b="1"/>
       <specular value="0"/>
     </material>
-    <material type="blinn" name="wallRed">
+    <material type="flat" name="wallRed">
       <diffuse  r="1.0" g="0.5" b="0.5"/>
       <specular value="0"/>
     </material>
-    <material type="blinn" name="wallBlue">
+    <material type="flat" name="wallBlue">
       <diffuse  r="0.5" g="0.5" b="1.0"/>
       <specular value="0"/>
     </material>
@@ -77,13 +77,13 @@
       <intensity value="0.1"/>
     </light>
     <light type="point" name="pointLight">
-      <intensity value="400"/>
+      <intensity value="500"/>
       <position x="0" y="-10" z="22"/>
     </light>
   </scene>
  
   <camera>
-    <position x="0" y="-60" z="20"/>
+    <position x="0" y="-60" z="12"/>
     <target x="0" y="0" z="12"/>
     <up x="0" y="0" z="1"/>
     <fov value="30"/>

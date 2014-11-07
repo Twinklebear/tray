@@ -54,7 +54,13 @@ void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, Texture
 std::unique_ptr<PBRMaterial> load_flatmat(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file)
 {
-	Texture *tex = load_texture(elem->FirstChildElement("color"), elem->Attribute("name"), tcache, file);
+	Texture *tex = nullptr;
+	if (elem->FirstChildElement("color")){
+		tex = load_texture(elem->FirstChildElement("color"), elem->Attribute("name"), tcache, file);
+	}
+	else {
+		tex = load_texture(elem->FirstChildElement("diffuse"), elem->Attribute("name"), tcache, file);
+	}
 	return std::make_unique<MatteMaterial>(tex, 0);
 }
 std::unique_ptr<PBRMaterial> load_blinnphong(tinyxml2::XMLElement *elem, TextureCache &tcache,
