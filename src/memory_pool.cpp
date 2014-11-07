@@ -1,9 +1,13 @@
+#include <iostream>
+#include <cstring>
 #include <algorithm>
 #include "memory_pool.h"
 
-MemoryPool::MemoryPool(uint32_t block_size) : cur_block_pos(0), block_size(block_size){
-	cur_block = Block{block_size, new char[block_size]};
-}
+MemoryPool::Block::Block(uint32_t size, char *block) : size(size), block(block){}
+
+MemoryPool::MemoryPool(uint32_t block_size) : cur_block_pos(0), block_size(block_size),
+	cur_block(block_size, new char[block_size])
+{}
 MemoryPool::~MemoryPool(){
 	delete[] cur_block.block;
 	for (auto &b : used){
@@ -15,6 +19,9 @@ MemoryPool::~MemoryPool(){
 }
 void MemoryPool::free_blocks(){
 	while (!used.empty()){
+#ifdef DEBUG
+		std::memset(used.back().block, 255, used.back().size);
+#endif
 		available.push_back(used.back());
 		used.pop_back();
 	}

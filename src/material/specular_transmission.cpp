@@ -2,9 +2,8 @@
 #include "material/fresnel.h"
 #include "material/specular_transmission.h"
 
-SpecularTransmission::SpecularTransmission(const Colorf &transmission, float eta_i, float eta_t)
-	: BxDF(BxDFTYPE(BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR)), transmission(transmission),
-	eta_i(eta_i), eta_t(eta_t), fresnel(eta_t, eta_i)
+SpecularTransmission::SpecularTransmission(const Colorf &transmission, FresnelDielectric *fresnel)
+	: BxDF(BxDFTYPE(BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR)), transmission(transmission), fresnel(fresnel)
 {}
 Colorf SpecularTransmission::operator()(const Vector&, const Vector&) const {
 	return Colorf{0};
@@ -12,8 +11,8 @@ Colorf SpecularTransmission::operator()(const Vector&, const Vector&) const {
 Colorf SpecularTransmission::sample(const Vector &wo, Vector &wi, const std::array<float, 2>&, float &pdf_val) const {
 	//Determine the side of the material we're incident on and pick indices of refraction accordingly
 	bool entering = cos_theta(wo) > 0;
-	float ei = entering ? eta_i : eta_t;
-	float et = entering ? eta_t : eta_i;
+	float ei = entering ? fresnel->eta_i : fresnel->eta_t;
+	float et = entering ? fresnel->eta_t : fresnel->eta_i;
 	float sin_i2 = sin_theta2(wo);
 	float eta = ei / et;
 	float sin_t2 = eta * eta * sin_i2;
@@ -26,7 +25,7 @@ Colorf SpecularTransmission::sample(const Vector &wo, Vector &wi, const std::arr
 	cos_t = entering ? -cos_t : cos_t;
 	wi = Vector{eta * -wo.x, eta * -wo.y, cos_t};
 	pdf_val = 1;
-	return (Colorf{1} - fresnel(cos_theta(wo))) * transmission / std::abs(cos_theta(wi));
+	return (Colorf{1} - (*fresnel)(cos_theta(wo))) * transmission / std::abs(cos_theta(wi));
 }
 float SpecularTransmission::pdf(const Vector&, const Vector&) const {
 	return 0;

@@ -38,7 +38,7 @@ Colorf FresnelConductor::operator()(float cos_i) const {
 	return fresnel_conductor(std::abs(cos_i), eta, k);
 }
 
-Colorf FresnelNoOp::operator()(float cos_i) const {
+Colorf FresnelNoOp::operator()(float) const {
 	return Colorf{1};
 }
 

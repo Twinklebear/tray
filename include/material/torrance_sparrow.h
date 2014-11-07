@@ -2,7 +2,6 @@
 #define TORRANCE_SPARROW_H
 
 #include <array>
-#include <memory>
 #include "bxdf.h"
 #include "microfacet_distribution.h"
 #include "fresnel.h"
@@ -12,16 +11,15 @@
  */
 class TorranceSparrow : public BxDF {
 	Colorf reflectance;
-	std::unique_ptr<Fresnel> fresnel;
-	std::unique_ptr<MicrofacetDistribution> distribution;
+	Fresnel *fresnel;
+	MicrofacetDistribution *distribution;
 
 public:
 	/*
 	 * Create the microface BRDF with some color, fresnel term
 	 * and desired microfacet distribution
 	 */
-	TorranceSparrow(const Colorf &reflectance, std::unique_ptr<Fresnel> fresnel,
-		std::unique_ptr<MicrofacetDistribution> distribution);
+	TorranceSparrow(const Colorf &reflectance, Fresnel *fresnel, MicrofacetDistribution *distribution);
 	/*
 	 * Compute the value of the BxDF for some incident and outgoing directions
 	 */

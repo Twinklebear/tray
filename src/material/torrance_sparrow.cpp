@@ -2,10 +2,9 @@
 #include "material/torrance_sparrow.h"
 
 
-TorranceSparrow::TorranceSparrow(const Colorf &reflectance, std::unique_ptr<Fresnel> fresnel,
-	std::unique_ptr<MicrofacetDistribution> distribution)
+TorranceSparrow::TorranceSparrow(const Colorf &reflectance, Fresnel *fresnel, MicrofacetDistribution *distribution)
 	: BxDF(BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::GLOSSY)), reflectance(reflectance),
-	fresnel(std::move(fresnel)), distribution(std::move(distribution))
+	fresnel(fresnel), distribution(distribution)
 {}
 
 Colorf TorranceSparrow::operator()(const Vector &w_o, const Vector &w_i) const {

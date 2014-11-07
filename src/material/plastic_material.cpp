@@ -10,14 +10,14 @@
 PlasticMaterial::PlasticMaterial(const Texture *diffuse, const Texture *specular, float roughness)
 	: diffuse(diffuse), specular(specular), roughness(roughness)
 {}
-BSDF PlasticMaterial::get_bsdf(const DifferentialGeometry &dg) const {
-	BSDF bsdf{dg};
+BSDF* PlasticMaterial::get_bsdf(const DifferentialGeometry &dg, MemoryPool &pool) const {
+	BSDF *bsdf = pool.alloc<BSDF>(dg);
 	Colorf kd = diffuse->sample(dg).normalized();	
 	Colorf ks = specular->sample(dg).normalized();
-	bsdf.add(std::make_unique<Lambertian>(kd));
-	bsdf.add(std::make_unique<TorranceSparrow>(ks,
-		std::make_unique<FresnelDielectric>(1.5, 1),
-		std::make_unique<BlinnDistribution>(1.f / roughness)));
+	bsdf->add(pool.alloc<Lambertian>(kd));
+	bsdf->add(pool.alloc<TorranceSparrow>(ks,
+		pool.alloc<FresnelDielectric>(1.5f, 1.f),
+		pool.alloc<BlinnDistribution>(1.f / roughness)));
 	return bsdf;
 }
 

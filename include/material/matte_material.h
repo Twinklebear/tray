@@ -22,7 +22,7 @@ public:
 	 * Get the BSDF to compute the shading for the material at this
 	 * piece of geometry
 	 */
-	BSDF get_bsdf(const DifferentialGeometry &dg) const override;
+	BSDF* get_bsdf(const DifferentialGeometry &dg, MemoryPool &pool) const override;
 };
 
 #endif

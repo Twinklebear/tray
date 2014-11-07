@@ -1,7 +1,7 @@
 #include "integrator/surface_integrator.h"
 
-Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &bsdf,
-	const Renderer &renderer, const Scene &scene, Sampler &sampler)
+Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
+	const Scene &scene, Sampler &sampler, MemoryPool &pool)
 {
 	const Normal &n = bsdf.dg.normal;
 	const Point &p = bsdf.dg.point;
@@ -32,13 +32,13 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 			refl.rx.d = w_i - dd_dx + 2 * Vector{w_o.dot(n) * dn_dx + Vector{ddn_dx * n}};
 			refl.ry.d = w_i - dd_dy + 2 * Vector{w_o.dot(n) * dn_dy + Vector{ddn_dy * n}};
 		}
-		Colorf li = renderer.illumination(refl, scene, sampler);
+		Colorf li = renderer.illumination(refl, scene, sampler, pool);
 		reflected = f * li * std::abs(w_i.dot(n)) / pdf_val;
 	}
 	return reflected;
 }
-Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &bsdf,
-	const Renderer &renderer, const Scene &scene, Sampler &sampler)
+Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
+	const Scene &scene, Sampler &sampler, MemoryPool &pool)
 {
 	const Normal &n = bsdf.dg.normal;
 	const Point &p = bsdf.dg.point;
@@ -75,7 +75,7 @@ Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &
 			refr_ray.rx.d = w_i + eta * dd_dx - Vector{mu * dn_dx + Vector{dmu_dx * n}};
 			refr_ray.ry.d = w_i + eta * dd_dy - Vector{mu * dn_dy + Vector{dmu_dy * n}};
 		}
-		Colorf li = renderer.illumination(refr_ray, scene, sampler);
+		Colorf li = renderer.illumination(refr_ray, scene, sampler, pool);
 		transmitted = f * li * std::abs(w_i.dot(n)) / pdf_val;
 	}
 	return transmitted;

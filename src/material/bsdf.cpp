@@ -9,8 +9,8 @@ BSDF::BSDF(const DifferentialGeometry &dg, float eta)
 	//Update the bitangent to get a proper coordinate system
 	bitangent = tangent.cross(Vector{normal}).normalized();
 }
-void BSDF::add(std::unique_ptr<BxDF> b){
-	bxdfs.push_back(std::move(b));
+void BSDF::add(BxDF *b){
+	bxdfs.push_back(b);
 }
 int BSDF::num_bxdfs() const {
 	return bxdfs.size();
@@ -131,7 +131,7 @@ float BSDF::pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags) 
 const BxDF* BSDF::matching_at(int i, BxDFTYPE flags) const {
 	for (const auto &b : bxdfs){
 		if (b->matches(flags) && i-- == 0){
-			return b.get();
+			return b;
 		}
 	}
 	return nullptr;

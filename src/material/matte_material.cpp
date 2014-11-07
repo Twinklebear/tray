@@ -10,14 +10,14 @@
 MatteMaterial::MatteMaterial(const Texture *diffuse, float roughness)
 	: diffuse(diffuse), roughness(roughness)
 {}
-BSDF MatteMaterial::get_bsdf(const DifferentialGeometry &dg) const {
-	BSDF bsdf{dg};
+BSDF* MatteMaterial::get_bsdf(const DifferentialGeometry &dg, MemoryPool &pool) const {
+	BSDF *bsdf = pool.alloc<BSDF>(dg);
 	Colorf kd = diffuse->sample(dg).normalized();
 	if (roughness == 0){
-		bsdf.add(std::make_unique<Lambertian>(kd));
+		bsdf->add(pool.alloc<Lambertian>(kd));
 	}
 	else {
-		bsdf.add(std::make_unique<OrenNayer>(kd, roughness));
+		bsdf->add(pool.alloc<OrenNayer>(kd, roughness));
 	}
 	return bsdf;
 }

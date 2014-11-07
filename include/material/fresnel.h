@@ -30,9 +30,9 @@ public:
  * Computes the Fresnel reflectance term for dielectrics using fresnel_dielectric
  */
 class FresnelDielectric : public Fresnel {
-	float eta_i, eta_t;
-
 public:
+	const float eta_i, eta_t;
+
 	/*
 	 * Construct the Fresnel dielectric evaluator for the interface
 	 * between two materials
@@ -48,9 +48,9 @@ public:
  * Computes the Fresnel reflectance term for conductors using fresnel_conductor
  */
 class FresnelConductor : public Fresnel {
-	Colorf eta, k;
-
 public:
+	const Colorf eta, k;
+
 	/*
 	 * Construct the Fresnel conductor evaluator for the conductor being hit
 	 */

@@ -9,13 +9,13 @@
 
 WhittedIntegrator::WhittedIntegrator(int max_depth) : max_depth(max_depth){}
 Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-	const DifferentialGeometry &dg, Sampler &sampler) const
+	const DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
 	const PBRMaterial *mat = dg.node->get_material();
 	if (!mat){
 		return Colorf{0.4};
 	}
-	BSDF bsdf = mat->get_bsdf(dg);
+	BSDF *bsdf = mat->get_bsdf(dg, pool);
 
 	Colorf illum;
 	Vector wo = -ray.d;
@@ -26,19 +26,19 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 		Vector wi;
 		float pdf_val = 0;
 		OcclusionTester occlusion;
-		Colorf li = l.second->sample(bsdf.dg.point, light_sample[0], wi, pdf_val, occlusion);
+		Colorf li = l.second->sample(bsdf->dg.point, light_sample[0], wi, pdf_val, occlusion);
 		//If there's no light or no probability for this sample there's no illumination
 		if (li.luminance() == 0 || pdf_val == 0){
 			continue;
 		}
-		Colorf c = bsdf(wo, wi);
+		Colorf c = (*bsdf)(wo, wi);
 		if (c.luminance() != 0 && !occlusion.occluded(scene)){
-			illum += c * li * std::abs(wi.dot(bsdf.dg.normal)) / pdf_val;
+			illum += c * li * std::abs(wi.dot(bsdf->dg.normal)) / pdf_val;
 		}
 	}
 	if (ray.depth < max_depth){
-		illum += spec_reflect(ray, bsdf, renderer, scene, sampler);
-		illum += spec_transmit(ray, bsdf, renderer, scene, sampler);
+		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);
+		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
 	}
 	return illum;
 }

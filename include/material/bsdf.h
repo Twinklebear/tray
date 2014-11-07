@@ -19,7 +19,7 @@ class BSDF {
 	//the coordinate system has the shading normal as z, primary tangent as x and secondary as y
 	Normal normal, geom_normal;
 	Vector bitangent, tangent;
-	std::vector<std::unique_ptr<BxDF>> bxdfs;
+	std::vector<BxDF*> bxdfs;
 
 public:
 	const DifferentialGeometry dg;
@@ -32,7 +32,7 @@ public:
 	/*
 	 * Add a BxDF to the set of BxDFs used by this BSDF
 	 */
-	void add(std::unique_ptr<BxDF> b);
+	void add(BxDF *b);
 	/*
 	 * Return the number of BxDFs in this BSDF or those specifically matching a flag
 	 */

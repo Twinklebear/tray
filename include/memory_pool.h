@@ -12,6 +12,8 @@ class MemoryPool {
 	struct Block {
 		uint32_t size;
 		char *block;
+
+		Block(uint32_t size, char *block);
 	};
 
 	uint32_t cur_block_pos, block_size;

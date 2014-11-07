@@ -20,7 +20,7 @@ public:
 	 * Compute the illumination at a point on a surface in the scene
 	 */
 	Colorf illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-		const DifferentialGeometry &dg, Sampler &sampler) const override;
+		const DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const override;
 };
 
 #endif

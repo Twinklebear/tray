@@ -9,15 +9,14 @@
  */
 class SpecularTransmission : public BxDF {
 	Colorf transmission;
-	float eta_i, eta_t;
-	FresnelDielectric fresnel;
+	FresnelDielectric *fresnel;
 
 public:
 	/*
 	 * Create a specularly transmissive BTDF with some transmissive color
 	 * and desired Fresnel component
 	 */
-	SpecularTransmission(const Colorf &transmission, float eta_i, float eta_t);
+	SpecularTransmission(const Colorf &transmission, FresnelDielectric *fresnel);
 	/*
 	 * Compute the value of the BxDF for some incident and outgoing directions
 	 * Note that because this is a delta distribution this will always return 0,
