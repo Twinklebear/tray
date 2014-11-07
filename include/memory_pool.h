@@ -38,6 +38,14 @@ public:
 		return new(alloc(sizeof(T))) T{std::forward<Args>(args)...};
 	}
 	/*
+	 * Allocate an array of types in the memory pool, elements in the array
+	 * will be uninitialized
+	 */
+	template<typename T>
+	T* alloc_array(int size){
+		return static_cast<T*>(alloc(sizeof(T) * size));
+	}
+	/*
 	 * Clear all used blocks, making them available again
 	 */
 	void free_blocks();
