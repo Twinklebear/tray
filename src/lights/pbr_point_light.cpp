@@ -1,4 +1,5 @@
 #include "linalg/util.h"
+#include "monte_carlo/util.h"
 #include "lights/pbr_point_light.h"
 
 PBRPointLight::PBRPointLight(const Transform &to_world, const Colorf &intensity)
@@ -11,6 +12,14 @@ Colorf PBRPointLight::sample(const Point &p, const std::array<float, 2>&,
 	pdf_val = 1;
 	occlusion.set_points(p, position);
 	return intensity / position.distance_sqr(p);
+}
+Colorf PBRPointLight::sample(const Scene&, const std::array<float, 2> &a, const std::array<float, 2>&,
+	Ray &ray, Normal &normal, float &pdf_val) const
+{
+	ray = Ray{position, uniform_sample_sphere(a)};
+	normal = Normal{ray.d};
+	pdf_val = uniform_sphere_pdf();
+	return intensity;
 }
 Colorf PBRPointLight::power(const Scene&) const {
 	return 4 * PI * intensity;

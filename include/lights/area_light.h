@@ -30,6 +30,13 @@ public:
 	Colorf sample(const Point &p, const std::array<float, 2> &lsample,
 		Vector &wi, float &pdf_val, OcclusionTester &occlusion) const override;
 	/*
+	 * Sample a light ray from the distribution of rays leaving the light
+	 * returning the ray, normal on the light surface where the ray was emitted
+	 * and pdf
+	 */
+	Colorf sample(const Scene &scene, const std::array<float, 2> &a,
+		const std::array<float, 2> &b, Ray &ray, Normal &normal, float &pdf_val) const override;
+	/*
 	 * Compute the total power emitted by the light in the scene
 	 */
 	Colorf power(const Scene &scene) const override;
