@@ -15,7 +15,7 @@ set(RAY_LIBS loaders lights integrator renderer linalg film geometry samplers
 	material accelerators filters textures monte_carlo)
 
 add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp
-	${tinyxml2_DIR}/tinyxml2.cpp)
+	memory_pool.cpp ${tinyxml2_DIR}/tinyxml2.cpp)
 
 # Need to link libm on Unix
 if (NOT WIN32)
