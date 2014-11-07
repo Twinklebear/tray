@@ -19,7 +19,7 @@ public:
 	 * for the outgoing and incident directions for the microfacets
 	 * with normal = w_h
 	 */
-	float geom_atten(const Vector &w_o, const Vector &w_i, const Vector &w_h) const;
+	static float geom_atten(const Vector &w_o, const Vector &w_i, const Vector &w_h);
 };
 
 #endif
