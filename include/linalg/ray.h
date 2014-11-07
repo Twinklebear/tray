@@ -70,16 +70,6 @@ struct RayDifferential : Ray {
 		rx.d = d + (rx.d - d) * s;
 		ry.d = d + (ry.d - d) * s;
 	}
-	/*
-	 * Reflect the ray and its differentials off the piece of geometry
-	 */
-	RayDifferential reflect(const DifferentialGeometry &dg) const;
-	/*
-	 * Refract the ray and its differentials through the piece of geometry
-	 * n: the surface normal corrected to face towards the incident ray
-	 * eta: incident index of refraction / transmitted index of refraction
-	 */
-	RayDifferential refract(const DifferentialGeometry &dg, float eta) const;
 	inline bool has_differentials() const {
 		return rx.d.length_sqr() > 0 && ry.d.length_sqr() > 0;
 	}
