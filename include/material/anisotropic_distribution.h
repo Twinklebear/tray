@@ -22,6 +22,15 @@ public:
 	 * oriented with normal = w_h in this distribution
 	 */
 	float operator()(const Vector &w_h) const override;
+	/*
+	 * Sample the distribution for some outgoing direction, returning the incident
+	 * direction and the PDF for this pair of vectors
+	 */
+	void sample(const Vector &w_o, Vector &w_i, const std::array<float, 2> &u, float &pdf_val) const override;
+	/*
+	 * Sample the PDF of the distribution for some pair of directions
+	 */
+	float pdf(const Vector &w_o, const Vector &w_i) const override;
 };
 
 #endif

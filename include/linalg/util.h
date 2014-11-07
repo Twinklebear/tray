@@ -46,6 +46,9 @@ template<typename T>
 constexpr int sign(T x){
 	return (T{0} < x) - (x < T{0});
 }
+inline Vector spherical_dir(float sin_theta, float cos_theta, float phi){
+	return Vector{sin_theta * std::cos(phi), sin_theta * std::sin(phi), cos_theta};
+}
 constexpr inline float spherical_theta(const Vector &v){
 	return std::acos(clamp(v.z, -1.f, 1.f));
 }

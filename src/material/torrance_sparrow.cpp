@@ -19,4 +19,17 @@ Colorf TorranceSparrow::operator()(const Vector &w_o, const Vector &w_i) const {
 	return reflectance * (*distribution)(w_h) * distribution->geom_atten(w_o, w_i, w_h) * (*fresnel)(cos_th)
 		/ (4 * cos_to * cos_ti);
 }
+Colorf TorranceSparrow::sample(const Vector &w_o, Vector &w_i, const std::array<float, 2> &samples, float &pdf_val) const {
+	distribution->sample(w_o, w_i, samples, pdf_val);
+	if (!same_hemisphere(w_o, w_i)){
+		return Colorf{0};
+	}
+	return (*this)(w_o, w_i);
+}
+float TorranceSparrow::pdf(const Vector &w_o, const Vector &w_i) const {
+	if (!same_hemisphere(w_o, w_i)){
+		return 0;
+	}
+	return distribution->pdf(w_o, w_i);
+}
 
