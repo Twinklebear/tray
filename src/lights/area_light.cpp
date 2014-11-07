@@ -12,14 +12,15 @@ Colorf AreaLight::radiance(const Point&, const Normal &n, const Vector &w) const
 Colorf AreaLight::sample(const Point &p, const std::array<float, 2> &lsample, Vector &w_i,
 	float &pdf_val, OcclusionTester &occlusion) const
 {
-	Normal normal;
-	Point pl = to_light(p);
-	Point ps = geometry->sample(pl, lsample, normal);
-	Vector w_il = (ps - pl).normalized();
+	Normal n_l;
+	Point p_l = to_light(p);
+	Point ps_l = geometry->sample(p_l, lsample, n_l);
+	Point ps_w = to_world(ps_l);
+	Vector w_il = (ps_l - p_l).normalized();
 	to_world(w_il, w_i);
-	pdf_val = geometry->pdf(pl, w_il);
-	occlusion.set_points(p, ps);
-	return radiance(ps, normal, -w_il);
+	pdf_val = geometry->pdf(p_l, w_il);
+	occlusion.set_points(p, ps_w);
+	return radiance(ps_w, n_l, -w_il);
 }
 Colorf AreaLight::sample(const Scene&, const std::array<float, 2> &a, const std::array<float, 2> &b,
 	Ray &ray, Normal &normal, float &pdf_val) const
@@ -30,11 +31,12 @@ Colorf AreaLight::sample(const Scene&, const std::array<float, 2> &a, const std:
 	if (d.dot(normal) < 0){
 		d *= -1;
 	}
-	ray = Ray{to_world(o), to_world(d), 0.001};
+	Point o_w = to_world(o);
+	Vector d_w = to_world(d);
+	ray = Ray{o_w, d_w, 0.001};
 	pdf_val = geometry->pdf(o) * INV_TAU;
-	Normal nl = normal;
 	to_world(normal, normal);
-	return radiance(o, nl, d);
+	return radiance(o_w, normal, d_w);
 }
 Colorf AreaLight::power(const Scene&) const {
 	return emit * surface_area * PI;

@@ -77,7 +77,7 @@
       <intensity value="0.1"/>
     </light>
     <light type="point" name="pointLight">
-      <intensity value="500"/>
+      <intensity value="700"/>
       <position x="0" y="-10" z="22"/>
     </light>
   </scene>
@@ -92,7 +92,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" min="8" max="64"/>
+	  <sampler type="adaptive" min="16" max="32"/>
   </config>
 </xml>
 

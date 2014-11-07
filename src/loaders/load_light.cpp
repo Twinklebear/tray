@@ -5,6 +5,7 @@
 #include "lights/ambient_light.h"
 #include "lights/direct_light.h"
 #include "lights/pbr_point_light.h"
+#include "lights/area_light.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_light.h"
 
@@ -71,6 +72,6 @@ std::unique_ptr<PBRLight> load_pointl(tinyxml2::XMLElement *elem){
 	Vector pos{0, 0, 0};
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_vector(elem->FirstChildElement("position"), pos);
-	return std::make_unique<PBRPointLight>(Transform::translate(pos), color);
+	return std::make_unique<AreaLight>(Transform::translate(pos), color, 6, 0.5);
 }
 
