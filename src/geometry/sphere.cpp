@@ -4,12 +4,13 @@
 #include "linalg/vector.h"
 #include "geometry/sphere.h"
 
+Sphere::Sphere(float radius) : radius(radius){}
 bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	//Compute quadratic sphere coefficients
 	Vector ray_orig{ray.o};
 	float a = ray.d.length_sqr();
 	float b = 2 * ray.d.dot(ray_orig);
-	float c = ray_orig.length_sqr() - 1;
+	float c = ray_orig.length_sqr() - radius * radius;
 	//Solve quadratic equation for t values
 	//If no solutions exist the ray doesn't intersect the sphere
 	float t[2];
@@ -47,7 +48,7 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	if (phi < 0){
 		phi += TAU;
 	}
-	float theta = std::acos(clamp(diff_geom.point.z, -1.f, 1.f));
+	float theta = std::acos(clamp(diff_geom.point.z / radius, -1.f, 1.f));
 	diff_geom.u = phi / TAU;
 	diff_geom.v = theta / PI;
 
@@ -59,7 +60,7 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	float sin_phi = diff_geom.point.y * inv_z;
 	diff_geom.dp_du = Vector{-TAU * diff_geom.point.y, TAU * diff_geom.point.x, 0};
 	diff_geom.dp_dv = PI * Vector{diff_geom.point.z * cos_phi, diff_geom.point.z * sin_phi,
-		-std::sin(theta)};
+		-radius * std::sin(theta)};
 
 	//Compute derivatives of normals using Weingarten eqns
 	Vector ddp_duu = -TAU * TAU * Vector{diff_geom.point.x, diff_geom.point.y, 0};
@@ -80,9 +81,13 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	return true;
 }
 BBox Sphere::bound() const {
-	return BBox{Point{-1, -1, -1}, Point{1, 1, 1}};
+	return BBox{Point{-radius, -radius, -radius},
+		Point{radius, radius, radius}};
 }
 void Sphere::refine(std::vector<Geometry*> &prims){
 	prims.push_back(this);
+}
+float Sphere::surface_area() const {
+	return 2 * TAU * radius;
 }
 

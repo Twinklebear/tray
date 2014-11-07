@@ -51,6 +51,10 @@ struct Transform {
 	 * Get a transform representing the inverse of this one
 	 */
 	Transform inverse() const;
+	/*
+	 * Check if this transformation has a scaling factor in it
+	 */
+	bool has_scale() const;
 	bool operator==(const Transform &t) const;
 	bool operator!=(const Transform &t) const;
 	/*
