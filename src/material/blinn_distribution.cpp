@@ -4,7 +4,7 @@
 
 BlinnDistribution::BlinnDistribution(float exponent) : exponent(exponent){}
 float BlinnDistribution::operator()(const Vector &w_h) const {
-	return (exponent + 2) / INV_TAU * std::pow(std::abs(BxDF::cos_theta(w_h)), exponent);
+	return (exponent + 2) * INV_TAU * std::pow(std::abs(BxDF::cos_theta(w_h)), exponent);
 }
 void BlinnDistribution::sample(const Vector &w_o, Vector &w_i, const std::array<float, 2> &u, float &pdf_val) const {
 	//Sample a direction on the hemisphere for the half-vector
