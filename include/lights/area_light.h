@@ -20,7 +20,7 @@ public:
 	 * Construct the area light with some transformation to be applied to
 	 * the sphere it's emitting from
 	 */
-	AreaLight(const Transform &to_world, const Colorf &emit, int n_samples, float radius);
+	AreaLight(const Transform &to_world, const Colorf &emit, float radius, int n_samples = 6);
 	/*
 	 * Compute the light's emitted radiance in the outgoing direction, w
 	 * from the point on the surface with normal n

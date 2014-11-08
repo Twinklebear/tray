@@ -2,7 +2,7 @@
 #include "monte_carlo/util.h"
 #include "lights/area_light.h"
 
-AreaLight::AreaLight(const Transform &to_world, const Colorf &emit, int n_samples, float radius)
+AreaLight::AreaLight(const Transform &to_world, const Colorf &emit, float radius, int n_samples)
 	: PBRLight(to_world, n_samples), emit(emit), geometry(std::make_unique<Sphere>(radius)),
 	surface_area(geometry->surface_area())
 {}
