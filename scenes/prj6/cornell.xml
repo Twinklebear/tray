@@ -42,7 +42,7 @@
     <object type="sphere" name="sphere2" material="mtl2">
       <scale value="4"/>
       <rotate angle="30" y="1"/>
-      <translate x="-8" y="-6" z="4"/>
+      <translate x="-8" y="-6" z="20"/>
     </object>
  
     <!-- Materials -->
@@ -76,9 +76,10 @@
     <light type="ambient" name="ambientLight">
       <intensity value="0.1"/>
     </light>
-    <light type="point" name="pointLight">
-      <intensity value="700"/>
-      <position x="0" y="-10" z="22"/>
+    <light type="area" name="areaLight">
+      <intensity value="100"/>
+      <position x="0" y="-20" z="12"/>
+	  <size value="1"/>
     </light>
   </scene>
  

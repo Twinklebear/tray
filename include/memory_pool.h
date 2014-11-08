@@ -10,13 +10,13 @@
  */
 class MemoryPool {
 	struct Block {
-		uint32_t size;
+		uint64_t size;
 		char *block;
 
-		Block(uint32_t size, char *block);
+		Block(uint64_t size, char *block);
 	};
 
-	uint32_t cur_block_pos, block_size;
+	uint64_t cur_block_pos, block_size;
 	Block cur_block;
 	std::vector<Block> used, available;
 
@@ -54,7 +54,7 @@ private:
 	/*
 	 * Allocate some number of bytes to be used for constructing some object
 	 */
-	void* alloc(uint32_t size);
+	void* alloc(uint64_t size);
 };
 
 #endif

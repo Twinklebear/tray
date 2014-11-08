@@ -3,7 +3,7 @@
 #include <algorithm>
 #include "memory_pool.h"
 
-MemoryPool::Block::Block(uint32_t size, char *block) : size(size), block(block){}
+MemoryPool::Block::Block(uint64_t size, char *block) : size(size), block(block){}
 
 MemoryPool::MemoryPool(uint32_t block_size) : cur_block_pos(0), block_size(block_size),
 	cur_block(block_size, new char[block_size])
@@ -26,11 +26,11 @@ void MemoryPool::free_blocks(){
 		used.pop_back();
 	}
 }
-void* MemoryPool::alloc(uint32_t size){
+void* MemoryPool::alloc(uint64_t size){
 	//Round size to minimum machine alignment
 	size = (size + 15) & ~15;
 	//If we need a new block to store this allocation
-	if (cur_block_pos + size > block_size){
+	if (cur_block_pos + size > cur_block.size){
 		used.push_back(cur_block);
 		//If we've got an available block that can fit use that, otherwise allocate a new one
 		auto block = std::find_if(available.begin(), available.end(),
@@ -38,12 +38,14 @@ void* MemoryPool::alloc(uint32_t size){
 				return size <= b.size;
 			});
 		if (block != available.end()){
+			std::cout << "re-using block for request of size " << size << std::endl;
 			cur_block = *block;
 			available.erase(block);
 		}
 		else {
-			uint32_t sz = std::max(size, block_size);
+			uint64_t sz = std::max(size, block_size);
 			cur_block = Block{sz, new char[sz]};
+			std::cout << "allocating new block, blocks used: " << used.size() << std::endl;
 		}
 		cur_block_pos = 0;
 	}
