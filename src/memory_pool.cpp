@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cstring>
 #include <algorithm>
 #include "memory_pool.h"
@@ -32,7 +31,6 @@ void* MemoryPool::alloc(uint64_t size){
 	size = (size + 15) & ~15;
 	//If we need a new block to store this allocation
 	if (cur_block_pos + size > cur_block.size){
-		std::cout << "Current block full, looking for new block" << std::endl;
 		used.push_back(cur_block);
 		//If we've got an available block that can fit use that, otherwise allocate a new one
 		auto block = std::find_if(available.begin(), available.end(),
@@ -46,7 +44,6 @@ void* MemoryPool::alloc(uint64_t size){
 		else {
 			uint64_t sz = std::max(size, block_size);
 			cur_block = Block{sz, new char[sz]};
-			std::cout << "allocating new block, blocks used: " << used.size() << std::endl;
 		}
 		cur_block_pos = 0;
 	}
