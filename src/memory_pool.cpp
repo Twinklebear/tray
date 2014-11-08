@@ -18,6 +18,7 @@ MemoryPool::~MemoryPool(){
 	}
 }
 void MemoryPool::free_blocks(){
+	cur_block_pos = 0;
 	while (!used.empty()){
 #ifdef DEBUG
 		std::memset(used.back().block, 255, used.back().size);
@@ -38,7 +39,6 @@ void* MemoryPool::alloc(uint64_t size){
 				return size <= b.size;
 			});
 		if (block != available.end()){
-			std::cout << "re-using block for request of size " << size << std::endl;
 			cur_block = *block;
 			available.erase(block);
 		}
