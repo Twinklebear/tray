@@ -14,7 +14,7 @@ Colorf TorranceSparrow::operator()(const Vector &w_o, const Vector &w_i) const {
 		return Colorf{0};
 	}
 	Vector w_h = w_i + w_o;
-	if (w_h.length() == 0){
+	if (w_h.length_sqr() == 0){
 		return Colorf{0};
 	}
 	w_h = w_h.normalized();
