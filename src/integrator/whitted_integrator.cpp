@@ -18,22 +18,22 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 	BSDF *bsdf = mat->get_bsdf(dg, pool);
 
 	Colorf illum;
-	Vector wo = -ray.d;
+	Vector w_o = -ray.d;
 	std::array<float, 2> light_sample;
 	//Compute the incident light from all lights in the scene
 	for (const auto &l : scene.get_light_cache()){
 		sampler.get_samples(&light_sample, 1);
-		Vector wi;
+		Vector w_i;
 		float pdf_val = 0;
 		OcclusionTester occlusion;
-		Colorf li = l.second->sample(bsdf->dg.point, light_sample, wi, pdf_val, occlusion);
+		Colorf li = l.second->sample(bsdf->dg.point, light_sample, w_i, pdf_val, occlusion);
 		//If there's no light or no probability for this sample there's no illumination
 		if (li.luminance() == 0 || pdf_val == 0){
 			continue;
 		}
-		Colorf c = (*bsdf)(wo, wi);
+		Colorf c = (*bsdf)(w_o, w_i);
 		if (c.luminance() != 0 && !occlusion.occluded(scene)){
-			illum += c * li * std::abs(wi.dot(bsdf->dg.normal)) / pdf_val;
+			illum += c * li * std::abs(w_i.dot(bsdf->dg.normal)) / pdf_val;
 		}
 	}
 	if (ray.depth < max_depth){

@@ -27,7 +27,7 @@ enum BxDFTYPE {
 };
 
 /*
- * Generic BxDF class for interacting with BRDFs and BTDFs in a general
+ * Generic BxDF class for interacting w_ith BRDFs and BTDFs in a general
  */
 class BxDF {
 public:
@@ -41,16 +41,16 @@ public:
 	/*
 	 * Compute the value of the BxDF for some incident and outgoing directions
 	 */
-	virtual Colorf operator()(const Vector &wo, const Vector &wi) const = 0;
+	virtual Colorf operator()(const Vector &w_o, const Vector &w_i) const = 0;
 	/*
 	 * Sample the BxDFs value for some outgoing direction using the random values
 	 * passed and returning the incident light direction
 	 */
-	virtual Colorf sample(const Vector &wo, Vector &wi, const std::array<float, 2> &samples, float &pdf_val) const;
+	virtual Colorf sample(const Vector &w_o, Vector &w_i, const std::array<float, 2> &samples, float &pdf_val) const;
 	/*
 	 * Compute the hemispherical-directional reflectance function using the samples passed
 	 */
-	virtual Colorf rho_hd(const Vector &wo, const std::array<float, 2> *samples, int n_samples) const;
+	virtual Colorf rho_hd(const Vector &w_o, const std::array<float, 2> *samples, int n_samples) const;
 	/*
 	 * Compute the hemispherical-hemispherical reflectance function using the samples passed
 	 * samples_a and samples_b should contain the same number of samples
@@ -60,7 +60,7 @@ public:
 	/*
 	 * Compute the probability density function for sampling the directions passed
 	 */
-	virtual float pdf(const Vector &wo, const Vector &wi) const;
+	virtual float pdf(const Vector &w_o, const Vector &w_i) const;
 	/*
 	 * Quicker utilities for computing cos and sin the shading coordinate system
 	 */
