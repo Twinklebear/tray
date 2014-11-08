@@ -34,13 +34,11 @@ void Worker::render(){
 		if (!sampler){
 			break;
 		}
-		std::vector<Sample> samples;
-		std::vector<RayDifferential> rays;
-		std::vector<Colorf> colors;
+		std::vector<Sample> samples(sampler->get_max_spp());
+		std::vector<RayDifferential> rays(sampler->get_max_spp());
+		std::vector<Colorf> colors(sampler->get_max_spp());
 		while (sampler->has_samples()){
 			sampler->get_samples(samples);
-			rays.reserve(samples.size());
-			colors.reserve(samples.size());
 			for (const auto &s : samples){
 				rays.push_back(camera.generate_raydifferential(s));
 				rays.back().scale_differentials(1.f / std::sqrt(sampler->get_max_spp()));
@@ -62,6 +60,7 @@ void Worker::render(){
 						return;
 					}
 				}
+				pool.free_blocks();
 			}
 			if (sampler->report_results(samples, rays, colors)){
 				for (size_t i = 0; i < samples.size(); ++i){
@@ -71,7 +70,6 @@ void Worker::render(){
 			}
 			rays.clear();
 			colors.clear();
-			pool.free_blocks();
 		}
 	}
 	status.store(STATUS::DONE, std::memory_order_release);
