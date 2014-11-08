@@ -120,10 +120,17 @@ Point Sphere::sample(const Point &p, const std::array<float, 2> &u, Normal &norm
 float Sphere::pdf(const Point&) const {
 	return 1 / surface_area();
 }
-float Sphere::pdf(const Point &p, const Vector&) const {
-	//If we're in the sphere the PDF is uniform
+float Sphere::pdf(const Point &p, const Vector &w_i) const {
+	//If we're in the sphere compute the weight inside but defined over the solid angle
 	if (p.distance_sqr(Point{0, 0, 0}) - radius * radius < 1e-4){
-		return 1 / surface_area();
+		DifferentialGeometry dg;
+		Ray ray{p, w_i, 0.001};
+		if (!intersect(ray, dg)){
+			return 0;
+		}
+		//Convert PDF over area to be over solid angle
+		float pdf_val = p.distance_sqr(ray(ray.max_t)) / (std::abs(dg.normal.dot(-w_i)) * surface_area());
+		return std::isinf(pdf_val) ? 0 : pdf_val;
 	}
 	float cos_theta = std::sqrt(std::max(0.f, 1 - radius * radius / p.distance_sqr(Point{0, 0, 0})));
 	return uniform_cone_pdf(cos_theta);
