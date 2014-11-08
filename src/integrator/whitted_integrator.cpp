@@ -19,22 +19,26 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 
 	Colorf illum;
 	Vector w_o = -ray.d;
-	std::array<float, 2> light_sample;
 	//Compute the incident light from all lights in the scene
 	for (const auto &l : scene.get_light_cache()){
-		sampler.get_samples(&light_sample, 1);
-		Vector w_i;
-		float pdf_val = 0;
-		OcclusionTester occlusion;
-		Colorf li = l.second->sample(bsdf->dg.point, light_sample, w_i, pdf_val, occlusion);
-		//If there's no light or no probability for this sample there's no illumination
-		if (li.luminance() == 0 || pdf_val == 0){
-			continue;
+		int n_samples = l.second->n_samples;
+		auto l_samples = pool.alloc_array<std::array<float, 2>>(n_samples);
+		sampler.get_samples(l_samples, n_samples);
+		for (int i = 0; i < n_samples; ++i){
+			Vector w_i;
+			float pdf_val = 0;
+			OcclusionTester occlusion;
+			Colorf li = l.second->sample(bsdf->dg.point, l_samples[i], w_i, pdf_val, occlusion);
+			//If there's no light or no probability for this sample there's no illumination
+			if (li.luminance() == 0 || pdf_val == 0){
+				continue;
+			}
+			Colorf c = (*bsdf)(w_o, w_i);
+			if (c.luminance() != 0 && !occlusion.occluded(scene)){
+				illum += c * li * std::abs(w_i.dot(bsdf->dg.normal)) / pdf_val;
+			}
 		}
-		Colorf c = (*bsdf)(w_o, w_i);
-		if (c.luminance() != 0 && !occlusion.occluded(scene)){
-			illum += c * li * std::abs(w_i.dot(bsdf->dg.normal)) / pdf_val;
-		}
+		illum /= n_samples;
 	}
 	if (ray.depth < max_depth){
 		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);

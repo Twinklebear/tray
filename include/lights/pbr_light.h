@@ -18,9 +18,10 @@ class PBRLight {
 protected:
 	//Transforms from light to world space and world to light space
 	const Transform to_world, to_light;
-	const int n_samples;
 
 public:
+	const int n_samples;
+
 	/*
 	 * Create the light with some transformation to world space
 	 * and desired number of samples to be taken

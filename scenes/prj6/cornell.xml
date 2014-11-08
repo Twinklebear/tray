@@ -78,7 +78,7 @@
     </light>
     <light type="area" name="areaLight">
       <intensity value="300"/>
-      <position x="0" y="-20" z="12"/>
+      <position x="0" y="-10" z="22"/>
 	  <size value="1"/>
     </light>
   </scene>
@@ -93,7 +93,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" min="16" max="64"/>
+	  <sampler type="adaptive" min="16" max="256"/>
   </config>
 </xml>
 
