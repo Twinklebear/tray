@@ -27,6 +27,9 @@ void Worker::render(){
 	Camera &camera = scene.get_camera();
 	auto renderer = std::make_unique<Renderer>(std::make_unique<WhittedIntegrator>(scene.get_max_depth()));
 	MemoryPool pool;
+	std::vector<Sample> samples;
+	std::vector<RayDifferential> rays;
+	std::vector<Colorf> colors;
 	//Counter so we can check if we've been canceled, check after every 32 pixels rendered
 	int check_cancel = 0;
 	while (true){
@@ -34,9 +37,9 @@ void Worker::render(){
 		if (!sampler){
 			break;
 		}
-		std::vector<Sample> samples(sampler->get_max_spp());
-		std::vector<RayDifferential> rays(sampler->get_max_spp());
-		std::vector<Colorf> colors(sampler->get_max_spp());
+		samples.resize(sampler->get_max_spp());
+		rays.reserve(sampler->get_max_spp());
+		colors.reserve(sampler->get_max_spp());
 		while (sampler->has_samples()){
 			sampler->get_samples(samples);
 			for (const auto &s : samples){
