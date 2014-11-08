@@ -17,7 +17,7 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 	Colorf reflected{0};
 	Colorf f = bsdf.sample(w_o, w_i, u_sample, c_sample, pdf_val,
 			BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::SPECULAR | BxDFTYPE::GLOSSY));	
-	if (pdf_val > 0 && !f.luminance() == 0 && std::abs(w_i.dot(n)) != 0){
+	if (pdf_val > 0 && f.luminance() != 0 && std::abs(w_i.dot(n)) != 0){
 		RayDifferential refl{p, w_i, ray, 0.001};
 		if (ray.has_differentials()){
 			refl.rx = Ray{p + bsdf.dg.dp_dx, w_i, ray, 0.001};
@@ -34,7 +34,7 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 			refl.ry.d = w_i - dd_dy + 2 * Vector{w_o.dot(n) * dn_dy + Vector{ddn_dy * n}};
 		}
 		Colorf li = renderer.illumination(refl, scene, sampler, pool);
-		reflected += f * li * std::abs(w_i.dot(n)) / pdf_val;
+		reflected = f * li * std::abs(w_i.dot(n)) / pdf_val;
 	}
 	return reflected / n_samples;
 }
@@ -51,10 +51,10 @@ Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &
 	sampler.get_samples(&u_sample, 1);
 	sampler.get_samples(&c_sample, 1);
 	Colorf f = bsdf.sample(w_o, w_i, u_sample, c_sample, pdf_val,
-		BxDFTYPE(BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR));	
+		BxDFTYPE(BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR | BxDFTYPE::GLOSSY));	
 	//Compute the color transmitted through the BSDF
 	Colorf transmitted{0};
-	if (pdf_val > 0 && !f.luminance() == 0 && std::abs(w_i.dot(n)) != 0){
+	if (pdf_val > 0 && f.luminance() != 0 && std::abs(w_i.dot(n)) != 0){
 		RayDifferential refr_ray{p, w_i, ray, 0.001};
 		if (ray.has_differentials()){
 			refr_ray.rx = Ray{p + bsdf.dg.dp_dx, w_i, ray, 0.001};
