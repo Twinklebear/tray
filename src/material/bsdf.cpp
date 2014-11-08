@@ -10,6 +10,7 @@ BSDF::BSDF(const DifferentialGeometry &dg, float eta)
 	bitangent = tangent.cross(Vector{normal}).normalized();
 }
 void BSDF::add(BxDF *b){
+	assert(n_bxdfs < 8);
 	bxdfs[n_bxdfs++] = b;
 }
 int BSDF::num_bxdfs() const {
