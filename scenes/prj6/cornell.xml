@@ -42,7 +42,7 @@
     <object type="sphere" name="sphere2" material="mtl2">
       <scale value="4"/>
       <rotate angle="30" y="1"/>
-      <translate x="-8" y="-6" z="20"/>
+      <translate x="-8" y="-6" z="4"/>
     </object>
  
     <!-- Materials -->
@@ -61,13 +61,13 @@
     <material type="blinn" name="mtl1">
       <diffuse  r="0.8" g="0.2" b="0.2"/>
       <specular r="1.0" g="1.0" b="1.0" value="0.9"/>
-      <glossiness value="0.05"/>
+      <glossiness value="0.1"/>
       <reflection value="0.7"/>
     </material>
     <material type="blinn" name="mtl2">
       <diffuse  r="0.1" g="0.1" b="0.9"/>
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
-      <glossiness value="0.1"/>
+      <glossiness value="0.01"/>
       <refraction value="0.8" index="1.52"/>
       <absorption r="0.01" g="0.001" b="0.0001"/>
     </material>
@@ -77,7 +77,7 @@
       <intensity value="0.1"/>
     </light>
     <light type="area" name="areaLight">
-      <intensity value="100"/>
+      <intensity value="300"/>
       <position x="0" y="-20" z="12"/>
 	  <size value="1"/>
     </light>
@@ -93,7 +93,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" min="16" max="32"/>
+	  <sampler type="adaptive" min="16" max="64"/>
   </config>
 </xml>
 
