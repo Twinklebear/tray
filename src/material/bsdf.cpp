@@ -4,21 +4,23 @@
 
 BSDF::BSDF(const DifferentialGeometry &dg, float eta)
 	: normal(dg.normal), geom_normal(dg.geom_normal), bitangent(dg.dp_du.normalized()),
-	tangent(normal.cross(bitangent).normalized()), dg(dg), eta(eta)
+	tangent(normal.cross(bitangent).normalized()), n_bxdfs(0), dg(dg), eta(eta)
 {
 	//Update the bitangent to get a proper coordinate system
 	bitangent = tangent.cross(Vector{normal}).normalized();
 }
 void BSDF::add(BxDF *b){
-	bxdfs.push_back(b);
+	bxdfs[n_bxdfs++] = b;
+	//bxdfs.push_back(b);
 }
 int BSDF::num_bxdfs() const {
-	return bxdfs.size();
+	return n_bxdfs;
+	//return bxdfs.size();
 }
 int BSDF::num_bxdfs(BxDFTYPE flags) const {
 	int n = 0;
-	for (const auto &b : bxdfs){
-		if (b->matches(flags)){
+	for (int i = 0; i < n_bxdfs; ++i){
+		if (bxdfs[i]->matches(flags)){
 			++n;
 		}
 	}
@@ -43,9 +45,9 @@ Colorf BSDF::operator()(const Vector &wo_world, const Vector &wi_world, BxDFTYPE
 		flags = BxDFTYPE(flags & ~BxDFTYPE::REFLECTION);
 	}
 	Colorf color;
-	for (const auto &b : bxdfs){
-		if (b->matches(flags)){
-			color += (*b)(wo, wi);
+	for (int i = 0; i < n_bxdfs; ++i){
+		if (bxdfs[i]->matches(flags)){
+			color += (*bxdfs[i])(wo, wi);
 		}
 	}
 	return color;
@@ -95,9 +97,9 @@ Colorf BSDF::rho_hd(const Vector &wo, Sampler &sampler, MemoryPool &pool, BxDFTY
 	std::array<float, 2> *samples = pool.alloc_array<std::array<float, 2>>(n_samples);
 	sampler.get_samples(samples, n_samples);
 	Colorf color;
-	for (const auto &b : bxdfs){
-		if (b->matches(flags)){
-			color += b->rho_hd(wo, samples, n_samples);
+	for (int i = 0; i < n_bxdfs; ++i){
+		if (bxdfs[i]->matches(flags)){
+			color += bxdfs[i]->rho_hd(wo, samples, n_samples);
 		}
 	}
 	return color;
@@ -109,9 +111,9 @@ Colorf BSDF::rho_hh(Sampler &sampler, MemoryPool &pool, BxDFTYPE flags, int sqrt
 	sampler.get_samples(samples_a, n_samples);
 	sampler.get_samples(samples_b, n_samples);
 	Colorf color;
-	for (const auto &b : bxdfs){
-		if (b->matches(flags)){
-			color += b->rho_hh(samples_a, samples_b, n_samples);
+	for (int i = 0; i < n_bxdfs; ++i){
+		if (bxdfs[i]->matches(flags)){
+			color += bxdfs[i]->rho_hh(samples_a, samples_b, n_samples);
 		}
 	}
 	return color;
@@ -122,18 +124,18 @@ float BSDF::pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags) 
 	Vector wi = to_shading(wi_world);
 	float pdf_val = 0;
 	int n_comps = 0;
-	for (const auto &b : bxdfs){
-		if (b->matches(flags)){
+	for (int i = 0; i < n_bxdfs; ++i){
+		if (bxdfs[i]->matches(flags)){
 			++n_comps;
-			pdf_val += b->pdf(wo, wi);
+			pdf_val += bxdfs[i]->pdf(wo, wi);
 		}
 	}
 	return n_comps > 0 ? pdf_val / n_comps : 0;
 }
-const BxDF* BSDF::matching_at(int i, BxDFTYPE flags) const {
-	for (const auto &b : bxdfs){
-		if (b->matches(flags) && i-- == 0){
-			return b;
+const BxDF* BSDF::matching_at(int n, BxDFTYPE flags) const {
+	for (int i = 0; i < n_bxdfs; ++i){
+		if (bxdfs[i]->matches(flags) && n-- == 0){
+			return bxdfs[i];
 		}
 	}
 	return nullptr;

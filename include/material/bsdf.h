@@ -20,7 +20,8 @@ class BSDF {
 	//the coordinate system has the shading normal as z, primary tangent as x and secondary as y
 	Normal normal, geom_normal;
 	Vector bitangent, tangent;
-	std::vector<BxDF*> bxdfs;
+	std::array<BxDF*, 8> bxdfs;
+	int n_bxdfs;
 
 public:
 	const DifferentialGeometry dg;
