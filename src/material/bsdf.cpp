@@ -11,11 +11,9 @@ BSDF::BSDF(const DifferentialGeometry &dg, float eta)
 }
 void BSDF::add(BxDF *b){
 	bxdfs[n_bxdfs++] = b;
-	//bxdfs.push_back(b);
 }
 int BSDF::num_bxdfs() const {
 	return n_bxdfs;
-	//return bxdfs.size();
 }
 int BSDF::num_bxdfs(BxDFTYPE flags) const {
 	int n = 0;

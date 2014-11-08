@@ -3,7 +3,6 @@
 
 #include <random>
 #include <memory>
-#include <vector>
 #include "memory_pool.h"
 #include "linalg/vector.h"
 #include "samplers/sampler.h"
