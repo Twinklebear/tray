@@ -16,6 +16,7 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 		return Colorf{0.4};
 	}
 	BSDF *bsdf = mat->get_bsdf(dg, pool);
+	return Colorf{0};
 
 	Colorf illum;
 	Vector wo = -ray.d;
