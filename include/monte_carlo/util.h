@@ -65,6 +65,25 @@ Vector uniform_sample_cone(const std::array<float, 2> &u, float cos_theta, const
 inline constexpr float uniform_cone_pdf(float cos_theta){
 	return 1 / (TAU * (1 - cos_theta));
 }
+/*
+ * Balance heuristic for multiple importance sampling for two functions being sampled, f & g
+ * n_f, n_g - number of samples taken of each
+ * pdf_f, pdf_g - pdf of each function
+ */
+inline float balance_heuristic(float n_f, float pdf_f, float n_g, float pdf_g){
+	return (n_f * pdf_f) / (n_f * pdf_f + n_g * pdf_g);
+}
+/*
+ * Power heuristic for multiple importance sampling for two functions being sampled, f & g
+ * where beta is hard-coded to be two following PBR & Veach
+ * n_f, n_g - number of samples taken of each
+ * pdf_f, pdf_g - pdf of each function
+ */
+inline float power_heuristic(float n_f, float pdf_f, float n_g, float pdf_g){
+	float f = n_f * pdf_f;
+	float g = n_g * pdf_g;
+	return (f * f) / (f * f + g * g);
+}
 
 #endif
 
