@@ -18,6 +18,64 @@ Note that texture names beginning with \_\_ are reserved for generated texture n
 and should not be used. If you want to compare trilinear filtering to EWA filtering for textures you can pass
 `-DTEX_TRILINEAR=1` to indicate that trilinear filtering should be used for texture sampling instead of the default (EWA).
 
+Materials
+-
+The ray tracer uses are very different material model than what is discussed in class, aiming to be more physically accurate.
+As such no BlinnPhong material is provided. The supported materials are listed below along with the parameters they require.
+Note that material names (as with all other names) should not conflict.
+
+**Matte Material**
+```XML
+<material type="matte" name="my_matte_material">
+	<!-- The color (or texture) for the material, required -->
+	<diffuse r="1" g="0" b="0.5"/>
+</material>
+```
+
+**Plastic Material**
+```XML
+<material type="plastic" name="my_plastic_material">
+	<!-- The diffuse color (or texture) for the material, required -->
+	<diffuse  r="0.8" g="0.2" b="0.2"/>
+	<!-- The color (or texture) of specular highlights of the material, required -->
+	<specular r="1.0" g="1.0" b="1.0" value="0.9"/>
+	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
+	<roughness value="0.5"/>
+</material>
+```
+
+**Translucent Material**
+Translucent material colors are computed by multiplying the base colors with the effect occuring, eg. the color
+for diffuse reflection is `reflection * diffuse` and so on.
+```XML
+<material type="translucent" name="my_translucent_material">
+	<!-- The base diffuse color (or texture) for the material, required -->
+	<diffuse  r="0.8" g="0.2" b="0.2"/>
+	<!-- The base color (or texture) of specular highlights of the material, required -->
+	<specular r="1.0" g="1.0" b="1.0" value="0.9"/>
+	<!-- The color (or texture) for reflections, required -->
+	<reflection r="1.0" g="0.4" b="1.0" value="0.9"/>
+	<!-- The color (or texture) for transmission, required -->
+	<transmission r="1.0" g="1.0" b="0.2"/>
+	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
+	<roughness value="0.5"/>
+	<!-- The material's index of refraction, defaults to 1 (air) -->
+	<ior value="1.6"/>
+</material>
+```
+
+**Metal Material**
+```XML
+<material type="metal" name="my_metal_material">
+	<!-- The metal's index of refraction (can be a texture), required -->
+	<ior r="1.3" g="1.1" b="0.4"/>
+	<!-- The metal's absoprtion coefficient (can be a texture), required -->
+	<absorption r="1.9" g="2.5" b="4.3"/>
+	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
+	<roughness value="0.01"/>
+</material>
+```
+
 Extras
 -
 The ray tracer also supports some extra scene options that can be specified within a <config> block in the scene file.
