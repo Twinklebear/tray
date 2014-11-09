@@ -49,6 +49,10 @@ public:
 	 */
 	virtual void get_samples(float *samples, int n_samples) = 0;
 	/*
+	 * Get a random float in the range [0, 1)
+	 */
+	virtual float random_float();
+	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */
 	virtual int get_max_spp() const = 0;
