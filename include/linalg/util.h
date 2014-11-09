@@ -19,7 +19,8 @@ enum AXIS { X, Y, Z };
 /*
  * Some basic math/geometric utility functions
  */
-constexpr inline float lerp(float t, float a, float b){
+template<typename T>
+constexpr T lerp(float t, const T &a, const T &b){
 	return (1.f - t) * a + t * b;
 }
 template<typename T>
