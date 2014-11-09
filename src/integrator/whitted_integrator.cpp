@@ -1,4 +1,3 @@
-#include <vector>
 #include <array>
 #include "material/material.h"
 #include "lights/light.h"

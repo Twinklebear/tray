@@ -31,6 +31,18 @@ public:
 	 */
 	static Colorf spec_transmit(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
 		const Scene &scene, Sampler &sampler, MemoryPool &pool);
+	/*
+	 * Utility function to uniformly samply one light in the scene illuminating the BSDF
+	 */
+	static Colorf uniform_sample_one_light(const Scene &scene, const Renderer &renderer, const Point &p,
+		const Normal &n, const Vector &w_o, const BSDF &bsdf, const LightSample &l_sample,
+		const BSDFSample &bsdf_sample);
+	/*
+	 * Estimate the direct light contribution from the light passed to the BSDF
+	 */
+	static Colorf estimate_direct(const Scene &scene, const Renderer &renderer, const Point &p,
+		const Normal &n, const Vector &w_o, const BSDF &bsdf, const Light &light, const LightSample &l_sample,
+		const BSDFSample &bsdf_sample, BxDFTYPE flags);
 };
 
 #endif
