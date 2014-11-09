@@ -19,10 +19,10 @@ PBRMaterialCache& Scene::get_mat_cache(){
 TextureCache& Scene::get_tex_cache(){
 	return tex_cache;
 }
-PBRLightCache& Scene::get_light_cache(){
+LightCache& Scene::get_light_cache(){
 	return light_cache;
 }
-const PBRLightCache& Scene::get_light_cache() const {
+const LightCache& Scene::get_light_cache() const {
 	return light_cache;
 }
 Camera& Scene::get_camera(){

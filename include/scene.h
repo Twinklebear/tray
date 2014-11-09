@@ -6,7 +6,7 @@
 #include "geometry/geometry.h"
 #include "material/pbr_material.h"
 #include "textures/texture.h"
-#include "lights/pbr_light.h"
+#include "lights/light.h"
 #include "film/render_target.h"
 #include "film/camera.h"
 #include "samplers/sampler.h"
@@ -19,7 +19,7 @@ class Scene {
 	GeometryCache geom_cache;
 	PBRMaterialCache mat_cache;
 	TextureCache tex_cache;
-	PBRLightCache light_cache;
+	LightCache light_cache;
 	Camera camera;
 	RenderTarget render_target;
 	std::unique_ptr<Sampler> sampler;
@@ -38,8 +38,8 @@ public:
 	GeometryCache& get_geom_cache();
 	PBRMaterialCache& get_mat_cache();
 	TextureCache& get_tex_cache();
-	PBRLightCache& get_light_cache();
-	const PBRLightCache& get_light_cache() const;
+	LightCache& get_light_cache();
+	const LightCache& get_light_cache() const;
 	Camera& get_camera();
 	RenderTarget& get_render_target();
 	const RenderTarget& get_render_target() const;

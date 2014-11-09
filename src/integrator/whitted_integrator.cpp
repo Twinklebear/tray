@@ -1,7 +1,7 @@
 #include <vector>
 #include <array>
 #include "material/pbr_material.h"
-#include "lights/pbr_light.h"
+#include "lights/light.h"
 #include "lights/occlusion_tester.h"
 #include "material/bsdf.h"
 #include "renderer/renderer.h"

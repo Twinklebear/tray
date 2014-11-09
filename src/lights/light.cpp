@@ -1,7 +1,7 @@
 #include <iostream>
-#include "lights/pbr_light.h"
+#include "lights/light.h"
 
-PBRLight::PBRLight(const Transform &to_world, int n_samples)
+Light::Light(const Transform &to_world, int n_samples)
 	: to_world(to_world), to_light(to_world.inverse()),	n_samples(n_samples)
 {
 	if (to_light.has_scale()){

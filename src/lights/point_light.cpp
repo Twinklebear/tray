@@ -1,16 +1,33 @@
-#include "linalg/point.h"
+#include "linalg/util.h"
+#include "monte_carlo/util.h"
 #include "lights/point_light.h"
 
-PointLight::PointLight(const Colorf &color, const Point &pos)
-	: color(color), position(pos)
+PointLight::PointLight(const Transform &to_world, const Colorf &intensity)
+	: Light(to_world), position(to_world(Point{0, 0, 0})), intensity(intensity)
 {}
-Colorf PointLight::illuminate(const Point &p) const {
-	return color;
+Colorf PointLight::sample(const Point &p, const std::array<float, 2>&,
+	Vector &wi, float &pdf_val, OcclusionTester &occlusion) const
+{
+	wi = (position - p).normalized();
+	pdf_val = 1;
+	occlusion.set_points(p, position);
+	return intensity / position.distance_sqr(p);
 }
-Vector PointLight::direction(const Point &p) const {
-	return p - position;
+Colorf PointLight::sample(const Scene&, const std::array<float, 2> &a, const std::array<float, 2>&,
+	Ray &ray, Normal &normal, float &pdf_val) const
+{
+	ray = Ray{position, uniform_sample_sphere(a)};
+	normal = Normal{ray.d};
+	pdf_val = uniform_sphere_pdf();
+	return intensity;
 }
-LIGHT PointLight::type() const {
-	return LIGHT::POINT;
+Colorf PointLight::power(const Scene&) const {
+	return 4 * PI * intensity;
+}
+bool PointLight::delta_light() const {
+	return true;
+}
+float PointLight::pdf(const Point&, const Vector&) const {
+	return 0;
 }
 

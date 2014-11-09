@@ -3,14 +3,14 @@
 
 #include <memory>
 #include "geometry/sphere.h"
-#include "pbr_light.h"
+#include "light.h"
 
 /*
  * Diffuse area light that can be attached to some arbitrary geometry
  * to create an emissive version of the object
  * TODO: Currently only spheres are supported
  */
-class AreaLight : public PBRLight {
+class AreaLight : public Light {
 	Colorf emit;
 	std::unique_ptr<Sphere> geometry;
 	float surface_area;

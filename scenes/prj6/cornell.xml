@@ -67,9 +67,6 @@
     </material>
  
     <!-- Lights -->
-    <light type="ambient" name="ambientLight">
-      <intensity value="0.1"/>
-    </light>
     <light type="area" name="areaLight">
       <intensity value="300"/>
       <position x="0" y="-10" z="22"/>

@@ -43,7 +43,7 @@ void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, Texture
 				continue;
 			}
 			std::cout << "Loading material: " << name << std::endl;
-			std::unique_ptr<PBRMaterial> material;
+			std::unique_ptr<PBRMaterial> material = nullptr;
 			std::string type = m->Attribute("type");
 			if (type == "matte"){
 				material = load_matte(m, tcache, file);
@@ -57,7 +57,9 @@ void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, Texture
 			else if (type == "metal"){
 				material = load_metal(m, tcache, file);
 			}
-			cache.add(name, std::move(material));
+			if (material != nullptr){
+				cache.add(name, std::move(material));
+			}
 		}
 		else {
 			//The materials are all passed in a block, so once
