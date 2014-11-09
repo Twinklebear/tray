@@ -91,14 +91,14 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 	}
 	return f;
 }
-Colorf BSDF::rho_hd(const Vector &wo, Sampler &sampler, MemoryPool &pool, BxDFTYPE flags, int sqrt_samples) const {
+Colorf BSDF::rho_hd(const Vector &w_o, Sampler &sampler, MemoryPool &pool, BxDFTYPE flags, int sqrt_samples) const {
 	int n_samples = sqrt_samples * sqrt_samples;
 	std::array<float, 2> *samples = pool.alloc_array<std::array<float, 2>>(n_samples);
 	sampler.get_samples(samples, n_samples);
 	Colorf color;
 	for (int i = 0; i < n_bxdfs; ++i){
 		if (bxdfs[i]->matches(flags)){
-			color += bxdfs[i]->rho_hd(wo, samples, n_samples);
+			color += bxdfs[i]->rho_hd(w_o, samples, n_samples);
 		}
 	}
 	return color;

@@ -23,7 +23,7 @@ public:
 	/*
 	 * Compute the value of the BxDF for some incident and outgoing directions
 	 */
-	Colorf operator()(const Vector &wo, const Vector &wi) const override;
+	Colorf operator()(const Vector &w_o, const Vector &w_i) const override;
 	/*
 	 * Sample the BxDFs value for some outgoing direction using the random values
 	 * passed and returning the incident light direction

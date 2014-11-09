@@ -7,11 +7,11 @@ SpecularReflection::SpecularReflection(const Colorf &reflection, Fresnel *fresne
 Colorf SpecularReflection::operator()(const Vector&, const Vector&) const {
 	return Colorf{0};
 }
-Colorf SpecularReflection::sample(const Vector &wo, Vector &wi, const std::array<float, 2>&, float &pdf_val) const {
+Colorf SpecularReflection::sample(const Vector &w_o, Vector &w_i, const std::array<float, 2>&, float &pdf_val) const {
 	//Compute the perfect specular reflection direction since we're explicitly sampling the delta distribution
-	wi = Vector{-wo.x, -wo.y, wo.z};
+	w_i = Vector{-w_o.x, -w_o.y, w_o.z};
 	pdf_val = 1;
-	return (*fresnel)(cos_theta(wo)) * reflection / std::abs(cos_theta(wi));
+	return (*fresnel)(cos_theta(w_o)) * reflection / std::abs(cos_theta(w_i));
 }
 float SpecularReflection::pdf(const Vector&, const Vector&) const {
 	return 0;

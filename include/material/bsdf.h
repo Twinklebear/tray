@@ -62,7 +62,7 @@ public:
 	 * Sample the hemispherical-directional reflectance function of the BxDFs
 	 * sqrt_samples is the square root of the number of samples to take
 	 */
-	Colorf rho_hd(const Vector &wo, Sampler &sampler, MemoryPool &pool,
+	Colorf rho_hd(const Vector &w_o, Sampler &sampler, MemoryPool &pool,
 		BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Sample the hemispherical-hemispherical reflectance function of the BxDFs

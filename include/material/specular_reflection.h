@@ -22,17 +22,17 @@ public:
 	 * Note that because this is a delta distribution this will always return 0,
 	 * sample must be used for delta distributions instead
 	 */
-	Colorf operator()(const Vector &wo, const Vector &wi) const override;
+	Colorf operator()(const Vector &w_o, const Vector &w_i) const override;
 	/*
 	 * Sample the BRDFs value for some outgoing direction using the random values
 	 * passed and returning the incident light direction
 	 */
-	Colorf sample(const Vector &wo, Vector &wi, const std::array<float, 2> &samples, float &pdf_val) const override;
+	Colorf sample(const Vector &w_o, Vector &w_i, const std::array<float, 2> &samples, float &pdf_val) const override;
 	/*
 	 * Compute the probability density function for sampling the directions passed
 	 * Note again that this returns 0 because this is a delta distribution
 	 */
-	float pdf(const Vector &wo, const Vector &wi) const override;
+	float pdf(const Vector &w_o, const Vector &w_i) const override;
 };
 
 #endif

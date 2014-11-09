@@ -17,11 +17,11 @@ public:
 	/*
 	 * Compute the value of the BxDF for some incident and outgoing directions
 	 */
-	Colorf operator()(const Vector &wo, const Vector &wi) const override;
+	Colorf operator()(const Vector &w_o, const Vector &w_i) const override;
 	/*
 	 * Compute the hemispherical-directional reflectance function using the samples passed
 	 */
-	Colorf rho_hd(const Vector &wo, const std::array<float, 2> *samples, int n_samples) const override;
+	Colorf rho_hd(const Vector &w_o, const std::array<float, 2> *samples, int n_samples) const override;
 	/*
 	 * Compute the hemispherical-hemispherical reflectance function using the samples passed
 	 */
