@@ -38,10 +38,15 @@ void read_point(tinyxml2::XMLElement *elem, Point &p);
  */
 void read_transform(tinyxml2::XMLElement *elem, Transform &t);
 /*
- * Read the value float attribute of the XMLElement and return it
+ * Read the float attribute of the XMLElement and return it
  * optionally passing the attribute name to read from. Default is value
  */
 void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib = "value");
+/*
+ * Read the int attribute of the XMLElement and return it
+ * optionally passing the attribute name to read from. Default is value
+ */
+void read_int(tinyxml2::XMLElement *elem, int &i, const std::string &attrib = "value");
 
 #endif
 

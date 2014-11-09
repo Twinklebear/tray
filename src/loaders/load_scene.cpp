@@ -188,9 +188,13 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 					std::exit(1);
 				}
 				Colorf emit{1, 1, 1};
+				int n_samples = 6;
 				read_color(light_elem->FirstChildElement("intensity"), emit);
+				if (light_elem->FirstChildElement("nsamples")){
+					read_int(light_elem->FirstChildElement("nsamples"), n_samples);
+				}
 				AreaLight *area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
-					std::make_unique<AreaLight>(n.get_transform(), emit, sphere_geom)));
+					std::make_unique<AreaLight>(n.get_transform(), emit, sphere_geom, n_samples)));
 				n.attach_light(area_light);
 			}
 			//Load any children the node may have
@@ -259,6 +263,9 @@ void read_point(tinyxml2::XMLElement *elem, Point &p){
 }
 void read_float(tinyxml2::XMLElement *elem, float &f, const std::string &attrib){
 	elem->QueryFloatAttribute(attrib.c_str(), &f);
+}
+void read_int(tinyxml2::XMLElement *elem, int &i, const std::string &attrib){
+	elem->QueryIntAttribute(attrib.c_str(), &i);
 }
 void read_transform(tinyxml2::XMLElement *elem, Transform &t){
 	using namespace tinyxml2;

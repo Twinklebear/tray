@@ -48,6 +48,7 @@
       <translate x="0" y="-10" z="22"/>
 	  <light type="area" name="areaLight">
         <intensity value="250"/>
+		<nsamples value="4"/>
       </light>
     </object>
  
@@ -85,7 +86,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" min="16" max="256"/>
+	  <sampler type="adaptive" min="16" max="64"/>
   </config>
 </xml>
 
