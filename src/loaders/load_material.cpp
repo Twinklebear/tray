@@ -13,26 +13,24 @@
  * Load the matte material properties and return the material
  * elem should be root of the material being loaded
  */
-static std::unique_ptr<PBRMaterial> load_matte(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+static std::unique_ptr<Material> load_matte(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 /*
  * Load the plastic material properties and return the material
  * elem should be the root of the material being loaded
  */
-static std::unique_ptr<PBRMaterial> load_plastic(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+static std::unique_ptr<Material> load_plastic(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 /*
  * Load the translucent material properties and return the material
  * elem should be root of the material being loaded
  */
-static std::unique_ptr<PBRMaterial> load_translucent(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+static std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 /*
  * Load the metal material properties and return the material
  * elem should be root of the material being loaded
  */
-static std::unique_ptr<PBRMaterial> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+static std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 
-void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, TextureCache &tcache,
-	const std::string &file)
-{
+void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
 	using namespace std::literals;
 	for (XMLNode *n = elem; n; n = n->NextSibling()){
@@ -43,7 +41,7 @@ void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, Texture
 				continue;
 			}
 			std::cout << "Loading material: " << name << std::endl;
-			std::unique_ptr<PBRMaterial> material = nullptr;
+			std::unique_ptr<Material> material = nullptr;
 			std::string type = m->Attribute("type");
 			if (type == "matte"){
 				material = load_matte(m, tcache, file);
@@ -68,7 +66,7 @@ void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, Texture
 		}
 	}
 }
-std::unique_ptr<PBRMaterial> load_matte(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
+std::unique_ptr<Material> load_matte(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
 	Texture *tex = nullptr;
 	if (elem->FirstChildElement("diffuse")){
 		tex = load_texture(elem->FirstChildElement("diffuse"), elem->Attribute("name"), tcache, file);
@@ -79,7 +77,7 @@ std::unique_ptr<PBRMaterial> load_matte(tinyxml2::XMLElement *elem, TextureCache
 	}
 	return std::make_unique<MatteMaterial>(tex, 0);
 }
-std::unique_ptr<PBRMaterial> load_plastic(tinyxml2::XMLElement *elem, TextureCache &tcache,
+std::unique_ptr<Material> load_plastic(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file)
 {
 	using namespace tinyxml2;
@@ -104,7 +102,7 @@ std::unique_ptr<PBRMaterial> load_plastic(tinyxml2::XMLElement *elem, TextureCac
 	}
 	return std::make_unique<PlasticMaterial>(diff, spec, rough);
 }
-std::unique_ptr<PBRMaterial> load_translucent(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
+std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
 	Texture *diff = nullptr, *spec = nullptr, *refl = nullptr, *trans = nullptr;
 	float rough = 1, ior = 1;
@@ -140,7 +138,7 @@ std::unique_ptr<PBRMaterial> load_translucent(tinyxml2::XMLElement *elem, Textur
 	}
 	return std::make_unique<TranslucentMaterial>(diff, spec, refl, trans, rough, ior);
 }
-std::unique_ptr<PBRMaterial> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
+std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
 	Texture *ior = nullptr, *absorp_coef = nullptr;
 	float rough = 1;

@@ -2,13 +2,13 @@
 #define METAL_MATERIAL_H
 
 #include "textures/texture.h"
-#include "pbr_material.h"
+#include "material.h"
 
 /*
  * A material that models a metal surface, described by its
  * refractive index and absorption coefficient
  */
-class MetalMaterial : public PBRMaterial {
+class MetalMaterial : public Material {
 	const Texture *refr_index, *absoption_coef;
 	const float roughness;
 

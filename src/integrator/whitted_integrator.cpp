@@ -1,6 +1,6 @@
 #include <vector>
 #include <array>
-#include "material/pbr_material.h"
+#include "material/material.h"
 #include "lights/light.h"
 #include "lights/occlusion_tester.h"
 #include "material/bsdf.h"
@@ -11,7 +11,7 @@ WhittedIntegrator::WhittedIntegrator(int max_depth) : max_depth(max_depth){}
 Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	const DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
-	const PBRMaterial *mat = dg.node->get_material();
+	const Material *mat = dg.node->get_material();
 	if (!mat){
 		return Colorf{0.4};
 	}

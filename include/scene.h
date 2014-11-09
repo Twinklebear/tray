@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include "geometry/geometry.h"
-#include "material/pbr_material.h"
+#include "material/material.h"
 #include "textures/texture.h"
 #include "lights/light.h"
 #include "film/render_target.h"
@@ -17,7 +17,7 @@
  */
 class Scene {
 	GeometryCache geom_cache;
-	PBRMaterialCache mat_cache;
+	MaterialCache mat_cache;
 	TextureCache tex_cache;
 	LightCache light_cache;
 	Camera camera;
@@ -36,7 +36,7 @@ public:
 	 */
 	Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, int depth);
 	GeometryCache& get_geom_cache();
-	PBRMaterialCache& get_mat_cache();
+	MaterialCache& get_mat_cache();
 	TextureCache& get_tex_cache();
 	LightCache& get_light_cache();
 	const LightCache& get_light_cache() const;

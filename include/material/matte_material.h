@@ -2,13 +2,13 @@
 #define MATTE_MATERIAL_H
 
 #include "textures/texture.h"
-#include "pbr_material.h"
+#include "material.h"
 
 /*
  * A material describing a purely diffuse surface, parameterized by
  * its diffuse color and a roughness value
  */
-class MatteMaterial : public PBRMaterial {
+class MatteMaterial : public Material {
 	const Texture *diffuse;
 	const float roughness;
 

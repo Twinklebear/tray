@@ -13,7 +13,7 @@ Scene::Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sample
 GeometryCache& Scene::get_geom_cache(){
 	return geom_cache;
 }
-PBRMaterialCache& Scene::get_mat_cache(){
+MaterialCache& Scene::get_mat_cache(){
 	return mat_cache;
 }
 TextureCache& Scene::get_tex_cache(){

@@ -2,13 +2,13 @@
 #define TRANSLUCENT_MATERIAL_H
 
 #include "textures/texture.h"
-#include "pbr_material.h"
+#include "material.h"
 
 /*
  * A material modeling a translucent dielectric, eg. transparent
  * plastics or similar
  */
-class TranslucentMaterial : public PBRMaterial {
+class TranslucentMaterial : public Material {
 	const Texture *diffuse, *specular, *reflect, *transmit;
 	const float roughness, refr_index;
 

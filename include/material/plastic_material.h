@@ -2,13 +2,13 @@
 #define PLASTIC_MATERIAL_H
 
 #include "textures/texture.h"
-#include "pbr_material.h"
+#include "material.h"
 
 /*
  * A material that models plastic, parameterized by diffuse and specular
  * colors along with a roughness value
  */
-class PlasticMaterial : public PBRMaterial {
+class PlasticMaterial : public Material {
 	const Texture *diffuse, *specular;
 	const float roughness;
 

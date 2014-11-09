@@ -2,7 +2,7 @@
 #define LOAD_MATERIAL_H
 
 #include <tinyxml2.h>
-#include "material/pbr_material.h"
+#include "material/material.h"
 #include "textures/texture.h"
 
 /*
@@ -14,7 +14,7 @@
  * file is layed out with materials coming after objects
  * Loaded textures for the materials will be placed in the texture cache
  */
-void load_materials(tinyxml2::XMLElement *elem, PBRMaterialCache &cache, TextureCache &tcache,
+void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache,
 	const std::string &file);
 
 #endif
