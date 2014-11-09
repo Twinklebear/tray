@@ -51,6 +51,9 @@ public:
 	citer end() const {
 		return cache.cend();
 	}
+	size_t size() const {
+		return cache.size();
+	}
 };
 
 #endif

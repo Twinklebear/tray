@@ -10,6 +10,14 @@
 class Scene;
 
 /*
+ * Struct to easily pass light samples for choosing a light and then sampling the light
+ */
+struct LightSample {
+	const std::array<float, 2> u;
+	const float light;
+};
+
+/*
  * Base class for lights, stores the transformation from world space to light space
  * and the number of samples that should be taken when sampling this light
  */

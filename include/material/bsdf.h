@@ -11,6 +11,14 @@
 #include "bxdf.h"
 
 /*
+ * Struct for easily passing around BSDF Sample data
+ */
+struct BSDFSample {
+	const std::array<float, 2> u;
+	const float comp;
+};
+
+/*
  * Implementation of BSDF to manage surface's BRDT and BTDFs motivated by PBR
  */
 class BSDF {
