@@ -29,10 +29,10 @@
       </object>
     </object>
 	<object type="obj" name="../models/killeroo.obj" material="mtl1">
-      <scale value="18"/>
+      <scale value="0.85"/>
       <rotate angle="90" x="1"/>
 	  <rotate angle="-145" z="1"/>
-      <translate x="1" y="5" z="8"/>
+      <translate x="1" y="1.5" z="11.7"/>
     </object>
 	<object type="obj" name="../models/teapot_hres.obj" material="mtl1">
       <scale value="0.3"/>
