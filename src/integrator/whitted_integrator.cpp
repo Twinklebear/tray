@@ -34,7 +34,7 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 				continue;
 			}
 			Colorf c = (*bsdf)(w_o, w_i);
-			if (c.luminance() != 0 && !occlusion.occluded(scene)){
+			if (!c.is_black() && !occlusion.occluded(scene)){
 				illum += c * li * std::abs(w_i.dot(bsdf->dg.normal)) / pdf_val;
 			}
 		}
