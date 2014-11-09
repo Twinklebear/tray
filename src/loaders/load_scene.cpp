@@ -44,7 +44,8 @@ static void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, cons
  * the name is used by the obj loader as the model filename and is used as the
  * key in the geometry cache to store the object
  */
-static Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file);
+static Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file,
+	tinyxml2::XMLElement *elem);
 
 Scene load_scene(const std::string &file, int depth){
 	using namespace tinyxml2;
@@ -160,7 +161,7 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			if (t){
 				std::string type = t;
 				std::cout << "Setting geometry: " << type << std::endl;
-				geom = get_geometry(type, name, scene, file);
+				geom = get_geometry(type, name, scene, file, e);
 			}
 			const char *m = e->Attribute("material");
 			Material *mat = nullptr;
@@ -178,11 +179,28 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			Node &n = *children.back();
 			read_transform(e, n.get_transform());
 			n.get_inv_transform() = n.get_transform().inverse();
+			//Check if there's an area light attached to this geometry
+			XMLElement *light_elem = c->FirstChildElement("light");
+			if (light_elem){
+				Sphere *sphere_geom = dynamic_cast<Sphere*>(geom);
+				if (sphere_geom == nullptr){
+					std::cout << "Scene error: Lights can currently only be attached to spheres" << std::endl;
+					std::exit(1);
+				}
+				Colorf emit{1, 1, 1};
+				read_color(light_elem->FirstChildElement("intensity"), emit);
+				AreaLight *area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
+					std::make_unique<AreaLight>(n.get_transform(), emit, sphere_geom)));
+				n.attach_light(area_light);
+			}
+			//Load any children the node may have
 			load_node(e, n, scene, file);
 		}
 	}
 }
-Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file){
+Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file,
+	tinyxml2::XMLElement *elem)
+{
 	//Check if the geometry is in our cache, if not load it
 	auto &cache = scene.get_geom_cache();
 	Geometry *g = cache.get(type);
@@ -194,7 +212,9 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		return g;
 	}
 	if (type == "sphere"){
-		return cache.add(type, std::make_unique<Sphere>());
+		float radius = 1;
+		read_float(elem, radius, "radius");
+		return cache.add(type, std::make_unique<Sphere>(radius));
 	}
 	else if (type == "plane"){
 		return cache.add(type, std::make_unique<Plane>());

@@ -1,7 +1,9 @@
+#include <memory>
 #include <algorithm>
 #include <vector>
 #include <string>
 #include <memory>
+#include "lights/area_light.h"
 #include "linalg/ray.h"
 #include "linalg/transform.h"
 #include "accelerators/bvh.h"
@@ -9,8 +11,11 @@
 #include "geometry/geometry.h"
 
 Node::Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name)
-	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name)
+	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name), area_light(nullptr)
 {}
+void Node::attach_light(AreaLight *light){
+	area_light = light;
+}
 void Node::flatten_children(){
 	std::vector<std::shared_ptr<Node>> flat_children;
 	for (auto &c : children){
@@ -81,6 +86,9 @@ const Material* Node::get_material() const {
 }
 Material* Node::get_material(){
 	return material;
+}
+const AreaLight* Node::get_area_light() const {
+	return area_light;
 }
 const Transform& Node::get_transform() const {
 	return transform;

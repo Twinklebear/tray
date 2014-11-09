@@ -17,10 +17,6 @@
  * elem should be the root of the direct light being loaded
  */
 static std::unique_ptr<Light> load_point_light(tinyxml2::XMLElement *elem);
-/*
- * Load the AreaLight properties and return the light
- */
-static std::unique_ptr<Light> load_area_light(tinyxml2::XMLElement *elem);
 
 void load_lights(tinyxml2::XMLElement *elem, LightCache &cache){
 	using namespace tinyxml2;
@@ -34,9 +30,6 @@ void load_lights(tinyxml2::XMLElement *elem, LightCache &cache){
 			std::string type = l->Attribute("type");
 			if (type == "point"){
 				light = load_point_light(l);
-			}
-			else if (type == "area"){
-				light = load_area_light(l);
 			}
 			if (light != nullptr){
 				cache.add(name, std::move(light));
@@ -55,14 +48,5 @@ std::unique_ptr<Light> load_point_light(tinyxml2::XMLElement *elem){
 	read_color(elem->FirstChildElement("intensity"), color);
 	read_vector(elem->FirstChildElement("position"), pos);
 	return std::make_unique<PointLight>(Transform::translate(pos), color);
-}
-std::unique_ptr<Light> load_area_light(tinyxml2::XMLElement *elem){
-	Colorf color{1, 1, 1};
-	Vector pos{0, 0, 0};
-	float radius = 1;
-	read_color(elem->FirstChildElement("intensity"), color);
-	read_vector(elem->FirstChildElement("position"), pos);
-	read_float(elem->FirstChildElement("size"), radius);
-	return std::make_unique<AreaLight>(Transform::translate(pos), color, radius);
 }
 

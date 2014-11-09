@@ -10,6 +10,7 @@
 #include "accelerators/bvh.h"
 #include "cache.h"
 #include "differential_geometry.h"
+#include "lights/area_light.h"
 #include "bbox.h"
 
 class Geometry {
@@ -49,15 +50,19 @@ class Node : public Geometry {
 	Material *material;
 	Transform transform, inv_transform;
 	std::string name;
+	AreaLight *area_light;
 	//BVH is created for the root node of the scene only
 	std::unique_ptr<BVH> bvh;
 
 public:
 	/*
-	 * Create a node in the scene graph, placing some named geometry in
-	 * the scene
+	 * Create a node in the scene graph, placing some named geometry in the scene
 	 */
 	Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name);
+	/*
+	 * Attach an area light to the geometry with some intensity
+	 */
+	void attach_light(AreaLight *light);
 	/*
 	 * Instruct the node to flatten its children into a vector and build a BVH for them
 	 * to accelerate intersection tests. Child transforms will also be brought up into
@@ -93,6 +98,10 @@ public:
 	 */
 	const Material* get_material() const;
 	Material* get_material();
+	/*
+	 * Get the area light attached to the geometry, returns nullptr if none is attached
+	 */
+	const AreaLight* get_area_light() const;
 	/*
 	 * Get the transform of the inverse of the node's transform
 	 */

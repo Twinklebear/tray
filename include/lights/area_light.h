@@ -2,8 +2,9 @@
 #define AREA_LIGHT_H
 
 #include <memory>
-#include "geometry/sphere.h"
 #include "light.h"
+
+class Sphere;
 
 /*
  * Diffuse area light that can be attached to some arbitrary geometry
@@ -12,7 +13,7 @@
  */
 class AreaLight : public Light {
 	Colorf emit;
-	std::unique_ptr<Sphere> geometry;
+	Sphere *geometry;
 	float surface_area;
 
 public:
@@ -20,7 +21,7 @@ public:
 	 * Construct the area light with some transformation to be applied to
 	 * the sphere it's emitting from
 	 */
-	AreaLight(const Transform &to_world, const Colorf &emit, float radius, int n_samples = 6);
+	AreaLight(const Transform &to_world, const Colorf &emit, Sphere *geometry, int n_samples = 6);
 	/*
 	 * Compute the light's emitted radiance in the outgoing direction, w
 	 * from the point on the surface with normal n

@@ -3,10 +3,10 @@
 #include "lights/occlusion_tester.h"
 
 void OcclusionTester::set_points(const Point &a, const Point &b){
-	ray = Ray{a, b - a, 1e-4f, 1};
+	ray = Ray{a, b - a, 0.001, 0.999};
 }
 void OcclusionTester::set_ray(const Point &p, const Vector &d){
-	ray = Ray{p, d.normalized(), 1e-4f};
+	ray = Ray{p, d.normalized(), 0.001};
 }
 bool OcclusionTester::occluded(const Scene &scene){
 	DifferentialGeometry dg;
