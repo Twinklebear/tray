@@ -41,7 +41,7 @@ public:
 	 * for shadow testing if the color returned wasn't black
 	 */
 	virtual Colorf sample(const Point &p, const std::array<float, 2> &lsample,
-		Vector &wi, float &pdf_val, OcclusionTester &occlusion) const = 0;
+		Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const = 0;
 	/*
 	 * Sample a light ray from the distribution of rays leaving the light
 	 * returning the ray, normal on the light surface where the ray was emitted
@@ -60,7 +60,7 @@ public:
 	/*
 	 * Compute the PDF for sampling the point with the incident direction wi
 	 */
-	virtual float pdf(const Point &p, const Vector &wi) const = 0;
+	virtual float pdf(const Point &p, const Vector &w_i) const = 0;
 };
 
 typedef Cache<Light> LightCache;

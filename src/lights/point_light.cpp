@@ -6,9 +6,9 @@ PointLight::PointLight(const Transform &to_world, const Colorf &intensity)
 	: Light(to_world), position(to_world(Point{0, 0, 0})), intensity(intensity)
 {}
 Colorf PointLight::sample(const Point &p, const std::array<float, 2>&,
-	Vector &wi, float &pdf_val, OcclusionTester &occlusion) const
+	Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const
 {
-	wi = (position - p).normalized();
+	w_i = (position - p).normalized();
 	pdf_val = 1;
 	occlusion.set_points(p, position);
 	return intensity / position.distance_sqr(p);

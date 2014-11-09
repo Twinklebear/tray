@@ -24,7 +24,7 @@ public:
 	 * for shadow testing if the color returned wasn't black
 	 */
 	Colorf sample(const Point &p, const std::array<float, 2> &lsample,
-		Vector &wi, float &pdf_val, OcclusionTester &occlusion) const override;
+		Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const override;
 	/*
 	 * Sample a light ray from the distribution of rays leaving the light
 	 * returning the ray, normal on the light surface where the ray was emitted
@@ -45,7 +45,7 @@ public:
 	 * since there's no chance of sampling the delta distribution randomly this
 	 * just returns 0
 	 */
-	float pdf(const Point &p, const Vector &wi) const override;
+	float pdf(const Point &p, const Vector &w_i) const override;
 };
 
 #endif
