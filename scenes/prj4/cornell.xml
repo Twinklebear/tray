@@ -56,7 +56,7 @@
     <material type="blinn" name="mtl2">
       <diffuse  r="0.1" g="0.1" b="0.9"/>
       <specular r="0.9" g="0.9" b="1.0" value="0.8"/>
-      <glossiness value="10"/>
+      <glossiness value="0"/>
       <refraction value="0.8" index="1.52"/>
       <absorption r="0.01" g="0.001" b="0.0001"/>
     </material>
@@ -66,7 +66,7 @@
       <intensity value="0.1"/>
     </light>
     <light type="point" name="pointLight">
-      <intensity value="0.5"/>
+      <intensity value="500"/>
       <position x="0" y="0" z="22"/>
     </light>
   </scene>
@@ -81,7 +81,7 @@
   </camera>
 
   <config>
-	  <sampler type="lowdiscrepancy" spp="16"/>
+	  <sampler type="adaptive" min="8" max="32"/>
   </config>
 </xml>
 

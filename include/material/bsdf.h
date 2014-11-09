@@ -3,8 +3,9 @@
 
 #include <random>
 #include <memory>
-#include <vector>
+#include "memory_pool.h"
 #include "linalg/vector.h"
+#include "samplers/sampler.h"
 #include "geometry/differential_geometry.h"
 #include "film/color.h"
 #include "bxdf.h"
@@ -16,9 +17,10 @@ class BSDF {
 	//Vectors forming the shading coordinate system:
 	//shading normal, secondary and primary tangents along with the geometry normal
 	//the coordinate system has the shading normal as z, primary tangent as x and secondary as y
-	Normal ns, ng;
-	Vector s, t;
-	std::vector<std::unique_ptr<BxDF>> bxdfs;
+	Normal normal, geom_normal;
+	Vector bitangent, tangent;
+	std::array<BxDF*, 8> bxdfs;
+	int n_bxdfs;
 
 public:
 	const DifferentialGeometry dg;
@@ -31,7 +33,7 @@ public:
 	/*
 	 * Add a BxDF to the set of BxDFs used by this BSDF
 	 */
-	void add(std::unique_ptr<BxDF> b);
+	void add(BxDF *b);
 	/*
 	 * Return the number of BxDFs in this BSDF or those specifically matching a flag
 	 */
@@ -49,18 +51,34 @@ public:
 	 */
 	Colorf operator()(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags = BxDFTYPE::ALL) const;
 	/*
+	 * Sample a BxDF in the BSDF, comp is used to randomly select the BxDF and u is used to sample
+	 * the BxDF itself
+	 * Returns information about the sampled color, incident direction, pdf and optionally the
+	 * sampled type of the sampled BxDF
+	 */
+	Colorf sample(const Vector &wo_world, Vector &wi_world, const std::array<float, 2> &u, float comp,
+		float &pdf_val, BxDFTYPE flags = BxDFTYPE::ALL, BxDFTYPE *sampled_type = nullptr) const;
+	/*
 	 * Sample the hemispherical-directional reflectance function of the BxDFs
 	 * sqrt_samples is the square root of the number of samples to take
 	 */
-	Colorf rho_hd(const Vector &wo, std::minstd_rand &rng, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
+	Colorf rho_hd(const Vector &wo, Sampler &sampler, MemoryPool &pool,
+		BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Sample the hemispherical-hemispherical reflectance function of the BxDFs
 	 */
-	Colorf rho_hh(std::minstd_rand &rng, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
+	Colorf rho_hh(Sampler &sampler, MemoryPool &pool, BxDFTYPE flags = BxDFTYPE::ALL, int sqrt_samples = 6) const;
 	/*
 	 * Compute the probability density function for BxDFs for the directions passed
 	 */
 	float pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags = BxDFTYPE::ALL) const;
+
+private:
+	/*
+	 * Find the ith BxDF matching the desired flags, returns nullptr if no matches
+	 * or i >= num_bxdfs(flags)
+	 */
+	const BxDF* matching_at(int i, BxDFTYPE flags) const;
 };
 
 #endif

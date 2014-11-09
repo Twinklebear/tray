@@ -19,7 +19,8 @@ enum AXIS { X, Y, Z };
 /*
  * Some basic math/geometric utility functions
  */
-constexpr inline float lerp(float t, float a, float b){
+template<typename T>
+constexpr T lerp(float t, const T &a, const T &b){
 	return (1.f - t) * a + t * b;
 }
 template<typename T>
@@ -45,6 +46,9 @@ inline float log_2(float x){
 template<typename T>
 constexpr int sign(T x){
 	return (T{0} < x) - (x < T{0});
+}
+inline Vector spherical_dir(float sin_theta, float cos_theta, float phi){
+	return Vector{sin_theta * std::cos(phi), sin_theta * std::sin(phi), cos_theta};
 }
 constexpr inline float spherical_theta(const Vector &v){
 	return std::acos(clamp(v.z, -1.f, 1.f));

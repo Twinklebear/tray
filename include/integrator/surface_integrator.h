@@ -2,9 +2,11 @@
 #define SURFACE_INTEGRATOR_H
 
 #include "scene.h"
+#include "samplers/sampler.h"
 #include "renderer/renderer.h"
 #include "linalg/ray.h"
 #include "geometry/differential_geometry.h"
+#include "memory_pool.h"
 #include "film/color.h"
 
 /*
@@ -15,8 +17,20 @@ public:
 	/*
 	 * Compute the illumination at a point on the surface in the scene
 	 */
-	virtual Colorf illumination(const Scene &scene, const Renderer &renderer,
-		const RayDifferential &ray, const DifferentialGeometry &dg) const = 0;
+	virtual Colorf illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
+		const DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const = 0;
+	/*
+	 * Utility function to compute the specularly reflected light off of
+	 * some geometry we hit
+	 */
+	static Colorf spec_reflect(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
+		const Scene &scene, Sampler &sampler, MemoryPool &pool);
+	/*
+	 * Utility function to compute the specularaly transmitted light coming
+	 * through some geometry we hit
+	 */
+	static Colorf spec_transmit(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
+		const Scene &scene, Sampler &sampler, MemoryPool &pool);
 };
 
 #endif

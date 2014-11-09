@@ -11,6 +11,7 @@
 #include "geometry/geometry.h"
 #include "linalg/ray.h"
 #include "linalg/transform.h"
+#include "memory_pool.h"
 #include "driver.h"
 
 Worker::Worker(Scene &scene, BlockQueue &queue)
@@ -25,6 +26,10 @@ void Worker::render(){
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
 	auto renderer = std::make_unique<Renderer>(std::make_unique<WhittedIntegrator>(scene.get_max_depth()));
+	MemoryPool pool;
+	std::vector<Sample> samples;
+	std::vector<RayDifferential> rays;
+	std::vector<Colorf> colors;
 	//Counter so we can check if we've been canceled, check after every 32 pixels rendered
 	int check_cancel = 0;
 	while (true){
@@ -32,17 +37,15 @@ void Worker::render(){
 		if (!sampler){
 			break;
 		}
-		std::vector<Sample> samples;
-		std::vector<RayDifferential> rays;
-		std::vector<Colorf> colors;
+		samples.resize(sampler->get_max_spp());
+		rays.reserve(sampler->get_max_spp());
+		colors.reserve(sampler->get_max_spp());
 		while (sampler->has_samples()){
 			sampler->get_samples(samples);
-			rays.reserve(samples.size());
-			colors.reserve(samples.size());
 			for (const auto &s : samples){
 				rays.push_back(camera.generate_raydifferential(s));
 				rays.back().scale_differentials(1.f / std::sqrt(sampler->get_max_spp()));
-				colors.push_back(renderer->illumination(rays.back(), scene));
+				colors.push_back(renderer->illumination(rays.back(), scene, *sampler, pool));
 				//If we didn't hit anything and the scene has a background use that
 				if (scene.get_background() && rays.back().max_t == std::numeric_limits<float>::infinity()){
 					DifferentialGeometry dg;
@@ -60,6 +63,7 @@ void Worker::render(){
 						return;
 					}
 				}
+				pool.free_blocks();
 			}
 			if (sampler->report_results(samples, rays, colors)){
 				for (size_t i = 0; i < samples.size(); ++i){

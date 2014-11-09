@@ -2,6 +2,7 @@
 #define SAMPLER_H
 
 #include <array>
+#include <random>
 #include <vector>
 #include <memory>
 #include "linalg/ray.h"
@@ -25,6 +26,8 @@ struct Sample {
 class Sampler {
 protected:
 	int x, y;
+	std::minstd_rand rng;
+	std::uniform_real_distribution<float> float_distrib;
 
 public:
 	const int x_start, x_end, y_start, y_end;
@@ -33,10 +36,18 @@ public:
 	 */
 	Sampler(int x_start, int x_end, int y_start, int y_end);
 	/*
-	 * Get some {x, y} positions to sample in the space being sampled
+	 * Get some 5D samples to sample the image plane, lens and time dimensions
 	 * If the sampler has finished sampling samples will be empty
 	 */
 	virtual void get_samples(std::vector<Sample> &samples) = 0;
+	/*
+	 * Get a set of 2D samples in range [0, 1)
+	 */
+	virtual void get_samples(std::array<float, 2> *samples, int n_samples) = 0;
+	/*
+	 * Get a set of 1D samples in range [0, 1)
+	 */
+	virtual void get_samples(float *samples, int n_samples) = 0;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */

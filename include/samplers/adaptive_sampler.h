@@ -16,8 +16,7 @@
 class AdaptiveSampler : public Sampler {
 	const int min_spp, max_spp;
 	//If the current pixel we're sampling needs super sampling
-	bool supersample_px;
-	std::minstd_rand rng;
+	int supersample_px;
 	std::uniform_int_distribution<uint32_t> distrib;
 
 public:
@@ -31,6 +30,14 @@ public:
 	 * If the sampler has finished sampling samples will be empty
 	 */
 	void get_samples(std::vector<Sample> &samples) override;
+	/*
+	 * Get a set of 2D samples in range [0, 1)
+	 */
+	void get_samples(std::array<float, 2> *samples, int n_samples) override;
+	/*
+	 * Get a set of 1D samples in range [0, 1)
+	 */
+	void get_samples(float *samples, int n_samples) override;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */

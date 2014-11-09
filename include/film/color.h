@@ -37,6 +37,10 @@ struct Colorf {
 	 * Compute the luminance of the  color
 	 */
 	float luminance() const;
+	/*
+	 * Check if the color is black
+	 */
+	bool is_black() const;
 	Colorf& operator+=(const Colorf &c);
 	Colorf& operator-=(const Colorf &c);
 	Colorf& operator*=(float s);

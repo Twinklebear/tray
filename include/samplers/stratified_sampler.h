@@ -13,7 +13,6 @@
  */
 class StratifiedSampler : public Sampler {
 	const int spp;
-	std::minstd_rand rng;
 
 public:
 	StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp);
@@ -22,6 +21,14 @@ public:
 	 * If the sampler has finished sampling samples will be empty
 	 */
 	void get_samples(std::vector<Sample> &samples) override;
+	/*
+	 * Get a set of 2D samples in range [0, 1)
+	 */
+	void get_samples(std::array<float, 2> *samples, int n_samples) override;
+	/*
+	 * Get a set of 1D samples in range [0, 1)
+	 */
+	void get_samples(float *samples, int n_samples) override;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */
@@ -36,12 +43,12 @@ public:
 	 * Generate a 1d pattern of stratified samples and return them
 	 * samples will be normalized between [0, 1)
 	 */
-	static void sample1d(std::vector<float> &samples, std::minstd_rand &rng);
+	static void sample1d(float *samples, int n_samples, std::minstd_rand &rng);
 	/*
 	 * Generate a 2d pattern of stratified samples and return them
 	 * sample positions will be normalized between [0, 1)
 	 */
-	static void sample2d(std::vector<std::array<float, 2>> &samples, std::minstd_rand &rng);
+	static void sample2d(std::array<float, 2> *samples, int n_samples, std::minstd_rand &rng);
 };
 
 #endif

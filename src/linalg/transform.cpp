@@ -134,6 +134,13 @@ Transform Transform::orthographic(float near, float far){
 Transform Transform::inverse() const {
 	return Transform{inv, mat};
 }
+bool Transform::has_scale() const {
+	float a = (*this)(Vector{1, 0, 0}).length_sqr();
+	float b = (*this)(Vector{0, 1, 0}).length_sqr();
+	float c = (*this)(Vector{0, 0, 1}).length_sqr();
+	return a < 0.999 || a > 1.001 || b < 0.999 || b > 1.001
+		|| c < 0.999 || c > 1.001;
+}
 bool Transform::operator==(const Transform &t) const {
 	return mat == t.mat && inv == t.inv;
 }
@@ -245,7 +252,9 @@ DifferentialGeometry Transform::operator()(const DifferentialGeometry &d) const 
 void Transform::operator()(const DifferentialGeometry &in, DifferentialGeometry &out) const {
 	(*this)(in.point, out.point);
 	(*this)(in.normal, out.normal);
+	out.normal = out.normal.normalized();
 	(*this)(in.geom_normal, out.geom_normal);
+	out.geom_normal = out.geom_normal.normalized();
 	(*this)(in.dp_du, out.dp_du);
 	(*this)(in.dp_dv, out.dp_dv);
 	(*this)(in.dp_dx, out.dp_dx);

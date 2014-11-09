@@ -8,11 +8,11 @@
 Renderer::Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator)
 	: surface_integrator(std::move(surface_integrator))
 {}
-Colorf Renderer::illumination(RayDifferential &ray, const Scene &scene) const {
+Colorf Renderer::illumination(RayDifferential &ray, const Scene &scene, Sampler &sampler, MemoryPool &pool) const {
 	DifferentialGeometry dg;
 	if (scene.get_root().intersect(ray, dg)){
 		dg.compute_differentials(ray);
-		return surface_integrator->illumination(scene, *this, ray, dg);
+		return surface_integrator->illumination(scene, *this, ray, dg, sampler, pool);
 	}
 	else if (scene.get_environment()){
 		//TODO: Compute light along the ray coming from lights

@@ -1,8 +1,8 @@
 #include <cmath>
 #include "material/specular_reflection.h"
 
-SpecularReflection::SpecularReflection(const Colorf &reflection, std::unique_ptr<Fresnel> fresnel)
-	: BxDF(BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::SPECULAR)), reflection(reflection), fresnel(std::move(fresnel))
+SpecularReflection::SpecularReflection(const Colorf &reflection, Fresnel *fresnel)
+	: BxDF(BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::SPECULAR)), reflection(reflection), fresnel(fresnel)
 {}
 Colorf SpecularReflection::operator()(const Vector&, const Vector&) const {
 	return Colorf{0};

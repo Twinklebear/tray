@@ -1,7 +1,6 @@
 #ifndef SPECULAR_REFLECTION_H
 #define SPECULAR_REFLECTION_H
 
-#include <memory>
 #include "fresnel.h"
 #include "bxdf.h"
 
@@ -10,14 +9,14 @@
  */
 class SpecularReflection : public BxDF {
 	Colorf reflection;
-	std::unique_ptr<Fresnel> fresnel;
+	Fresnel *fresnel;
 
 public:
 	/*
 	 * Create a specularly reflective BRDF with some reflective color
 	 * and desired Fresnel component
 	 */
-	SpecularReflection(const Colorf &reflection, std::unique_ptr<Fresnel> fresnel);
+	SpecularReflection(const Colorf &reflection, Fresnel *fresnel);
 	/*
 	 * Compute the value of the BxDF for some incident and outgoing directions
 	 * Note that because this is a delta distribution this will always return 0,

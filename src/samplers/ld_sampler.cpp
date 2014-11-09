@@ -8,9 +8,7 @@
 #include "samplers/ld_sampler.h"
 
 LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp)
-	: Sampler(x_start, x_end, y_start, y_end), spp(round_up_pow2(sp)),
-	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+	: Sampler(x_start, x_end, y_start, y_end), spp(round_up_pow2(sp))
 {
 	if (sp % 2 != 0){
 		std::cout << "Warning: LDSampler requires power of 2 samples per pixel."
@@ -25,12 +23,9 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 	samples.resize(spp);
 	std::vector<std::array<float, 2>> pos(spp), lens(spp);
 	std::vector<float> time(spp);
-	sample2d(pos, distrib(rng), distrib(rng));
-	sample2d(lens, distrib(rng), distrib(rng));
-	sample1d(time, distrib(rng));
-	std::shuffle(pos.begin(), pos.end(), rng);
-	std::shuffle(lens.begin(), lens.end(), rng);
-	std::shuffle(time.begin(), time.end(), rng);
+	get_samples(pos.data(), pos.size());
+	get_samples(lens.data(), lens.size());
+	get_samples(time.data(), time.size());
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -47,6 +42,14 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 		x = x_start;
 		++y;
 	}
+}
+void LDSampler::get_samples(std::array<float, 2> *samples, int n_samples){
+	sample2d(samples, n_samples, distrib(rng), distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
+}
+void LDSampler::get_samples(float *samples, int n_samples){
+	sample1d(samples, n_samples, distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
 }
 int LDSampler::get_max_spp() const {
 	return spp;
@@ -81,14 +84,14 @@ std::vector<std::unique_ptr<Sampler>> LDSampler::get_subsamplers(int w, int h) c
 	}
 	return samplers;
 }
-void LDSampler::sample1d(std::vector<float> &samples, uint32_t scramble){
-	for (uint32_t i = 0; i < samples.size(); ++i){
+void LDSampler::sample1d(float *samples, int n_samples, uint32_t scramble){
+	for (int i = 0; i < n_samples; ++i){
 		samples[i] = van_der_corput(i, scramble);
 	}
 }
-void LDSampler::sample2d(std::vector<std::array<float, 2>> &samples, uint32_t x, uint32_t y){
+void LDSampler::sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y){
 	std::array<uint32_t, 2> scramble{x, y};
-	for (uint32_t i = 0; i < samples.size(); ++i){
+	for (int i = 0; i < n_samples; ++i){
 		sample02(i, scramble, samples[i]);
 	}
 }

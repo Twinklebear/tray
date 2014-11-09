@@ -10,9 +10,7 @@
 
 AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp)
 	: Sampler{x_start, x_end, y_start, y_end}, min_spp(round_up_pow2(min_sp)), max_spp(round_up_pow2(max_sp)),
-	supersample_px(false),
-	rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+	supersample_px(min_spp)
 {
 	if (min_sp % 2 != 0){
 		std::cout << "Warning: AdaptiveSampler requires power of 2 samples per pixel."
@@ -25,19 +23,16 @@ AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end,
 }
 void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
-	if (!supersample_px && !has_samples()){
+	if (supersample_px == min_spp && !has_samples()){
 		return;
 	}
-	int spp = supersample_px ? max_spp : min_spp;
+	int spp = supersample_px;
 	samples.resize(spp);
 	std::vector<std::array<float, 2>> pos(spp), lens(spp);
 	std::vector<float> time(spp);
-	LDSampler::sample2d(pos, distrib(rng), distrib(rng));
-	LDSampler::sample2d(lens, distrib(rng), distrib(rng));
-	LDSampler::sample1d(time, distrib(rng));
-	std::shuffle(pos.begin(), pos.end(), rng);
-	std::shuffle(lens.begin(), lens.end(), rng);
-	std::shuffle(time.begin(), time.end(), rng);
+	get_samples(pos.data(), pos.size());
+	get_samples(lens.data(), lens.size());
+	get_samples(time.data(), time.size());
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -50,14 +45,22 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 		s.img[1] += y;
 	}
 }
+void AdaptiveSampler::get_samples(std::array<float, 2> *samples, int n_samples){
+	LDSampler::sample2d(samples, n_samples, distrib(rng), distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
+}
+void AdaptiveSampler::get_samples(float *samples, int n_samples){
+	LDSampler::sample1d(samples, n_samples, distrib(rng));
+	std::shuffle(samples, samples + n_samples, rng);
+}
 int AdaptiveSampler::get_max_spp() const {
 	return max_spp;
 }
 bool AdaptiveSampler::report_results(const std::vector<Sample> &samples,
 	const std::vector<RayDifferential> &rays, const std::vector<Colorf> &colors)
 {
-	if (supersample_px || !needs_supersampling(samples, rays, colors)){
-		supersample_px = false;
+	if (supersample_px == max_spp || !needs_supersampling(samples, rays, colors)){
+		supersample_px = min_spp;
 		++x;
 		if (x == x_end){
 			x = x_start;
@@ -66,7 +69,7 @@ bool AdaptiveSampler::report_results(const std::vector<Sample> &samples,
 		return true;
 	}
 	//Throw away these samples, we need to super sample this pixel
-	supersample_px = true;
+	supersample_px *= 2;
 	return false;
 }
 std::vector<std::unique_ptr<Sampler>> AdaptiveSampler::get_subsamplers(int w, int h) const {

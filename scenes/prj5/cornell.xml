@@ -49,7 +49,7 @@
       <diffuse  r="1" g="1" b="1"/>
       <specular value="0"/>
     </material>
-    <material type="blinn" name="wallRed">
+	<material type="blinn" name="wallRed">
       <diffuse  r="1.0" g="0.5" b="0.5"/>
       <specular value="0"/>
     </material>
@@ -76,7 +76,7 @@
       <intensity value="0.1"/>
     </light>
     <light type="point" name="pointLight">
-      <intensity value="0.5"/>
+      <intensity value="500"/>
       <position x="0" y="0" z="22"/>
     </light>
   </scene>
@@ -89,5 +89,9 @@
     <width value="800"/>
     <height value="600"/>
   </camera>
+
+  <config>
+	  <sampler type="adaptive" min="8" max="16"/>
+  </config>
 </xml>
 
