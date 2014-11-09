@@ -27,6 +27,9 @@ Colorf Colorf::normalized() const {
 float Colorf::luminance() const {
 	return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 }
+bool Colorf::is_black() const {
+	return r == 0 && g == 0 && b == 0;
+}
 Colorf& Colorf::operator+=(const Colorf &c){
 	r += c.r;
 	b += c.b;
