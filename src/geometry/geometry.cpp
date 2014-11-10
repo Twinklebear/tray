@@ -1,3 +1,4 @@
+#include <cassert>
 #include <memory>
 #include <algorithm>
 #include <vector>
@@ -9,6 +10,31 @@
 #include "accelerators/bvh.h"
 #include "geometry/differential_geometry.h"
 #include "geometry/geometry.h"
+
+float Geometry::surface_area() const {
+	assert("Unimplemented surface area called");
+	return 0;
+}
+Point Geometry::sample(const std::array<float, 2>&, Normal&) const {
+	assert("Unimplemented sample called");
+	return Point{0};
+}
+Point Geometry::sample(const Point&, const std::array<float, 2> &u, Normal &normal) const {
+	return sample(u, normal);
+}
+float Geometry::pdf(const Point&) const {
+	return 1.f / surface_area();
+}
+float Geometry::pdf(const Point &p, const Vector &w_i) const {
+	DifferentialGeometry dg;
+	Ray ray{p, w_i, 0.001};
+	if (!intersect(ray, dg)){
+		return 0;
+	}
+	//Convert PDF over area to be over solid angle
+	float pdf_val = p.distance_sqr(ray(ray.max_t)) / (std::abs(dg.normal.dot(-w_i)) * surface_area());
+	return std::isinf(pdf_val) ? 0 : pdf_val;
+}
 
 Node::Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name)
 	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name), area_light(nullptr)

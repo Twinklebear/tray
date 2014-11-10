@@ -22,24 +22,20 @@ public:
 	/*
 	 * Compute the surface area of the sphere
 	 */
-	float surface_area() const;
+	float surface_area() const override;
 	/*
 	 * Sample a position on the geometry and return the point and normal
 	 */
-	Point sample(const std::array<float, 2> &u, Normal &normal) const;
+	Point sample(const std::array<float, 2> &u, Normal &normal) const override;
 	/*
 	 * Sample the shape using the probability density of the solid angle from
 	 * point p to the point on the surface
 	 */
-	Point sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const;
-	/*
-	 * Compute the pdf of sampling uniformly on the surface
-	 */
-	float pdf(const Point &p) const;
+	Point sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const override;
 	/*
 	 * Compute the pdf that the ray from p with direction w_i intersects the shape
 	 */
-	float pdf(const Point &p, const Vector &w_i) const;
+	float pdf(const Point &p, const Vector &w_i) const override;
 };
 
 #endif

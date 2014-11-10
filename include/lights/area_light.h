@@ -4,16 +4,15 @@
 #include <memory>
 #include "light.h"
 
-class Sphere;
+class Geometry;
 
 /*
  * Diffuse area light that can be attached to some arbitrary geometry
  * to create an emissive version of the object
- * TODO: Currently only spheres are supported
  */
 class AreaLight : public Light {
 	Colorf emit;
-	Sphere *geometry;
+	Geometry *geometry;
 	float surface_area;
 
 public:
@@ -21,7 +20,7 @@ public:
 	 * Construct the area light with some transformation to be applied to
 	 * the sphere it's emitting from
 	 */
-	AreaLight(const Transform &to_world, const Colorf &emit, Sphere *geometry, int n_samples = 6);
+	AreaLight(const Transform &to_world, const Colorf &emit, Geometry *geometry, int n_samples = 6);
 	/*
 	 * Compute the light's emitted radiance in the outgoing direction, w
 	 * from the point on the surface with normal n

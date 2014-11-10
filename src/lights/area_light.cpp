@@ -1,9 +1,9 @@
 #include "scene.h"
-#include "geometry/sphere.h"
+#include "geometry/geometry.h"
 #include "monte_carlo/util.h"
 #include "lights/area_light.h"
 
-AreaLight::AreaLight(const Transform &to_world, const Colorf &emit, Sphere *geometry, int n_samples)
+AreaLight::AreaLight(const Transform &to_world, const Colorf &emit, Geometry *geometry, int n_samples)
 	: Light(to_world, n_samples), emit(emit), geometry(geometry), surface_area(geometry->surface_area())
 {}
 Colorf AreaLight::radiance(const Point&, const Normal &n, const Vector &w) const {
