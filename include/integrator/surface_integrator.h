@@ -18,7 +18,7 @@ public:
 	 * Compute the illumination at a point on the surface in the scene
 	 */
 	virtual Colorf illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-		const DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const = 0;
+		DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const = 0;
 	/*
 	 * Utility function to compute the specularly reflected light off of
 	 * some geometry we hit

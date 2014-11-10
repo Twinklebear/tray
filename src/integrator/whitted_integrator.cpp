@@ -8,7 +8,7 @@
 
 WhittedIntegrator::WhittedIntegrator(int max_depth) : max_depth(max_depth){}
 Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-	const DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
+	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
 	Vector w_o = -ray.d;
 	Colorf illum;
@@ -20,6 +20,7 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 	if (!mat){
 		return illum;
 	}
+	dg.compute_differentials(ray);
 	BSDF *bsdf = mat->get_bsdf(dg, pool);
 
 	//Compute the incident light from all lights in the scene
