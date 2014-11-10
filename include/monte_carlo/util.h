@@ -38,10 +38,10 @@ inline constexpr float uniform_sphere_pdf(){
 	return 1.f / (4.f * PI);
 }
 /*
- * Uniformly sample positions on a triangle, this assumes an isoscles right-triangle
+ * Uniformly sample the barycentric coordinates of a triangle, this assumes an isoscles right-triangle
  * sample positions should be [0, 1)
  */
-std::array<float, 2> uniform_sample_tri(const std::array<float, 2> &u);
+Vector uniform_sample_tri(const std::array<float, 2> &u);
 /*
  * Compute concentric sample positions on a unit disk mapping input from range [0, 1)
  * to sample positions on a disk
