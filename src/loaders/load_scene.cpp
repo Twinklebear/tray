@@ -219,7 +219,6 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 	if (type.substr(0, 6) == "sphere"){
 		float radius = 1;
 		read_float(elem, radius, "radius");
-		std::cout << "sphere radius of " << radius << std::endl;
 		return cache.add(type, std::make_unique<Sphere>(radius));
 	}
 	else if (type == "plane"){
