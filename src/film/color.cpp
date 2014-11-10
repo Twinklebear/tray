@@ -32,20 +32,26 @@ bool Colorf::is_black() const {
 }
 Colorf& Colorf::operator+=(const Colorf &c){
 	r += c.r;
-	b += c.b;
 	g += c.g;
+	b += c.b;
 	return *this;
 }
 Colorf& Colorf::operator-=(const Colorf &c){
 	r -= c.r;
-	b -= c.b;
 	g -= c.g;
+	b -= c.b;
+	return *this;
+}
+Colorf& Colorf::operator*=(const Colorf &c){
+	r *= c.r;
+	g *= c.g;
+	b *= c.b;
 	return *this;
 }
 Colorf& Colorf::operator*=(float s){
 	r *= s;
-	b *= s;
 	g *= s;
+	b *= s;
 	return *this;
 }
 Colorf& Colorf::operator/=(float s){

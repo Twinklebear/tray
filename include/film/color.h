@@ -43,6 +43,7 @@ struct Colorf {
 	bool is_black() const;
 	Colorf& operator+=(const Colorf &c);
 	Colorf& operator-=(const Colorf &c);
+	Colorf& operator*=(const Colorf &c);
 	Colorf& operator*=(float s);
 	Colorf& operator/=(float s);
 	float& operator[](int i);
