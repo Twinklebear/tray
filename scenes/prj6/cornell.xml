@@ -44,7 +44,7 @@
       <rotate angle="30" y="1"/>
       <translate x="-8" y="-6" z="4"/>
     </object>
-    <object type="sphere" name="sphere_light" radius="1">
+    <object type="sphere_r1" name="sphere_light" radius="1">
       <translate x="0" y="-10" z="22"/>
 	  <light type="area" name="areaLight">
 		<intensity r="0.780131" g="0.780409" b="0.775833" value="85"/>

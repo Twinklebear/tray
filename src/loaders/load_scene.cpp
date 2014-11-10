@@ -187,6 +187,7 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 					std::cout << "Scene error: Lights can currently only be attached to spheres" << std::endl;
 					std::exit(1);
 				}
+				std::cout << "Attaching area light to " << name << std::endl;
 				Colorf emit{1, 1, 1};
 				int n_samples = 6;
 				read_color(light_elem->FirstChildElement("intensity"), emit);
@@ -215,9 +216,10 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 	if (g){
 		return g;
 	}
-	if (type == "sphere"){
+	if (type.substr(0, 6) == "sphere"){
 		float radius = 1;
 		read_float(elem, radius, "radius");
+		std::cout << "sphere radius of " << radius << std::endl;
 		return cache.add(type, std::make_unique<Sphere>(radius));
 	}
 	else if (type == "plane"){
