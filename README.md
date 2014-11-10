@@ -71,7 +71,9 @@ for diffuse reflection is `reflection * diffuse` and so on.
 	<ior r="1.3" g="1.1" b="0.4"/>
 	<!-- The metal's absoprtion coefficient (can be a texture), required -->
 	<absorption r="1.9" g="2.5" b="4.3"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
+	<!-- The material's roughness between (0, 1], defaults to 1 (roughest)
+	     an anisotropic metal can be specified by setting attributes x and y
+	     to the roughness along these axes instead -->
 	<roughness value="0.01"/>
 </material>
 ```

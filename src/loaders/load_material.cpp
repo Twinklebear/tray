@@ -141,7 +141,7 @@ std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, TextureCa
 std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
 	Texture *ior = nullptr, *absorp_coef = nullptr;
-	float rough = 1;
+	float rough_x = 1, rough_y;
 	std::string name = elem->Attribute("name");
 	XMLElement *e = elem->FirstChildElement("ior");
 	if (e){
@@ -153,12 +153,19 @@ std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &t
 	}
 	e = elem->FirstChildElement("roughness");
 	if (e){
-		read_float(e, rough);
+		if (e->Attribute("x") && e->Attribute("y")){
+			read_float(e, rough_x, "x");
+			read_float(e, rough_y, "y");
+		}
+		else {
+			read_float(e, rough_x);
+			rough_y = rough_x;
+		}
 	}
 	if (ior == nullptr || absorp_coef == nullptr){
 		std::cout << "Scene error: metal materials require an ior and absorption attribute" << std::endl;
 		std::exit(1);
 	}
-	return std::make_unique<MetalMaterial>(ior, absorp_coef, rough);
+	return std::make_unique<MetalMaterial>(ior, absorp_coef, rough_x, rough_y);
 }
 
