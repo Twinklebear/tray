@@ -11,7 +11,8 @@ Renderer::Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator)
 Colorf Renderer::illumination(RayDifferential &ray, const Scene &scene, Sampler &sampler, MemoryPool &pool) const {
 	DifferentialGeometry dg;
 	if (scene.get_root().intersect(ray, dg)){
-		dg.compute_differentials(ray);
+		std::cout << "Node pointed @ " << reinterpret_cast<uint64_t>(dg.node)
+			<< ", dg is at " << reinterpret_cast<uint64_t>(&dg) << std::endl;
 		return surface_integrator->illumination(scene, *this, ray, dg, sampler, pool);
 	}
 	else if (scene.get_environment()){

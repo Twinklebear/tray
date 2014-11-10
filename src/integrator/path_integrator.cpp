@@ -10,6 +10,10 @@ PathIntegrator::PathIntegrator(int min_depth, int max_depth) : min_depth(min_dep
 Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &r,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
+	std::cout << "PathIntegrator Node pointed @ " << reinterpret_cast<uint64_t>(dg.node)
+			<< ", dg is at " << reinterpret_cast<uint64_t>(&dg) << std::endl;
+	std::exit(1);
+	return Colorf{0};
 	//Allocate and generate samples for lights and bsdfs and path directions
 	auto *l_samples_u = pool.alloc_array<std::array<float, 2>>(max_depth + 1);
 	auto *l_samples_comp = pool.alloc_array<float>(max_depth + 1);
@@ -31,10 +35,10 @@ Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer
 	RayDifferential ray{r};
 	//If the last bounce was a specular one
 	bool specular_bounce = false;
-	//The current piece of geometry hit
-	DifferentialGeometry *dg_current = &dg;
 	//Next tracks the next geometry in the path
-	DifferentialGeometry next;
+	DifferentialGeometry next = dg;
+	//The current piece of geometry hit
+	DifferentialGeometry *dg_current = &next;
 	for (int bounce = 0; ; ++bounce){
 		//Sample emissive objects on the first ray for directly visible ones or in the case of
 		//specular bounces, as we don't compute them in estimate direct
