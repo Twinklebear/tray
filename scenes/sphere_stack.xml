@@ -30,31 +30,31 @@
 		</object>
 		<object name="stack">
 			<translate y="4" z="3.5"/>
-			<object type="sphere" name="sphere1" material="plastic_white">
+			<object type="sphere" name="sphere1" material="sphere1">
 				<scale value="3.5"/>
 				<translate x="-10.75"/>
 			</object>
-			<object type="sphere" name="sphere2" material="plastic_white">
+			<object type="sphere" name="sphere2" material="sphere2">
 				<scale value="3.5"/>
 				<translate x="-3.5"/>
 			</object>
-			<object type="sphere" name="sphere3" material="plastic_white">
+			<object type="sphere" name="sphere3" material="sphere3">
 				<scale value="3.5"/>
 				<translate x="3.5"/>
 			</object>
-			<object type="sphere" name="sphere4" material="plastic_white">
+			<object type="sphere" name="sphere4" material="sphere4">
 				<scale value="3.5"/>
 				<translate x="10.75"/>
 			</object>
-			<object type="sphere" name="sphere5" material="plastic_white">
+			<object type="sphere" name="sphere5" material="sphere5">
 				<scale value="3.5"/>
 				<translate x="-7.125" z="6"/>
 			</object>
-			<object type="sphere" name="sphere6" material="plastic_white">
+			<object type="sphere" name="sphere6" material="sphere6">
 				<scale value="3.5"/>
 				<translate x="0" z="6"/>
 			</object>
-			<object type="sphere" name="sphere6" material="plastic_white">
+			<object type="sphere" name="sphere7" material="sphere7">
 				<scale value="3.5"/>
 				<translate x="7.125" z="6"/>
 			</object>
@@ -76,10 +76,40 @@
 		<material type="matte" name="wallGreen">
 			<diffuse  r="0.162928" g="0.408903" b="0.0833759"/>
 		</material>
-		<material type="plastic" name="plastic_white">
-			<diffuse  r="0.8" g="0.8" b="0.8"/>
-			<specular r="1.0" g="1.0" b="1.0" value="0.6"/>
-			<roughness value="0.5"/>
+		<material type="metal" name="sphere1">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="1"/>
+		</material>
+		<material type="metal" name="sphere2">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="0.25"/>
+		</material>
+		<material type="metal" name="sphere3">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="0.0625"/>
+		</material>
+		<material type="metal" name="sphere4">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="0.0156"/>
+		</material>
+		<material type="metal" name="sphere5">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="0.0039"/>
+		</material>
+		<material type="metal" name="sphere6">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="0.000976"/>
+		</material>
+		<material type="metal" name="sphere7">
+			<ior r="1.3" g="1.1" b="1.3"/>
+			<absorption r="2.4" g="2.5" b="1.7"/>
+			<roughness value="0.000244"/>
 		</material>
 	</scene>
 
@@ -93,7 +123,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="4" max="8"/>
+		<sampler type="adaptive" min="64" max="1024"/>
 	</config>
 </xml>
 
