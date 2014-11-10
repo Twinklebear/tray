@@ -47,7 +47,7 @@
     <object type="sphere" name="sphere_light" radius="1">
       <translate x="0" y="0" z="22"/>
 	  <light type="area" name="areaLight">
-        <intensity value="75"/>
+        <intensity value="50"/>
 		<nsamples value="4"/>
       </light>
     </object>
@@ -86,7 +86,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" min="128" max="1024"/>
+	  <sampler type="adaptive" min="16" max="64"/>
   </config>
 </xml>
 

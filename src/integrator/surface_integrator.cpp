@@ -1,3 +1,4 @@
+#include <cassert>
 #include <algorithm>
 #include <cmath>
 #include "scene.h"
@@ -97,9 +98,9 @@ Colorf SurfaceIntegrator::uniform_sample_one_light(const Scene &scene, const Ren
 	//The unordered map isn't a random access container, so 'find' the light_num light
 	auto lit = std::find_if(scene.get_light_cache().begin(), scene.get_light_cache().end(),
 		[&light_num](const auto&){
-			light_num--;
-			return light_num == 0;
+			return light_num-- == 0;
 		});
+	assert(lit != scene.get_light_cache().end());
 	return n_lights * estimate_direct(scene, renderer, p, n, w_o, bsdf, *lit->second, l_sample,
 		bsdf_sample, BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR));
 }

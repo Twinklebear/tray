@@ -7,7 +7,6 @@
 #include "film/render_target.h"
 #include "film/camera.h"
 #include "renderer/renderer.h"
-#include "integrator/whitted_integrator.h"
 #include "integrator/path_integrator.h"
 #include "geometry/geometry.h"
 #include "linalg/ray.h"
@@ -26,7 +25,7 @@ void Worker::render(){
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
-	auto renderer = std::make_unique<Renderer>(std::make_unique<PathIntegrator>(1, 1));
+	auto renderer = std::make_unique<Renderer>(std::make_unique<PathIntegrator>(3, scene.get_max_depth()));
 	MemoryPool pool;
 	std::vector<Sample> samples;
 	std::vector<RayDifferential> rays;

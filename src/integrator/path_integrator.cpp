@@ -1,19 +1,15 @@
 #include <array>
-#include "renderer/renderer.h"
 #include "material/material.h"
 #include "lights/light.h"
 #include "lights/occlusion_tester.h"
 #include "material/bsdf.h"
+#include "renderer/renderer.h"
 #include "integrator/path_integrator.h"
 
 PathIntegrator::PathIntegrator(int min_depth, int max_depth) : min_depth(min_depth), max_depth(max_depth){}
 Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &r,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
-	std::cout << "PathIntegrator Node pointed @ " << reinterpret_cast<uint64_t>(dg.node)
-			<< ", dg is at " << reinterpret_cast<uint64_t>(&dg) << std::endl;
-	std::exit(1);
-	return Colorf{0};
 	//Allocate and generate samples for lights and bsdfs and path directions
 	auto *l_samples_u = pool.alloc_array<std::array<float, 2>>(max_depth + 1);
 	auto *l_samples_comp = pool.alloc_array<float>(max_depth + 1);
@@ -30,7 +26,7 @@ Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer
 
 	//Path throughput is the current product of bsdf values and geometry terms so far,
 	//divided by their pdfs. illum is the current illumination along the path
-	Colorf path_throughput, illum;
+	Colorf path_throughput{1}, illum;
 	//Current ray to find next path point
 	RayDifferential ray{r};
 	//If the last bounce was a specular one
@@ -99,4 +95,50 @@ Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer
 	}
 	return illum;
 }
+
+/*
+{
+	std::cout << "WhittedIntegrator Node has area light? " << (dg.node->get_area_light() ? "true" : "false") << std::endl;
+	return 0;
+	Vector w_o = -ray.d;
+	Colorf illum;
+	const Material *mat = dg.node->get_material();
+	const AreaLight *area_light = dg.node->get_area_light();
+	if (area_light){
+		illum += area_light->radiance(dg.point, dg.normal, w_o);
+	}
+	if (!mat){
+		return illum;
+	}
+	dg.compute_differentials(ray);
+	BSDF *bsdf = mat->get_bsdf(dg, pool);
+
+	//Compute the incident light from all lights in the scene
+	for (const auto &l : scene.get_light_cache()){
+		int n_samples = l.second->n_samples;
+		auto l_samples = pool.alloc_array<std::array<float, 2>>(n_samples);
+		sampler.get_samples(l_samples, n_samples);
+		for (int i = 0; i < n_samples; ++i){
+			Vector w_i;
+			float pdf_val = 0;
+			OcclusionTester occlusion;
+			Colorf li = l.second->sample(bsdf->dg.point, l_samples[i], w_i, pdf_val, occlusion);
+			//If there's no light or no probability for this sample there's no illumination
+			if (li.luminance() == 0 || pdf_val == 0){
+				continue;
+			}
+			Colorf c = (*bsdf)(w_o, w_i);
+			if (!c.is_black() && !occlusion.occluded(scene)){
+				illum += c * li * std::abs(w_i.dot(bsdf->dg.normal)) / pdf_val;
+			}
+		}
+		illum /= n_samples;
+	}
+	if (ray.depth < max_depth){
+		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);
+		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
+	}
+	return illum;
+}
+*/
 
