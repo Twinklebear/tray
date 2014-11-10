@@ -1,0 +1,99 @@
+<xml>
+	<scene>
+		<!-- Objects -->
+		<object name="box">
+			<translate x="0" y="0" z="12"/>
+			<object type="plane" name="WallBottom" material="wall">
+				<scale value="32"/>
+				<translate z="-12"/>
+			</object>
+			<object type="plane" name="WallTop" material="wall">
+				<scale value="32"/>
+				<rotate angle="180" x="1"/>
+				<translate z="12"/>
+			</object>
+			<object type="plane" name="WallBack" material="wall">
+				<scale value="32"/>
+				<rotate angle="90" x="1"/>
+				<translate y="20"/>
+			</object>
+			<object type="plane" name="WallLeft" material="wallRed">
+				<scale value="32"/>
+				<rotate angle="90" y="1"/>
+				<translate x="-15"/>
+			</object>
+			<object type="plane" name="WallRight" material="wallGreen">
+				<scale value="32"/>
+				<rotate angle="-90" y="1"/>
+				<translate x="15"/>
+			</object>
+		</object>
+		<object name="stack">
+			<translate y="4" z="3.5"/>
+			<object type="sphere" name="sphere1" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="-10.75"/>
+			</object>
+			<object type="sphere" name="sphere2" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="-3.5"/>
+			</object>
+			<object type="sphere" name="sphere3" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="3.5"/>
+			</object>
+			<object type="sphere" name="sphere4" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="10.75"/>
+			</object>
+			<object type="sphere" name="sphere5" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="-7.125" z="6"/>
+			</object>
+			<object type="sphere" name="sphere6" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="0" z="6"/>
+			</object>
+			<object type="sphere" name="sphere6" material="plastic_white">
+				<scale value="3.5"/>
+				<translate x="7.125" z="6"/>
+			</object>
+		</object>
+		<object type="sphere_r1.8" name="sphere_light" radius="1.8">
+			<translate x="0" y="0" z="24"/>
+			<light type="area" name="areaLight">
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="175"/>
+			</light>
+		</object>
+
+		<!-- Materials -->
+		<material type="matte" name="wall">
+			<diffuse  r="0.740063" g="0.742313" b="0.733934"/>
+		</material>
+		<material type="matte" name="wallRed">
+			<diffuse  r="0.366046" g="0.0371827" b="0.0416385"/>
+		</material>
+		<material type="matte" name="wallGreen">
+			<diffuse  r="0.162928" g="0.408903" b="0.0833759"/>
+		</material>
+		<material type="plastic" name="plastic_white">
+			<diffuse  r="0.8" g="0.8" b="0.8"/>
+			<specular r="1.0" g="1.0" b="1.0" value="0.6"/>
+			<roughness value="0.5"/>
+		</material>
+	</scene>
+
+	<camera>
+		<position x="0" y="-60" z="12"/>
+		<target x="0" y="0" z="12"/>
+		<up x="0" y="0" z="1"/>
+		<fov value="30"/>
+		<width value="800"/>
+		<height value="600"/>
+	</camera>
+
+	<config>
+		<sampler type="adaptive" min="4" max="8"/>
+	</config>
+</xml>
+
