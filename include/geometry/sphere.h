@@ -29,8 +29,7 @@ public:
 	Point sample(const std::array<float, 2> &u, Normal &normal) const;
 	/*
 	 * Sample the shape using the probability density of the solid angle from
-	 * point p
-	 * Return to 747 for sampling
+	 * point p to the point on the surface
 	 */
 	Point sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const;
 	/*
