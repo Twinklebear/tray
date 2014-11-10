@@ -5,6 +5,7 @@
 #include "material/plastic_material.h"
 #include "material/translucent_material.h"
 #include "material/metal_material.h"
+#include "material/merl_material.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_material.h"
 #include "loaders/load_texture.h"
@@ -29,6 +30,11 @@ static std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, Te
  * elem should be root of the material being loaded
  */
 static std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+/*
+ * Load the MERL measured material properties and return the material
+ * elem should be root of the material being loaded
+ */
+static std::unique_ptr<Material> load_merl(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 
 void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
@@ -54,6 +60,10 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 			}
 			else if (type == "metal"){
 				material = load_metal(m, tcache, file);
+			}
+			else if (type == "merl"){
+				std::cout << "loading merl material " << name << std::endl;
+				material = load_merl(m, tcache, file);
 			}
 			if (material != nullptr){
 				cache.add(name, std::move(material));
@@ -160,5 +170,15 @@ std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &t
 		std::exit(1);
 	}
 	return std::make_unique<MetalMaterial>(ior, absorp_coef, roughness);
+}
+std::unique_ptr<Material> load_merl(tinyxml2::XMLElement *elem, TextureCache&, const std::string &file){
+	using namespace tinyxml2;
+	if (!elem->Attribute("file")){
+		std::cout << "Scene error: MERL materials require a file attribute to load measured data from" << std::endl;
+		std::exit(1);
+	}
+	std::string brdf_file = elem->Attribute("file");
+	brdf_file = file.substr(0, file.rfind(PATH_SEP) + 1) + brdf_file;
+	return std::make_unique<MerlMaterial>(brdf_file);
 }
 
