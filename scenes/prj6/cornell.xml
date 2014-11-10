@@ -3,7 +3,6 @@
     <!-- Objects -->
     <object name="box">
       <translate x="0" y="0" z="12"/>
-	  <!--
       <object type="plane" name="WallBottom" material="wall">
         <scale value="32"/>
         <translate z="-12"/>
@@ -13,13 +12,11 @@
         <rotate angle="180" x="1"/>
         <translate z="12"/>
       </object>
-	  -->
       <object type="plane" name="WallBack" material="wall">
         <scale value="32"/>
         <rotate angle="90" x="1"/>
         <translate y="20"/>
       </object>
-	  <!--
       <object type="plane" name="WallLeft" material="wallRed">
         <scale value="32"/>
         <rotate angle="90" y="1"/>
@@ -30,9 +27,7 @@
         <rotate angle="-90" y="1"/>
         <translate x="15"/>
       </object>
-	  -->
     </object>
-	<!--
 	<object type="obj" name="../models/killeroo.obj" material="mtl1">
       <scale value="0.85"/>
       <rotate angle="90" x="1"/>
@@ -50,13 +45,12 @@
       <translate x="-8" y="-6" z="4"/>
     </object>
     <object type="sphere" name="sphere_light" radius="1">
-      <translate x="0" y="-10" z="22"/>
+      <translate x="0" y="0" z="22"/>
 	  <light type="area" name="areaLight">
-        <intensity value="250"/>
+        <intensity value="75"/>
 		<nsamples value="4"/>
       </light>
     </object>
-	-->
  
     <!-- Materials -->
     <material type="matte" name="wall">
@@ -92,7 +86,7 @@
   </camera>
 
   <config>
-	  <sampler type="adaptive" min="2" max="8"/>
+	  <sampler type="adaptive" min="128" max="1024"/>
   </config>
 </xml>
 
