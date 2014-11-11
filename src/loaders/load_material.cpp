@@ -6,6 +6,7 @@
 #include "material/translucent_material.h"
 #include "material/metal_material.h"
 #include "material/merl_material.h"
+#include "material/glass_material.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_material.h"
 #include "loaders/load_texture.h"
@@ -35,6 +36,11 @@ static std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureC
  * elem should be root of the material being loaded
  */
 static std::unique_ptr<Material> load_merl(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+/*
+ * Load the Glass material properties and return the material
+ * elem should be root of the material being loaded
+ */
+static std::unique_ptr<Material> load_glass(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 
 void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
@@ -62,8 +68,10 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 				material = load_metal(m, tcache, file);
 			}
 			else if (type == "merl"){
-				std::cout << "loading merl material " << name << std::endl;
 				material = load_merl(m, tcache, file);
+			}
+			else if (type == "glass"){
+				material = load_glass(m, tcache, file);
 			}
 			if (material != nullptr){
 				cache.add(name, std::move(material));
@@ -142,7 +150,7 @@ std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, TextureCa
 		read_float(e, ior);
 	}
 	if (diff == nullptr || spec == nullptr || refl == nullptr || trans == nullptr){
-		std::cout << "Scene error: plastic materials require a diffuse, specular, reflection"
+		std::cout << "Scene error: translucent materials require a diffuse, specular, reflection"
 			<< " and transmission attribute" << std::endl;
 		std::exit(1);
 	}
@@ -180,5 +188,28 @@ std::unique_ptr<Material> load_merl(tinyxml2::XMLElement *elem, TextureCache&, c
 	std::string brdf_file = elem->Attribute("file");
 	brdf_file = file.substr(0, file.rfind(PATH_SEP) + 1) + brdf_file;
 	return std::make_unique<MerlMaterial>(brdf_file);
+}
+std::unique_ptr<Material> load_glass(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
+	using namespace tinyxml2;
+	Texture *refl = nullptr, *trans = nullptr;
+	float ior = 1;
+	std::string name = elem->Attribute("name");
+	XMLElement *e = elem->FirstChildElement("reflection");
+	if (e){
+		refl = load_texture(e, name, tcache, file);
+	}
+	e = elem->FirstChildElement("transmission");
+	if (e){
+		trans = load_texture(e, name, tcache, file);
+	}
+	e = elem->FirstChildElement("ior");
+	if (e){
+		read_float(e, ior);
+	}
+	if (refl == nullptr || trans == nullptr){
+		std::cout << "Scene error: glass materials require a reflection and transmission attribute" << std::endl;
+		std::exit(1);
+	}
+	return std::make_unique<GlassMaterial>(refl, trans, ior);
 }
 

@@ -10,7 +10,7 @@ Colorf MerlBRDF::operator()(const Vector &w_oi, const Vector &w_ii) const {
 	//Find the half-vector and transform into the half angle coordinate system
 	Vector w_o = w_oi;
 	Vector w_i = w_ii;
-	Vector w_h = (w_o + w_i).normalized();
+	Vector w_h = w_o + w_i;
 	if (w_h.z < 0){
 		w_o = -w_o;
 		w_i = -w_i;
@@ -19,6 +19,7 @@ Colorf MerlBRDF::operator()(const Vector &w_oi, const Vector &w_ii) const {
 	if (w_h.length_sqr() == 0){
 		return Colorf{0};
 	}
+	w_h = w_h.normalized();
 	//Directly compute the rows of the matrix performing the rotation of w_h to (0, 0, 1)
 	float theta_h = spherical_theta(w_h);
 	float cos_phi_h = cos_phi(w_h);
@@ -34,7 +35,7 @@ Colorf MerlBRDF::operator()(const Vector &w_oi, const Vector &w_ii) const {
 	if (phi_d > PI){
 		phi_d -= PI;
 	}
-	int theta_h_idx = map_index(std::sqrt(std::max(0.f, theta_h / (PI / 2))), 1, n_theta_h);
+	int theta_h_idx = map_index(std::sqrt(std::max(0.f, 2 * theta_h / PI)), 1, n_theta_h);
 	int theta_d_idx = map_index(theta_d, PI / 2, n_theta_d);
 	int phi_d_idx = map_index(phi_d, PI, n_phi_d);
 	int i = phi_d_idx + n_phi_d * (theta_d_idx + theta_h_idx * n_theta_d);

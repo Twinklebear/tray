@@ -1,10 +1,8 @@
-#include <memory>
 #include "film/color.h"
 #include "textures/texture.h"
 #include "material/lambertian.h"
 #include "material/oren_nayer.h"
 #include "material/matte_material.h"
-#include "material/specular_reflection.h"
 #include "material/fresnel.h"
 
 MatteMaterial::MatteMaterial(const Texture *diffuse, float roughness)

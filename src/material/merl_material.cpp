@@ -41,8 +41,8 @@ bool MerlMaterial::load_brdf(const std::string &file){
 	uint32_t chunk_size = 2 * n_phi_d;
 	std::vector<double> tmp(chunk_size);
 	int n_chunks = n_vals / chunk_size;
-	assert(n % n_chunks == 0);
-	const std::array<float, 3> scaling{1.f / 1500.f, 1.15f / 1500.f, 1.66f / 1500.f};
+	assert(n_vals % n_chunks == 0);
+	const std::array<float, 3> scaling{1.f / 1500.f, 1.f / 1500.f, 1.66f / 1500.f};
 	for (int c = 0; c < 3; ++c){
 		int offset = 0;
 		for (int i = 0; i < n_chunks; ++i){
@@ -56,6 +56,7 @@ bool MerlMaterial::load_brdf(const std::string &file){
 			}
 		}
 	}
+	fclose(f);
 	return true;
 }
 
