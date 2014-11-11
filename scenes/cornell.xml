@@ -39,7 +39,7 @@
 			<translate x="4" y="-3" z="2.5"/>
 		</object>
 		<object type="sphere_r1.8" name="sphere_light" radius="1.8">
-			<translate x="0" y="0" z="24"/>
+			<translate x="0" y="0" z="23.5"/>
 			<light type="area" name="areaLight">
 				<intensity r="0.780131" g="0.780409" b="0.775833" value="175"/>
 			</light>
