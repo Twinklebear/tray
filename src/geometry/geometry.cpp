@@ -15,12 +15,12 @@ float Geometry::surface_area() const {
 	assert("Unimplemented surface area called");
 	return 0;
 }
-Point Geometry::sample(const std::array<float, 2>&, Normal&) const {
+Point Geometry::sample(const GeomSample&, Normal&) const {
 	assert("Unimplemented sample called");
 	return Point{0};
 }
-Point Geometry::sample(const Point&, const std::array<float, 2> &u, Normal &normal) const {
-	return sample(u, normal);
+Point Geometry::sample(const Point&, const GeomSample &gs, Normal &normal) const {
+	return sample(gs, normal);
 }
 float Geometry::pdf(const Point&) const {
 	return 1.f / surface_area();
@@ -35,12 +35,18 @@ float Geometry::pdf(const Point &p, const Vector &w_i) const {
 	float pdf_val = p.distance_sqr(ray(ray.max_t)) / (std::abs(dg.normal.dot(-w_i)) * surface_area());
 	return std::isinf(pdf_val) ? 0 : pdf_val;
 }
+bool Geometry::attach_light(const Transform&){
+	return false;
+}
 
 Node::Node(Geometry *geom, Material *mat, const Transform &t, const std::string &name)
 	: geometry(geom), material(mat), transform(t), inv_transform(t.inverse()), name(name), area_light(nullptr)
 {}
 void Node::attach_light(AreaLight *light){
 	area_light = light;
+	if (geometry && !geometry->attach_light(transform)){
+		assert("Invalid light attachment");
+	}
 }
 void Node::flatten_children(){
 	std::vector<std::shared_ptr<Node>> flat_children;

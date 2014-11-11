@@ -91,24 +91,24 @@ void Sphere::refine(std::vector<Geometry*> &prims){
 float Sphere::surface_area() const {
 	return 2 * TAU * radius;
 }
-Point Sphere::sample(const std::array<float, 2> &u, Normal &normal) const {
-	Point p = Point{0, 0, 0} + radius * uniform_sample_sphere(u);
+Point Sphere::sample(const GeomSample &gs, Normal &normal) const {
+	Point p = Point{0, 0, 0} + radius * uniform_sample_sphere(gs.u);
 	normal = Normal{p.x, p.y, p.z}.normalized();
 	return p;
 }
-Point Sphere::sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const {
+Point Sphere::sample(const Point &p, const GeomSample &gs, Normal &normal) const {
 	//Compute coordinate system for sampling the sphere where z is the vector from the center to the point
 	Vector w_z = Vector{-p}.normalized();
 	Vector w_x, w_y;
 	coordinate_system(w_z, w_x, w_y);
 	//If we're inside the sphere we can just sample it uniformly
 	if (p.distance_sqr(Point{0, 0, 0}) - radius * radius < 1e-4){
-		return sample(u, normal);
+		return sample(gs, normal);
 	}
 	//Compute angle of cone that we see of the sphere
 	float cos_theta = std::sqrt(std::max(0.f, 1 - radius * radius / p.distance_sqr(Point{0, 0, 0})));
 	DifferentialGeometry dg;
-	Ray ray{p, uniform_sample_cone(u, cos_theta, w_x, w_y, w_z), 0.001};
+	Ray ray{p, uniform_sample_cone(gs.u, cos_theta, w_x, w_y, w_z), 0.001};
 	//We might not hit the sphere due to some numerical errors, so make sure it does hit
 	if (!intersect(ray, dg)){
 		ray.max_t = ray.d.normalized().dot(Point{0, 0, 0} - p);
@@ -124,5 +124,8 @@ float Sphere::pdf(const Point &p, const Vector &w_i) const {
 	}
 	float cos_theta = std::sqrt(std::max(0.f, 1 - radius * radius / p.distance_sqr(Point{0, 0, 0})));
 	return uniform_cone_pdf(cos_theta);
+}
+bool Sphere::attach_light(const Transform&){
+	return true;
 }
 

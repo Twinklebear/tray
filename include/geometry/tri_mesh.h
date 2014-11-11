@@ -6,6 +6,7 @@
 #include "linalg/vector.h"
 #include "linalg/point.h"
 #include "linalg/ray.h"
+#include "monte_carlo/distribution1d.h"
 #include "bbox.h"
 #include "geometry.h"
 #include "accelerators/bvh.h"
@@ -26,6 +27,14 @@ public:
 	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const override;
 	BBox bound() const override;
 	void refine(std::vector<Geometry*> &prims) override;
+	/*
+	 * Compute the surface area of the sphere
+	 */
+	float surface_area() const override;
+	/*
+	 * Sample a position on the geometry and return the point and normal
+	 */
+	Point sample(const GeomSample &gs, Normal &normal) const override;
 };
 
 /*
@@ -42,6 +51,11 @@ class TriMesh : public Geometry {
 	std::vector<Triangle> tris;
 	//The BVH used to accelerate ray-triangle intersection tests on the mesh
 	BVH bvh;
+	//The total surface area of the mesh
+	float total_area;
+	//1D distribution of the triangle area values, only computed if a light
+	//is attached
+	Distribution1D area_distribution;
 
 	//Friends with the meshprocessor so it's able to get the data needed
 	//to serialize the binary mesh
@@ -71,6 +85,33 @@ public:
 	const Point& vertex(int i) const;
 	const Point& texcoord(int i) const;
 	const Normal& normal(int i) const;
+	/*
+	 * Compute the surface area of the sphere
+	 */
+	float surface_area() const override;
+	/*
+	 * Sample a position on the geometry and return the point and normal
+	 */
+	Point sample(const GeomSample &gs, Normal &normal) const override;
+	/*
+	 * Sample the shape using the probability density of the solid angle from
+	 * point p to the point on the surface
+	 */
+	Point sample(const Point &p, const GeomSample &gs, Normal &normal) const override;
+	/*
+	 * Compute the pdf of sampling uniformly on the surface
+	 */
+	float pdf(const Point &p) const override;
+	/*
+	 * Compute the pdf that the ray from p with direction w_i intersects the shape
+	 */
+	float pdf(const Point &p, const Vector &w_i) const override;
+	/*
+	 * Alert the geometry that an area light has been attached to it, passing its transform
+	 * as well. The triangle mesh uses the transform to move itself into world space
+	 * returns true if the light can be attached, false if a light can't be attached
+	 */
+	bool attach_light(const Transform &to_world) override;
 
 private:
 	/*

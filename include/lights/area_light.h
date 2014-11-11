@@ -9,6 +9,7 @@ class Geometry;
 /*
  * Diffuse area light that can be attached to some arbitrary geometry
  * to create an emissive version of the object
+ * TODO: Currently only spheres are supported
  */
 class AreaLight : public Light {
 	Colorf emit;

@@ -13,6 +13,17 @@
 #include "lights/area_light.h"
 #include "bbox.h"
 
+/*
+ * Struct for easily passing around geometry sample data
+ */
+struct GeomSample {
+	const std::array<float, 2> u;
+	const float comp;
+};
+
+/*
+ * Interface the must be implemented by all geometry
+ */
 class Geometry {
 public:
 	/*
@@ -41,12 +52,12 @@ public:
 	/*
 	 * Sample a position on the geometry and return the point and normal
 	 */
-	virtual Point sample(const std::array<float, 2> &u, Normal &normal) const;
+	virtual Point sample(const GeomSample &gs, Normal &normal) const;
 	/*
 	 * Sample the shape using the probability density of the solid angle from
 	 * point p to the point on the surface
 	 */
-	virtual Point sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const;
+	virtual Point sample(const Point &p, const GeomSample &gs, Normal &normal) const;
 	/*
 	 * Compute the pdf of sampling uniformly on the surface
 	 */
@@ -55,6 +66,12 @@ public:
 	 * Compute the pdf that the ray from p with direction w_i intersects the shape
 	 */
 	virtual float pdf(const Point &p, const Vector &w_i) const;
+	/*
+	 * Alert the geometry that an area light has been attached to it, passing its transform
+	 * as well. The triangle mesh uses the transform to move itself into world space
+	 * returns true if the light can be attached, false if a light can't be attached
+	 */
+	virtual bool attach_light(const Transform &to_world);
 };
 
 typedef Cache<Geometry> GeometryCache;

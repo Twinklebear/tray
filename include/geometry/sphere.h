@@ -26,16 +26,17 @@ public:
 	/*
 	 * Sample a position on the geometry and return the point and normal
 	 */
-	Point sample(const std::array<float, 2> &u, Normal &normal) const override;
+	Point sample(const GeomSample &gs, Normal &normal) const override;
 	/*
 	 * Sample the shape using the probability density of the solid angle from
 	 * point p to the point on the surface
 	 */
-	Point sample(const Point &p, const std::array<float, 2> &u, Normal &normal) const override;
+	Point sample(const Point &p, const GeomSample &gs, Normal &normal) const override;
 	/*
 	 * Compute the pdf that the ray from p with direction w_i intersects the shape
 	 */
 	float pdf(const Point &p, const Vector &w_i) const override;
+	bool attach_light(const Transform &to_world) override;
 };
 
 #endif

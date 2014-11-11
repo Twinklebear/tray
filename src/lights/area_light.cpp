@@ -14,7 +14,7 @@ Colorf AreaLight::sample(const Point &p, const std::array<float, 2> &lsample, Ve
 {
 	Normal n_l;
 	Point p_l = to_light(p);
-	Point ps_l = geometry->sample(p_l, lsample, n_l);
+	Point ps_l = geometry->sample(p_l, GeomSample{lsample, 0}, n_l);
 	Point ps_w = to_world(ps_l);
 	Vector w_il = (ps_l - p_l).normalized();
 	to_world(w_il, w_i);
@@ -25,7 +25,7 @@ Colorf AreaLight::sample(const Point &p, const std::array<float, 2> &lsample, Ve
 Colorf AreaLight::sample(const Scene&, const std::array<float, 2> &a, const std::array<float, 2> &b,
 	Ray &ray, Normal &normal, float &pdf_val) const
 {
-	Point o = geometry->sample(a, normal);
+	Point o = geometry->sample(GeomSample{a, 0}, normal);
 	Vector d = uniform_sample_sphere(b);
 	//Make sure the ray is heading out of the surface
 	if (d.dot(normal) < 0){

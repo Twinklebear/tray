@@ -14,7 +14,8 @@ public:
 	/*
 	 * Create the sampling distribution for the passed function values
 	 */
-	Distribution1D(std::vector<float> &&function);
+	Distribution1D(const std::vector<float> &function);
+	Distribution1D();
 	/*
 	 * Sample one of the buckets of the function and return the bucket
 	 * number sampled, u should be in the range [0, 1)

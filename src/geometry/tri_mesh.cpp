@@ -8,6 +8,8 @@
 #include "linalg/vector.h"
 #include "linalg/point.h"
 #include "linalg/util.h"
+#include "monte_carlo/util.h"
+#include "monte_carlo/distribution1d.h"
 #include "accelerators/bvh.h"
 #include "geometry/bbox.h"
 #include "geometry/geometry.h"
@@ -114,6 +116,23 @@ BBox Triangle::bound() const {
 void Triangle::refine(std::vector<Geometry*> &prims){
 	prims.push_back(this);
 }
+float Triangle::surface_area() const {
+	const Point &pa = mesh->vertex(a);
+	const Point &pb = mesh->vertex(b);
+	const Point &pc = mesh->vertex(c);
+	return 0.5 * (pb - pa).cross(pc - pa).length();
+}
+Point Triangle::sample(const GeomSample &gs, Normal &normal) const {
+	const Point &pa = mesh->vertex(a);
+	const Point &pb = mesh->vertex(b);
+	const Point &pc = mesh->vertex(c);
+	const Normal &na = mesh->normal(a);
+	const Normal &nb = mesh->normal(b);
+	const Normal &nc = mesh->normal(c);
+	Vector bary = uniform_sample_tri(gs.u);
+	normal = na * bary.x + nb * bary.y + nc * bary.z;
+	return pa * bary.x + pb * bary.y + pc * bary.z;
+}
 
 TriMesh::TriMesh(const std::string &file, bool no_bobj){
 	load_model(file, no_bobj);
@@ -151,10 +170,46 @@ const Point& TriMesh::texcoord(int i) const {
 const Normal& TriMesh::normal(int i) const {
 	return normals[i];
 }
+float TriMesh::surface_area() const {
+	return total_area;
+}
+Point TriMesh::sample(const GeomSample &gs, Normal &normal) const {
+	return Point{0, 0, 0};
+}
+Point TriMesh::sample(const Point &p, const GeomSample &gs, Normal &normal) const {
+	return Point{0, 0, 0};
+}
+float TriMesh::pdf(const Point &p) const {
+	return 0;
+}
+float TriMesh::pdf(const Point &p, const Vector &w_i) const {
+	return 0;
+}
+bool TriMesh::attach_light(const Transform &to_world){
+	//Move the mesh into world space so we can get rid of any scaling and have proper
+	//surface area computation
+	for (auto &p : vertices){
+		p = to_world(p);
+	}
+	for (auto &n : normals){
+		n = to_world(n);
+	}
+	total_area = 0;
+	for (const auto &t : tris){
+		total_area += t.surface_area();
+	}
+	//Re-build the BVH in world space
+	std::vector<Geometry*> ref_tris;
+	refine(ref_tris);
+	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 32};
+	return true;
+}
 void TriMesh::refine_tris(){
+	total_area = 0;
 	tris.reserve(vert_indices.size());
 	for (int i = 0; i < vert_indices.size(); i += 3){
 		tris.emplace_back(vert_indices[i], vert_indices[i + 1], vert_indices[i + 2], this);
+		total_area += tris.back().surface_area();
 	}
 }
 void TriMesh::load_model(const std::string &file, bool no_bobj){
