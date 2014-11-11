@@ -123,7 +123,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="64"/>
+		<sampler type="adaptive" min="64" max="1024"/>
 	</config>
 </xml>
 

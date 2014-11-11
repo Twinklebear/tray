@@ -10,7 +10,8 @@
  * by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan,
  * in ACM Transactions on Graphics 22, 3(2003), 759-769.
  *
- * to model the surface reflection properties
+ * to model the surface reflection properties. Implemnentation based on
+ * the method introduced in PBR
  */
 class MerlBRDF : public BxDF {
 	//The measured brdf data in regular halfangle format
