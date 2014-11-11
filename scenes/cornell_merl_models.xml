@@ -1,0 +1,83 @@
+<xml>
+	<scene>
+		<!-- Objects -->
+		<object name="box">
+			<translate x="0" y="0" z="12"/>
+			<object type="plane" name="WallBottom" material="wall">
+				<scale value="32"/>
+				<translate z="-12"/>
+			</object>
+			<object type="plane" name="WallTop" material="wall">
+				<scale value="32"/>
+				<rotate angle="180" x="1"/>
+				<translate z="12"/>
+			</object>
+			<object type="plane" name="WallBack" material="wall">
+				<scale value="32"/>
+				<rotate angle="90" x="1"/>
+				<translate y="20"/>
+			</object>
+			<object type="plane" name="WallLeft" material="wallRed">
+				<scale value="32"/>
+				<rotate angle="90" y="1"/>
+				<translate x="-15"/>
+			</object>
+			<object type="plane" name="WallRight" material="wallBlue">
+				<scale value="32"/>
+				<rotate angle="-90" y="1"/>
+				<translate x="15"/>
+			</object>
+		</object>
+		<object type="obj" name="./models/dragon.obj" material="dragon-mat">
+			<scale value="23"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="110" z="1"/>
+			<translate x="2" y="7" z="6"/>
+		</object>
+		<object type="obj" name="./models/buddha.obj" material="buddha-mat">
+			<scale value="15"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="145" z="1"/>
+			<translate x="9" y="2" z="6"/>
+		</object>
+		<object type="sphere" name="sphere2" material="sphere-mat">
+			<scale value="4"/>
+			<rotate angle="30" y="1"/>
+			<translate x="-8" y="-6" z="4"/>
+		</object>
+		<object type="sphere_r1" name="sphere_light" radius="1.8">
+			<translate x="0" y="-4" z="23.5"/>
+			<light type="area" name="areaLight">
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="225"/>
+			</light>
+		</object>
+
+		<!-- Materials -->
+		<material type="matte" name="wall">
+			<diffuse  r="0.75" g="0.75" b="0.75" value="0.85"/>
+		</material>
+		<material type="matte" name="wallRed">
+			<diffuse  r="0.75" g="0.25" b="0.25" value="0.85"/>
+		</material>
+		<material type="matte" name="wallBlue">
+			<diffuse  r="0.25" g="0.25" b="0.75" value="0.85"/>
+		</material>
+		<material type="merl" name="dragon-mat" file="./brdfs/blue-acrylic.binary"/>
+		<material type="merl" name="buddha-mat" file="./brdfs/gold-paint.binary"/>
+		<material type="merl" name="sphere-mat" file="./brdfs/red-fabric.binary"/>
+	</scene>
+
+	<camera>
+		<position x="0" y="-60" z="12"/>
+		<target x="0" y="0" z="12"/>
+		<up x="0" y="0" z="1"/>
+		<fov value="30"/>
+		<width value="800"/>
+		<height value="600"/>
+	</camera>
+
+	<config>
+		<sampler type="adaptive" min="64" max="1024"/>
+	</config>
+</xml>
+
