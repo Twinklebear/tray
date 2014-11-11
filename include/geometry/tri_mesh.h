@@ -35,12 +35,31 @@ public:
 	 * Sample a position on the geometry and return the point and normal
 	 */
 	Point sample(const GeomSample &gs, Normal &normal) const override;
+	/*
+	 * Sample the shape using the probability density of the solid angle from
+	 * point p to the point on the surface
+	 */
+	Point sample(const Point &p, const GeomSample &gs, Normal &normal) const override;
+};
+
+/*
+ * Some information about the mesh area light so it can be created only as needed
+ */
+struct MeshAreaLight {
+	//The total surface area of the mesh
+	float total_area;
+	//1D distribution of the triangle area values, only computed if a light
+	//is attached
+	Distribution1D area_distribution;
+	//Surface area of the triangles, only built if a light is attached
+	std::vector<float> tri_areas;
 };
 
 /*
  * A mesh composed of triangles
  */
 class TriMesh : public Geometry {
+	std::unique_ptr<MeshAreaLight> light_info;
 	std::vector<Point> vertices, texcoords;
 	std::vector<Normal> normals;
 	//Indices for each face's vert, texcoord and normal
@@ -51,11 +70,6 @@ class TriMesh : public Geometry {
 	std::vector<Triangle> tris;
 	//The BVH used to accelerate ray-triangle intersection tests on the mesh
 	BVH bvh;
-	//The total surface area of the mesh
-	float total_area;
-	//1D distribution of the triangle area values, only computed if a light
-	//is attached
-	Distribution1D area_distribution;
 
 	//Friends with the meshprocessor so it's able to get the data needed
 	//to serialize the binary mesh

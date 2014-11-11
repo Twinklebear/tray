@@ -5,18 +5,16 @@
 PointLight::PointLight(const Transform &to_world, const Colorf &intensity)
 	: Light(to_world), position(to_world(Point{0, 0, 0})), intensity(intensity)
 {}
-Colorf PointLight::sample(const Point &p, const std::array<float, 2>&,
-	Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const
-{
+Colorf PointLight::sample(const Point &p, const LightSample&, Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const {
 	w_i = (position - p).normalized();
 	pdf_val = 1;
 	occlusion.set_points(p, position);
 	return intensity / position.distance_sqr(p);
 }
-Colorf PointLight::sample(const Scene&, const std::array<float, 2> &a, const std::array<float, 2>&,
+Colorf PointLight::sample(const Scene&, const LightSample &lsample, const std::array<float, 2>&,
 	Ray &ray, Normal &normal, float &pdf_val) const
 {
-	ray = Ray{position, uniform_sample_sphere(a)};
+	ray = Ray{position, uniform_sample_sphere(lsample.u)};
 	normal = Normal{ray.d};
 	pdf_val = uniform_sphere_pdf();
 	return intensity;

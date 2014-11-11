@@ -13,8 +13,8 @@ class Scene;
  * Struct to easily pass light samples for choosing a light and then sampling the light
  */
 struct LightSample {
-	const std::array<float, 2> u;
-	const float light;
+	std::array<float, 2> u;
+	float light;
 };
 
 /*
@@ -40,14 +40,14 @@ public:
 	 * the PDF of the point that was sampled and fills out the occlusion tester
 	 * for shadow testing if the color returned wasn't black
 	 */
-	virtual Colorf sample(const Point &p, const std::array<float, 2> &lsample,
+	virtual Colorf sample(const Point &p, const LightSample &lsample,
 		Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const = 0;
 	/*
 	 * Sample a light ray from the distribution of rays leaving the light
 	 * returning the ray, normal on the light surface where the ray was emitted
 	 * and pdf
 	 */
-	virtual Colorf sample(const Scene &scene, const std::array<float, 2> &a,
+	virtual Colorf sample(const Scene &scene, const LightSample &lsample,
 		const std::array<float, 2> &b, Ray &ray, Normal &normal, float &pdf_val) const = 0;
 	/*
 	 * Compute the total power emitted by the light in the scene

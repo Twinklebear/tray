@@ -17,8 +17,8 @@
  * Struct for easily passing around geometry sample data
  */
 struct GeomSample {
-	const std::array<float, 2> u;
-	const float comp;
+	std::array<float, 2> u;
+	float comp;
 };
 
 /*

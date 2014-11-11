@@ -1,3 +1,4 @@
+#include <cmath>
 #include <algorithm>
 #include "monte_carlo/distribution1d.h"
 
@@ -17,6 +18,6 @@ Distribution1D::Distribution1D(const std::vector<float> &fcn)
 Distribution1D::Distribution1D(){}
 int Distribution1D::sample_discrete(float u) const {
 	auto a = std::lower_bound(cdf.begin(), cdf.end(), u);
-	return std::distance(cdf.begin(), a);
+	return std::min(static_cast<int>(std::distance(cdf.begin(), a)), static_cast<int>(cdf.size() - 2));
 }
 

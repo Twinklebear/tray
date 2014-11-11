@@ -156,10 +156,11 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			XMLElement *e = c->ToElement();
 			std::string name = e->Attribute("name");
 			const char *t = e->Attribute("type");
+			std::string type;
 			std::cout << "Loading object: " << name << std::endl;
 			Geometry *geom = nullptr;
 			if (t){
-				std::string type = t;
+				type = t;
 				std::cout << "Setting geometry: " << type << std::endl;
 				geom = get_geometry(type, name, scene, file, e);
 			}
@@ -182,11 +183,6 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			//Check if there's an area light attached to this geometry
 			XMLElement *light_elem = c->FirstChildElement("light");
 			if (light_elem){
-				Sphere *sphere_geom = dynamic_cast<Sphere*>(geom);
-				if (sphere_geom == nullptr){
-					std::cout << "Scene error: Lights can currently only be attached to spheres" << std::endl;
-					std::exit(1);
-				}
 				std::cout << "Attaching area light to " << name << std::endl;
 				Colorf emit{1, 1, 1};
 				int n_samples = 6;
@@ -194,9 +190,20 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 				if (light_elem->FirstChildElement("nsamples")){
 					read_int(light_elem->FirstChildElement("nsamples"), n_samples);
 				}
-				AreaLight *area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
-					std::make_unique<AreaLight>(n.get_transform(), emit, sphere_geom, n_samples)));
+				AreaLight *area_light = nullptr;
+				if (type != "obj"){
+					area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
+						std::make_unique<AreaLight>(n.get_transform(), emit, geom, n_samples)));
+				}
+				else {
+					area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
+						std::make_unique<AreaLight>(Transform{}, emit, geom, n_samples)));
+				}
 				n.attach_light(area_light);
+				if (type == "obj"){
+					n.get_transform() = Transform{};
+					n.get_inv_transform() = Transform{};
+				}
 			}
 			//Load any children the node may have
 			load_node(e, n, scene, file);
@@ -237,7 +244,11 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 	else if (type == "obj"){
 		std::string model_file = file.substr(0, file.rfind(PATH_SEP) + 1) + name;
 		std::cout << "Loading model from file: " << model_file << std::endl;
-		return cache.add(name, std::make_unique<TriMesh>(model_file));
+		std::string full_name = name;
+		if (elem->FirstChildElement("light")){
+			full_name += elem->FirstChildElement("light")->Attribute("name");
+		}
+		return cache.add(full_name, std::make_unique<TriMesh>(model_file));
 	}
 	return nullptr;
 }

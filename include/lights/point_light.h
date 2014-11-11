@@ -23,15 +23,15 @@ public:
 	 * the PDF of the point that was sampled and fills out the occlusion tester
 	 * for shadow testing if the color returned wasn't black
 	 */
-	Colorf sample(const Point &p, const std::array<float, 2> &lsample,
-		Vector &w_i, float &pdf_val, OcclusionTester &occlusion) const override;
+	Colorf sample(const Point &p, const LightSample &lsample, Vector &w_i,
+		float &pdf_val, OcclusionTester &occlusion) const override;
 	/*
 	 * Sample a light ray from the distribution of rays leaving the light
 	 * returning the ray, normal on the light surface where the ray was emitted
 	 * and pdf
 	 */
-	Colorf sample(const Scene &scene, const std::array<float, 2> &a,
-		const std::array<float, 2> &b, Ray &ray, Normal &normal, float &pdf_val) const override;
+	Colorf sample(const Scene &scene, const LightSample &lsample, const std::array<float, 2> &b,
+		Ray &ray, Normal &normal, float &pdf_val) const override;
 	/*
 	 * Compute the total power emitted by the light in the scene
 	 */

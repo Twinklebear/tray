@@ -9,12 +9,12 @@ AreaLight::AreaLight(const Transform &to_world, const Colorf &emit, Geometry *ge
 Colorf AreaLight::radiance(const Point&, const Normal &n, const Vector &w) const {
 	return w.dot(n) > 0 ? emit : Colorf{0};
 }
-Colorf AreaLight::sample(const Point &p, const std::array<float, 2> &lsample, Vector &w_i,
-	float &pdf_val, OcclusionTester &occlusion) const
+Colorf AreaLight::sample(const Point &p, const LightSample &lsample, Vector &w_i, float &pdf_val,
+	OcclusionTester &occlusion) const
 {
 	Normal n_l;
 	Point p_l = to_light(p);
-	Point ps_l = geometry->sample(p_l, GeomSample{lsample, 0}, n_l);
+	Point ps_l = geometry->sample(p_l, GeomSample{lsample.u, lsample.light}, n_l);
 	Point ps_w = to_world(ps_l);
 	Vector w_il = (ps_l - p_l).normalized();
 	to_world(w_il, w_i);
@@ -22,10 +22,10 @@ Colorf AreaLight::sample(const Point &p, const std::array<float, 2> &lsample, Ve
 	occlusion.set_points(p, ps_w);
 	return radiance(ps_w, n_l, -w_il);
 }
-Colorf AreaLight::sample(const Scene&, const std::array<float, 2> &a, const std::array<float, 2> &b,
+Colorf AreaLight::sample(const Scene&, const LightSample &lsample, const std::array<float, 2> &b,
 	Ray &ray, Normal &normal, float &pdf_val) const
 {
-	Point o = geometry->sample(GeomSample{a, 0}, normal);
+	Point o = geometry->sample(GeomSample{lsample.u, lsample.light}, normal);
 	Vector d = uniform_sample_sphere(b);
 	//Make sure the ray is heading out of the surface
 	if (d.dot(normal) < 0){

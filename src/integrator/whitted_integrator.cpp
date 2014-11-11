@@ -23,14 +23,15 @@ Colorf WhittedIntegrator::illumination(const Scene &scene, const Renderer &rende
 	dg.compute_differentials(ray);
 	BSDF *bsdf = mat->get_bsdf(dg, pool);
 
-	std::array<float, 2> l_samples;
+	LightSample lsample;
 	//Compute the incident light from all lights in the scene
 	for (const auto &l : scene.get_light_cache()){
-		sampler.get_samples(&l_samples, 1);
+		sampler.get_samples(&lsample.u, 1);
+		sampler.get_samples(&lsample.light, 1);
 		Vector w_i;
 		float pdf_val = 0;
 		OcclusionTester occlusion;
-		Colorf li = l.second->sample(bsdf->dg.point, l_samples, w_i, pdf_val, occlusion);
+		Colorf li = l.second->sample(bsdf->dg.point, lsample, w_i, pdf_val, occlusion);
 		//If there's no light or no probability for this sample there's no illumination
 		if (li.luminance() == 0 || pdf_val == 0){
 			continue;

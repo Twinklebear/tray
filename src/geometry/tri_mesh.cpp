@@ -133,8 +133,11 @@ Point Triangle::sample(const GeomSample &gs, Normal &normal) const {
 	normal = na * bary.x + nb * bary.y + nc * bary.z;
 	return pa * bary.x + pb * bary.y + pc * bary.z;
 }
+Point Triangle::sample(const Point &p, const GeomSample &gs, Normal &normal) const {
+	return Geometry::sample(p, gs, normal);
+}
 
-TriMesh::TriMesh(const std::string &file, bool no_bobj){
+TriMesh::TriMesh(const std::string &file, bool no_bobj) : light_info(nullptr){
 	load_model(file, no_bobj);
 	refine_tris();
 	std::vector<Geometry*> ref_tris;
@@ -142,8 +145,8 @@ TriMesh::TriMesh(const std::string &file, bool no_bobj){
 	bvh = BVH{ref_tris, SPLIT_METHOD::SAH, 32};
 }
 TriMesh::TriMesh(const std::vector<Point> &verts, const std::vector<Point> &tex,
-	const std::vector<Normal> &norm, const std::vector<int> vert_idx)
-	: vertices(verts), texcoords(tex), normals(norm), vert_indices(vert_idx)
+	const std::vector<Normal> &norm, const std::vector<int> vert_idx) : light_info(nullptr),
+	vertices(verts), texcoords(tex), normals(norm), vert_indices(vert_idx)
 {
 	refine_tris();
 	std::vector<Geometry*> ref_tris;
@@ -171,21 +174,47 @@ const Normal& TriMesh::normal(int i) const {
 	return normals[i];
 }
 float TriMesh::surface_area() const {
-	return total_area;
+	if (light_info != nullptr){
+		return light_info->total_area;
+	}
+	return 0;
 }
 Point TriMesh::sample(const GeomSample &gs, Normal &normal) const {
-	return Point{0, 0, 0};
+	int tri_num = light_info->area_distribution.sample_discrete(gs.comp);
+	return tris[tri_num].sample(gs, normal);
 }
 Point TriMesh::sample(const Point &p, const GeomSample &gs, Normal &normal) const {
-	return Point{0, 0, 0};
+	int tri_num = light_info->area_distribution.sample_discrete(gs.comp);
+	Point tri_pt = tris[tri_num].sample(p, gs, normal);
+	//This tri may be covered by some other one that we would actually want to sample, so see
+	//if we're blocked by anything and return that one if we are
+	Ray ray{p, tri_pt - p, 0.001};
+	DifferentialGeometry dg;
+	if (intersect(ray, dg)){
+		normal = dg.normal;
+	}
+	return ray(ray.max_t);
 }
 float TriMesh::pdf(const Point &p) const {
-	return 0;
+	//Would this just be 1? It's the sum of area[i] * tri[i].pdf(p)
+	//but tri[i].pdf(p) is just 1/area[i], so it all cancels out
+	//TODO: Double check this
+	float pdf_val = 0;
+	for (size_t i = 0; i < tris.size(); ++i){
+		pdf_val += light_info->tri_areas[i] * tris[i].pdf(p);
+	}
+	return pdf_val / light_info->total_area;
 }
 float TriMesh::pdf(const Point &p, const Vector &w_i) const {
-	return 0;
+	//TODO: Need a way to find which tri the ray from p to w_i hits so we don't need to loop over all of them
+	float pdf_val = 0;
+	for (size_t i = 0; i < tris.size(); ++i){
+		pdf_val += light_info->tri_areas[i] * tris[i].pdf(p, w_i);
+	}
+	return pdf_val / light_info->total_area;
 }
 bool TriMesh::attach_light(const Transform &to_world){
+	light_info = std::make_unique<MeshAreaLight>();
 	//Move the mesh into world space so we can get rid of any scaling and have proper
 	//surface area computation
 	for (auto &p : vertices){
@@ -194,10 +223,12 @@ bool TriMesh::attach_light(const Transform &to_world){
 	for (auto &n : normals){
 		n = to_world(n);
 	}
-	total_area = 0;
+	light_info->total_area = 0;
 	for (const auto &t : tris){
-		total_area += t.surface_area();
+		light_info->tri_areas.push_back(t.surface_area());
+		light_info->total_area += light_info->tri_areas.back();
 	}
+	light_info->area_distribution = Distribution1D{light_info->tri_areas};
 	//Re-build the BVH in world space
 	std::vector<Geometry*> ref_tris;
 	refine(ref_tris);
@@ -205,11 +236,9 @@ bool TriMesh::attach_light(const Transform &to_world){
 	return true;
 }
 void TriMesh::refine_tris(){
-	total_area = 0;
 	tris.reserve(vert_indices.size());
 	for (int i = 0; i < vert_indices.size(); i += 3){
 		tris.emplace_back(vert_indices[i], vert_indices[i + 1], vert_indices[i + 2], this);
-		total_area += tris.back().surface_area();
 	}
 }
 void TriMesh::load_model(const std::string &file, bool no_bobj){

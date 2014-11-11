@@ -114,7 +114,7 @@ Colorf SurfaceIntegrator::estimate_direct(const Scene &scene, const Renderer &, 
 	float pdf_light = 0, pdf_bsdf = 0;
 	OcclusionTester occlusion;
 	//Sample the light
-	Colorf li = light.sample(p, l_sample.u, w_i, pdf_light, occlusion);
+	Colorf li = light.sample(p, l_sample, w_i, pdf_light, occlusion);
 	if (pdf_light > 0 && !li.is_black()){
 		Colorf f = bsdf(w_o, w_i, flags);
 		if (!f.is_black() && !occlusion.occluded(scene)){
