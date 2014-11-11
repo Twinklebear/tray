@@ -6,6 +6,7 @@
 #include "linalg/ray.h"
 
 class Node;
+class Geometry;
 
 enum HITSIDE { NONE, FRONT, BACK };
 
@@ -20,6 +21,7 @@ struct DifferentialGeometry {
 	//geom_normal is the true normal of the original geometry we hit
 	Normal normal, geom_normal;
 	const Node *node;
+	const Geometry *geom;
 	HITSIDE hit_side;
 	//Various derivatives and info we need for texture mapping and filtering
 	Vector dp_du, dp_dv, dp_dx, dp_dy;

@@ -40,6 +40,7 @@ bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 		//Normal doesn't change over the plane so these are trivial
 		diff_geom.dn_du = Normal{0, 0, 0};
 		diff_geom.dn_dv = Normal{0, 0, 0};
+		diff_geom.geom = this;
 		return true;
 	}
 	return false;

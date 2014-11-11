@@ -106,6 +106,7 @@ bool Triangle::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	}
 	diff_geom.u = bary[2] * ta.x + bary[0] * tb.x + bary[1] * tc.x;
 	diff_geom.v = bary[2] * ta.y + bary[0] * tb.y + bary[1] * tc.y;
+	diff_geom.geom = this;
 	return true;
 }
 BBox Triangle::bound() const {
@@ -195,23 +196,26 @@ Point TriMesh::sample(const Point &p, const GeomSample &gs, Normal &normal) cons
 	}
 	return ray(ray.max_t);
 }
-float TriMesh::pdf(const Point &p) const {
+float TriMesh::pdf(const Point&) const {
 	//Would this just be 1? It's the sum of area[i] * tri[i].pdf(p)
 	//but tri[i].pdf(p) is just 1/area[i], so it all cancels out
+	//and we just get 1 / light_info->total_area?
 	//TODO: Double check this
+	/*
 	float pdf_val = 0;
 	for (size_t i = 0; i < tris.size(); ++i){
 		pdf_val += light_info->tri_areas[i] * tris[i].pdf(p);
 	}
-	return pdf_val / light_info->total_area;
+	*/
+	return 1 / light_info->total_area;
 }
 float TriMesh::pdf(const Point &p, const Vector &w_i) const {
-	//TODO: Need a way to find which tri the ray from p to w_i hits so we don't need to loop over all of them
-	float pdf_val = 0;
-	for (size_t i = 0; i < tris.size(); ++i){
-		pdf_val += light_info->tri_areas[i] * tris[i].pdf(p, w_i);
+	Ray ray{p, w_i, 0.001};
+	DifferentialGeometry dg;
+	if (!intersect(ray, dg)){
+		return 0;
 	}
-	return pdf_val / light_info->total_area;
+	return dg.geom->pdf(p, w_i) / light_info->total_area;
 }
 bool TriMesh::attach_light(const Transform &to_world){
 	light_info = std::make_unique<MeshAreaLight>();

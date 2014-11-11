@@ -79,6 +79,7 @@ bool Sphere::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 		+ (e * F - f * E) * divisor * diff_geom.dp_dv};
 	diff_geom.dn_dv = Normal{(g * F - f * G) * divisor * diff_geom.dp_du
 		+ (f * F - g * E) * divisor * diff_geom.dp_dv};
+	diff_geom.geom = this;
 	return true;
 }
 BBox Sphere::bound() const {
