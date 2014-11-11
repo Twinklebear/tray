@@ -197,16 +197,6 @@ Point TriMesh::sample(const Point &p, const GeomSample &gs, Normal &normal) cons
 	return ray(ray.max_t);
 }
 float TriMesh::pdf(const Point&) const {
-	//Would this just be 1? It's the sum of area[i] * tri[i].pdf(p)
-	//but tri[i].pdf(p) is just 1/area[i], so it all cancels out
-	//and we just get 1 / light_info->total_area?
-	//TODO: Double check this
-	/*
-	float pdf_val = 0;
-	for (size_t i = 0; i < tris.size(); ++i){
-		pdf_val += light_info->tri_areas[i] * tris[i].pdf(p);
-	}
-	*/
 	return 1 / light_info->total_area;
 }
 float TriMesh::pdf(const Point &p, const Vector &w_i) const {
