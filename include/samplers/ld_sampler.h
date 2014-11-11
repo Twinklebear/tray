@@ -43,13 +43,15 @@ public:
 	/*
 	 * Generate a 1d pattern of low discrepancy samples and return them
 	 * sample values will be normalized between [0, 1)
+	 * Optionally specify an offset index to start sample generation at
 	 */
-	static void sample1d(float *samples, int n_samples, uint32_t scramble);
+	static void sample1d(float *samples, int n_samples, uint32_t scramble, int offset = 0);
 	/*
 	 * Generate a 2d pattern of low discrepancy samples and return them
 	 * sample positions will be normalized between [0, 1)
+	 * Optionally specify an offset index to start sample generation at
 	 */
-	static void sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y);
+	static void sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y, int offset = 0);
 	/*
 	 * Generate a sample from a scrambled (0, 2) sequence
 	 */

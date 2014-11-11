@@ -46,11 +46,17 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	}
 }
 void AdaptiveSampler::get_samples(std::array<float, 2> *samples, int n_samples){
-	LDSampler::sample2d(samples, n_samples, distrib(rng), distrib(rng));
+	//Offset our sample sequence indices by the number of samples already taken
+	//so previous samples can still be used without introducing a pattern
+	int offset = supersample_px > min_spp ? supersample_px / 2 : 0;
+	LDSampler::sample2d(samples, n_samples, distrib(rng), distrib(rng), offset);
 	std::shuffle(samples, samples + n_samples, rng);
 }
 void AdaptiveSampler::get_samples(float *samples, int n_samples){
-	LDSampler::sample1d(samples, n_samples, distrib(rng));
+	//Offset our sample sequence indices by the number of samples already taken
+	//so previous samples can still be used without introducing a pattern
+	int offset = supersample_px > min_spp ? supersample_px / 2 : 0;
+	LDSampler::sample1d(samples, n_samples, distrib(rng), offset);
 	std::shuffle(samples, samples + n_samples, rng);
 }
 int AdaptiveSampler::get_max_spp() const {

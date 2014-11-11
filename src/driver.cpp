@@ -70,9 +70,9 @@ void Worker::render(){
 					target.write_pixel(samples[i].img[0], samples[i].img[1], colors[i]);
 					target.write_float(samples[i].img[0], samples[i].img[1], samples.size());
 				}
+				rays.clear();
+				colors.clear();
 			}
-			rays.clear();
-			colors.clear();
 		}
 	}
 	status.store(STATUS::DONE, std::memory_order_release);

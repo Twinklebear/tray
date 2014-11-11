@@ -84,15 +84,15 @@ std::vector<std::unique_ptr<Sampler>> LDSampler::get_subsamplers(int w, int h) c
 	}
 	return samplers;
 }
-void LDSampler::sample1d(float *samples, int n_samples, uint32_t scramble){
+void LDSampler::sample1d(float *samples, int n_samples, uint32_t scramble, int offset){
 	for (int i = 0; i < n_samples; ++i){
-		samples[i] = van_der_corput(i, scramble);
+		samples[i] = van_der_corput(i + offset, scramble);
 	}
 }
-void LDSampler::sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y){
+void LDSampler::sample2d(std::array<float, 2> *samples, int n_samples, uint32_t x, uint32_t y, int offset){
 	std::array<uint32_t, 2> scramble{x, y};
 	for (int i = 0; i < n_samples; ++i){
-		sample02(i, scramble, samples[i]);
+		sample02(i + offset, scramble, samples[i]);
 	}
 }
 void LDSampler::sample02(uint32_t n, const std::array<uint32_t, 2> &scramble,
