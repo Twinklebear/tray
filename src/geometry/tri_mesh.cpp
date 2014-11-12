@@ -197,7 +197,7 @@ Point TriMesh::sample(const Point &p, const GeomSample &gs, Normal &normal) cons
 	return ray(ray.max_t);
 }
 float TriMesh::pdf(const Point&) const {
-	return 1 / light_info->total_area;
+	return tris.size() / light_info->total_area;
 }
 float TriMesh::pdf(const Point &p, const Vector &w_i) const {
 	Ray ray{p, w_i, 0.001};
