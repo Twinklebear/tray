@@ -22,21 +22,6 @@ public:
 	 */
 	Colorf illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 		DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const override;
-
-private:
-	/*
-	 * Trace a camera path starting from the first hit at dg returning the throughput of the
-	 * path and the BSDF of the last object hit and the direction we hit it from so that we
-	 * can connect the path to a light path
-	 */
-	Colorf trace_camera(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-		DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool, BSDF *&bsdf, Vector &w_o) const;
-	/*
-	 * Trace a light path returning the illumination along the path and the BSDF of
-	 * of the last object hit and the direction we hit it from so that we
-	 */
-	Colorf trace_light(const Scene &scene, const Renderer &renderer, Sampler &sampler,
-		MemoryPool &pool, BSDF *&bsdf, Vector &w_o) const;
 };
 
 #endif
