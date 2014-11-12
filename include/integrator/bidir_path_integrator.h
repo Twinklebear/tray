@@ -1,13 +1,14 @@
-#ifndef PATH_INTEGRATOR_H
-#define PATH_INTEGRATOR_H
+#ifndef BIDIR_PATH_INTEGRATOR_H
+#define BIDIR_PATH_INTEGRATOR_H
 
 #include "surface_integrator.h"
 #include "renderer/renderer.h"
 
 /*
- * Surface integrator that uses Path tracing for computing illumination at a point on the surface
+ * Surface integrator that uses bidirectional path tracing for computing illumination
+ * at a a point on the surface
  */
-class PathIntegrator : public SurfaceIntegrator {
+class BidirPathIntegrator : public SurfaceIntegrator {
 	const int min_depth, max_depth;
 
 public:
@@ -16,7 +17,7 @@ public:
 	 * rays are randomly stopped by Russian roulette after reaching min_depth and are stopped
 	 * at max_depth
 	 */
-	PathIntegrator(int min_depth, int max_depth);
+	BidirPathIntegrator(int min_depth, int max_depth);
 	/*
 	 * Compute the illumination at a point on a surface in the scene
 	 */

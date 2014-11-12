@@ -8,6 +8,7 @@
 #include "film/camera.h"
 #include "renderer/renderer.h"
 #include "integrator/path_integrator.h"
+#include "integrator/bidir_path_integrator.h"
 #include "geometry/geometry.h"
 #include "linalg/ray.h"
 #include "linalg/transform.h"
