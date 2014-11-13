@@ -75,6 +75,15 @@ for diffuse reflection is `reflection * diffuse` and so on.
 	<roughness value="0.01"/>
 </material>
 ```
+Metals can also be specified using PBRT's [spd](https://github.com/mmp/pbrt-v2/tree/master/scenes/spds/metals) files which
+contain measured metal properties over the visible light spectrum.
+```XML
+<material type="metal" name="my_pbrt_metal">
+	<ior spd="./spds/Cu.eta.spd"/>
+	<absorption spd="./spds/Cu.k.spd"/>
+	<roughness value="0.000976"/>
+</material>
+```
 
 **MERL Material**
 The renderer supports materials from the MERL BRDF database from "A Data-Driven Reflectance Model", by Wojciech Matusik,
