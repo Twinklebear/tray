@@ -1,3 +1,5 @@
+#include <array>
+#include <algorithm>
 #include <ostream>
 #include "linalg/util.h"
 #include "film/color.h"
@@ -14,8 +16,31 @@ uint8_t& Color24::operator[](int i){
 	}
 }
 
+bool operator<(const SpectrumSample &a, const SpectrumSample &b){
+	return a.lambda < b.lambda;
+}
+
 Colorf::Colorf(float c) : r(c), g(c), b(c){}
 Colorf::Colorf(float r, float g, float b) : r(r), g(g), b(b){}
+Colorf::Colorf(const std::vector<SpectrumSample> &samples){
+	assert(std::is_sorted(samples.begin(), samples.end()));
+	std::array<float, 3> xyz{0};
+	float y_integral = 0;
+	for (size_t i = 0; i < NUM_CIE_SAMPLES; ++i){
+		y_integral += CIE_Y[i];
+		float val = interpolate_spectrum(samples, CIE_LAMBDA[i]);
+		xyz[0] += val * CIE_X[i];
+		xyz[1] += val * CIE_Y[i];
+		xyz[2] += val * CIE_Z[i];
+	}
+	for (int i = 0; i < 3; ++i){
+		xyz[i] /= y_integral;
+	}
+	//Convert to RGB using the standard spectra from PBRT
+	r = 3.240479f * xyz[0] - 1.537150f * xyz[1] - 0.498535f * xyz[2];
+	g = -0.969256f * xyz[0] + 1.875991f * xyz[1] + 0.041556f * xyz[2];
+	b = 0.055648f * xyz[0] - 0.204043f * xyz[1] + 1.057311f * xyz[2];
+}
 void Colorf::normalize(){
 	r = clamp(r, 0.f, 1.f);
 	g = clamp(g, 0.f, 1.f);
@@ -103,5 +128,22 @@ std::ostream& operator<<(std::ostream &os, const Colorf &c){
 	os << "Colorf: [r = " << c.r << ", g = " << c.g
 		<< ", b = " << c.b << "] ";
 	return os;
+}
+float interpolate_spectrum(const std::vector<SpectrumSample> &samples, float lambda){
+	if (lambda <= samples.front().lambda){
+		return samples.front().value;
+	}
+	if (lambda >= samples.back().lambda){
+		return samples.back().value;
+	}
+	//Find the first sample at wavelength higher than lambda and lerp it with the
+	//previous one (eg. the sample less than lambda)
+	auto grt = std::lower_bound(samples.begin(), samples.end(), lambda,
+		[](const auto &s, const auto &l){
+			return s.lambda < l;
+		});
+	auto less = grt - 1;
+	float t = (lambda - less->lambda) / (grt->lambda - less->lambda);
+	return lerp(t, less->value, grt->value);
 }
 
