@@ -62,7 +62,7 @@
 		<object type="sphere_r1.8" name="sphere_light" radius="1.8">
 			<translate x="0" y="0" z="23.5"/>
 			<light type="area" name="areaLight">
-				<intensity r="0.780131" g="0.780409" b="0.775833" value="225"/>
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="75"/>
 			</light>
 		</object>
 
@@ -77,38 +77,38 @@
 			<diffuse  r="0.162928" g="0.408903" b="0.0833759"/>
 		</material>
 		<material type="metal" name="sphere1">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="1"/>
 		</material>
 		<material type="metal" name="sphere2">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.25"/>
 		</material>
 		<material type="metal" name="sphere3">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.0625"/>
 		</material>
 		<material type="metal" name="sphere4">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.0156"/>
 		</material>
 		<material type="metal" name="sphere5">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.0039"/>
 		</material>
 		<material type="metal" name="sphere6">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.000976"/>
 		</material>
 		<material type="metal" name="sphere7">
-			<ior spd="./spds/Cu.eta.spd"/>
-			<absorption spd="./spds/Cu.k.spd"/>
+			<ior spd="./spds/Ag.eta.spd"/>
+			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.000244"/>
 		</material>
 	</scene>
@@ -123,7 +123,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="1024"/>
+		<sampler type="adaptive" min="64" max="64"/>
 	</config>
 </xml>
 

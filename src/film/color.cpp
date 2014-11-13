@@ -55,6 +55,21 @@ float Colorf::luminance() const {
 bool Colorf::is_black() const {
 	return r == 0 && g == 0 && b == 0;
 }
+Colorf Colorf::to_sRGB() const {
+	//Transformation from wikipedia: http://en.wikipedia.org/wiki/SRGB
+	const float a = 0.055;
+	const float b = 1.f / 2.4f;
+	Colorf srgb;
+	for (int i = 0; i < 3; ++i){
+		if ((*this)[i] <= 0.0031308){
+			srgb[i] = 12.92 * (*this)[i];
+		}
+		else {
+			srgb[i] = (1 + a) * std::pow((*this)[i], b) - a;
+		}
+	}
+	return srgb;
+}
 Colorf& Colorf::operator+=(const Colorf &c){
 	r += c.r;
 	g += c.g;
@@ -83,6 +98,16 @@ Colorf& Colorf::operator/=(float s){
 	return *this *= 1.f / s;
 }
 float& Colorf::operator[](int i){
+	switch (i){
+		case 0:
+			return r;
+		case 1:
+			return g;
+		default:
+			return b;
+	}
+}
+const float& Colorf::operator[](int i) const {
 	switch (i){
 		case 0:
 			return r;

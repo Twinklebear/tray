@@ -60,12 +60,17 @@ struct Colorf {
 	 * Check if the color is black
 	 */
 	bool is_black() const;
+	/*
+	 * Compute and return the sRGB color value for the linear RGB color value
+	 */
+	Colorf to_sRGB() const;
 	Colorf& operator+=(const Colorf &c);
 	Colorf& operator-=(const Colorf &c);
 	Colorf& operator*=(const Colorf &c);
 	Colorf& operator*=(float s);
 	Colorf& operator/=(float s);
 	float& operator[](int i);
+	const float& operator[](int i) const;
 	/*
 	 * Easily convert to the 8-bit/channel color representation
 	 */

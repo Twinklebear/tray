@@ -114,7 +114,7 @@ void RenderTarget::get_colorbuf(std::vector<Color24> &img) const {
 					p.b.load(std::memory_order_consume)};
 				c /= weight;
 				c.normalize();
-				img[y * width + x] = c;
+				img[y * width + x] = c.to_sRGB();
 			}
 		}
 	}
