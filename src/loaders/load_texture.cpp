@@ -1,4 +1,6 @@
 #include <memory>
+#include <cstdio>
+#include <fstream>
 #include <string>
 #include <regex>
 #include <tinyxml2.h>
@@ -135,11 +137,28 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 		}
 		else {
 			std::cout << "Warning: procedural texture " << name << " not implemented\n";
-			cache.add(name, std::make_unique<ConstantTexture>(Colorf{0, 0, 0}));
-			tex = cache.get(name);
+			tex = cache.add(name, std::make_unique<ConstantTexture>(Colorf{0, 0, 0}));
 		}
 	}
 	std::cout << "Created texture name: " << name << std::endl;
 	return tex;
+}
+Texture* load_spd(tinyxml2::XMLElement *elem, const std::string&, TextureCache &cache, const std::string &file){
+	std::string spd_file = file.substr(0, file.rfind(PATH_SEP) + 1) + std::string{elem->Attribute("spd")};
+	Texture *tex = cache.get(spd_file);
+	if (tex){
+		return tex;
+	}
+	//Parse the spectrum samples in the file and load them into an RGB color
+	std::ifstream fin{spd_file};
+	std::string line;
+	std::vector<SpectrumSample> samples;
+	while (std::getline(fin, line)){
+		float lambda, val;
+		std::sscanf(line.c_str(), "%f %f", &lambda, &val);
+		samples.push_back(SpectrumSample{lambda, val});
+	}
+	Colorf color{samples};
+	return cache.add(spd_file, std::make_unique<ConstantTexture>(color));
 }
 

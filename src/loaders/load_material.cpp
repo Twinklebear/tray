@@ -163,11 +163,21 @@ std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &t
 	std::string name = elem->Attribute("name");
 	XMLElement *e = elem->FirstChildElement("ior");
 	if (e){
-		ior = load_texture(e, name, tcache, file);
+		if (e->Attribute("spd")){
+			ior = load_spd(e, name, tcache, file);
+		}
+		else {
+			ior = load_texture(e, name, tcache, file);
+		}
 	}
 	e = elem->FirstChildElement("absorption");
 	if (e){
-		absorp_coef = load_texture(e, name, tcache, file);
+		if (e->Attribute("spd")){
+			absorp_coef = load_spd(e, name, tcache, file);
+		}
+		else {
+			absorp_coef = load_texture(e, name, tcache, file);
+		}
 	}
 	e = elem->FirstChildElement("roughness");
 	if (e){
