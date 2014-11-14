@@ -87,8 +87,7 @@ contain measured metal properties over the visible light spectrum.
 ```
 
 **MERL Material**
-The renderer supports materials from the MERL BRDF database from "A Data-Driven Reflectance Model", by Wojciech Matusik,
-Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769.
+The renderer supports materials from the [MERL BRDF database](http://www.merl.com/brdf/) from "A Data-Driven Reflectance Model", by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769.
 ```XML
 <material type="merl" name="my_merl_material" file="./brdfs/alumina-oxide.binary"/>
 ```
