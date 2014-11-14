@@ -10,13 +10,15 @@
  */
 class MetalMaterial : public Material {
 	const Texture *refr_index, *absoption_coef;
-	const float roughness;
+	const float rough_x, rough_y;
 
 public:
 	/*
 	 * Create the metal, specifying the textures to be used for its attributes
+	 * To create an anisotropic material specify both rough_x and rough_y, for a
+	 * non-aniostropic material only specify rough_x
 	 */
-	MetalMaterial(const Texture *refr_index, const Texture *absoption_coef, float roughness);
+	MetalMaterial(const Texture *refr_index, const Texture *absoption_coef, float rough_x, float rough_y = -1);
 	/*
 	 * Get the BSDF to compute the shading for the material at this
 	 * piece of geometry
