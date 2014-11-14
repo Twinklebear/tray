@@ -1,89 +1,89 @@
 <xml>
-  <scene>
-    <!-- Objects -->
-    <object name="box">
-      <translate x="0" y="0" z="12"/>
-      <object type="plane" name="WallBottom" material="wall">
-        <scale value="32"/>
-        <translate z="-12"/>
-      </object>
-      <object type="plane" name="WallTop" material="wall">
-        <scale value="32"/>
-        <rotate angle="180" x="1"/>
-        <translate z="12"/>
-      </object>
-      <object type="plane" name="WallBack" material="wall">
-        <scale value="32"/>
-        <rotate angle="90" x="1"/>
-        <translate y="20"/>
-      </object>
-      <object type="plane" name="WallLeft" material="wallRed">
-        <scale value="32"/>
-        <rotate angle="90" y="1"/>
-        <translate x="-15"/>
-      </object>
-      <object type="plane" name="WallRight" material="wallBlue">
-        <scale value="32"/>
-        <rotate angle="-90" y="1"/>
-        <translate x="15"/>
-      </object>
-    </object>
-	<object type="obj" name="./models/killeroo.obj" material="brass">
-      <scale value="0.85"/>
-      <rotate angle="90" x="1"/>
-	  <rotate angle="-135" z="1"/>
-      <translate x="1" y="4" z="11.7"/>
-    </object>
-	<object type="obj" name="./models/teapot_hres.obj" material="mtl1">
-      <scale value="0.3"/>
-      <rotate angle="-60" z="1"/>
-      <translate x="5" y="-6" z="0"/>
-    </object>
-	<object type="sphere" name="sphere2" material="mtl2">
-      <scale value="4"/>
-      <translate x="-8" y="-4" z="4"/>
-    </object>
-    <object type="sphere_r1" name="sphere_light" radius="1">
-      <translate x="0" y="0" z="22"/>
-	  <light type="area" name="areaLight">
-		<intensity r="0.780131" g="0.780409" b="0.775833" value="50"/>
-      </light>
-    </object>
- 
-    <!-- Materials -->
-    <material type="matte" name="wall">
-      <diffuse  r="1" g="1" b="1"/>
-    </material>
-    <material type="matte" name="wallRed">
-      <diffuse  r="1.0" g="0.2" b="0.2"/>
-    </material>
-    <material type="matte" name="wallBlue">
-      <diffuse  r="0.2" g="0.2" b="1.0"/>
-    </material>
-	<material type="merl" name="brass" file="./brdfs/brass.binary"/>
-    <material type="plastic" name="mtl1">
-      <diffuse  r="0.8" g="0.2" b="0.2"/>
-      <specular r="1.0" g="1.0" b="1.0" value="0.7"/>
-      <roughness value="0.2"/>
-    </material>
-	<material type="metal" name="mtl2">
-		<ior spd="./spds/Au.eta.spd"/>
-		<absorption spd="./spds/Au.k.spd"/>
-		<roughness x="0.01" y="0.08"/>
-	</material>
-  </scene>
- 
-  <camera>
-    <position x="0" y="-60" z="12"/>
-    <target x="0" y="0" z="12"/>
-    <up x="0" y="0" z="1"/>
-    <fov value="30"/>
-    <width value="800"/>
-    <height value="600"/>
-  </camera>
+	<scene>
+		<!-- Objects -->
+		<object name="box">
+			<translate x="0" y="0" z="12"/>
+			<object type="plane" name="WallBottom" material="wall">
+				<scale value="32"/>
+				<translate z="-12"/>
+			</object>
+			<object type="plane" name="WallTop" material="wall">
+				<scale value="32"/>
+				<rotate angle="180" x="1"/>
+				<translate z="12"/>
+			</object>
+			<object type="plane" name="WallBack" material="wall">
+				<scale value="32"/>
+				<rotate angle="90" x="1"/>
+				<translate y="20"/>
+			</object>
+			<object type="plane" name="WallLeft" material="wallRed">
+				<scale value="32"/>
+				<rotate angle="90" y="1"/>
+				<translate x="-15"/>
+			</object>
+			<object type="plane" name="WallRight" material="wallBlue">
+				<scale value="32"/>
+				<rotate angle="-90" y="1"/>
+				<translate x="15"/>
+			</object>
+		</object>
+		<object type="obj" name="./models/killeroo.obj" material="brass">
+			<scale value="0.85"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="-135" z="1"/>
+			<translate x="1" y="4" z="11.7"/>
+		</object>
+		<object type="obj" name="./models/teapot_hres.obj" material="mtl1">
+			<scale value="0.3"/>
+			<rotate angle="-60" z="1"/>
+			<translate x="5" y="-6" z="0"/>
+		</object>
+		<object type="sphere" name="sphere2" material="mtl2">
+			<scale value="4"/>
+			<translate x="-8" y="-4" z="4"/>
+		</object>
+		<object type="sphere_r1" name="sphere_light" radius="1">
+			<translate x="0" y="0" z="22"/>
+			<light type="area" name="areaLight">
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="50"/>
+			</light>
+		</object>
 
-  <config>
-	  <sampler type="adaptive" min="64" max="64"/>
-  </config>
+		<!-- Materials -->
+		<material type="matte" name="wall">
+			<diffuse  r="1" g="1" b="1"/>
+		</material>
+		<material type="matte" name="wallRed">
+			<diffuse  r="1.0" g="0.2" b="0.2"/>
+		</material>
+		<material type="matte" name="wallBlue">
+			<diffuse  r="0.2" g="0.2" b="1.0"/>
+		</material>
+		<material type="merl" name="brass" file="./brdfs/brass.binary"/>
+		<material type="plastic" name="mtl1">
+			<diffuse  r="0.8" g="0.2" b="0.2"/>
+			<specular r="1.0" g="1.0" b="1.0" value="0.7"/>
+			<roughness value="0.2"/>
+		</material>
+		<material type="metal" name="mtl2">
+			<ior spd="./spds/Au.eta.spd"/>
+			<absorption spd="./spds/Au.k.spd"/>
+			<roughness x="0.01" y="0.08"/>
+		</material>
+	</scene>
+
+	<camera>
+		<position x="0" y="-60" z="12"/>
+		<target x="0" y="0" z="12"/>
+		<up x="0" y="0" z="1"/>
+		<fov value="30"/>
+		<width value="800"/>
+		<height value="600"/>
+	</camera>
+
+	<config>
+		<sampler type="adaptive" min="64" max="64"/>
+	</config>
 </xml>
 
