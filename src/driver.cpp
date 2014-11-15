@@ -26,7 +26,7 @@ void Worker::render(){
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
-	auto renderer = std::make_unique<Renderer>(std::make_unique<PathIntegrator>(3, scene.get_max_depth()));
+	auto renderer = std::make_unique<Renderer>(std::make_unique<BidirPathIntegrator>(3, scene.get_max_depth()));
 	MemoryPool pool;
 	std::vector<Sample> samples;
 	std::vector<RayDifferential> rays;
