@@ -54,11 +54,11 @@ private:
 	Colorf camera_luminance(const Scene &scene, const Renderer &renderer, const PathVertex *path_vertices,
 		int path_len, Sampler &sampler, MemoryPool &pool) const;
 	/*
-	 * Trace a light path returning the illumination along the path and the BSDF of
-	 * of the last object hit and the direction we hit it from so that we
+	 * Compute the luminance coming back along the camera path by combining the camera and light
+	 * paths that were traced previously
 	 */
-	Colorf bidir_luminance(const Scene &scene, const Renderer &renderer, Sampler &sampler,
-		MemoryPool &pool, BSDF *&bsdf, Vector &w_o) const;
+	Colorf bidir_luminance(const Scene &scene, const Renderer &renderer, PathVertex *cam_path, int cam_path_len,
+		PathVertex *light_path, int light_path_len, Sampler &sampler, MemoryPool &pool) const;
 };
 
 #endif
