@@ -11,6 +11,8 @@ scenes/textures/
 scenes/models/
 scenes/brdfs
 *.png
+*.ppm
+*.pgm
 
 # Ignored ycm compiled python file
 *.pyc
