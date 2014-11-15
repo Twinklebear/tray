@@ -35,9 +35,9 @@
 			<translate x="1" y="4" z="11.7"/>
 		</object>
 		<object type="obj" name="./models/teapot_hres.obj" material="mtl1">
-			<scale value="0.3"/>
+			<scale value="0.32"/>
 			<rotate angle="-60" z="1"/>
-			<translate x="5" y="-6" z="0"/>
+			<translate x="8" y="-6" z="0"/>
 		</object>
 		<object type="sphere" name="sphere2" material="mtl2">
 			<scale value="4"/>
@@ -62,9 +62,9 @@
 		</material>
 		<material type="merl" name="brass" file="./brdfs/brass.binary"/>
 		<material type="plastic" name="mtl1">
-			<diffuse  r="0.8" g="0.2" b="0.2"/>
-			<specular r="1.0" g="1.0" b="1.0" value="0.7"/>
-			<roughness value="0.2"/>
+			<diffuse  r="1.0" g="0.2" b="0.2"/>
+			<specular r="1.0" g="0.7" b="0.7" value="0.7"/>
+			<roughness value="0.08"/>
 		</material>
 		<material type="metal" name="mtl2">
 			<ior spd="./spds/Au.eta.spd"/>
