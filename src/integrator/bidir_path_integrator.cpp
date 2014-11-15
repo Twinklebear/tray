@@ -26,12 +26,12 @@ Colorf BidirPathIntegrator::illumination(const Scene &scene, const Renderer &ren
 	if (light_illum.is_black()){
 		return Colorf{0};
 	}
-	//TODO output color is way wrong, is this because we aren't permuting the paths and hooking every combination
-	//up and sending light back along the camera subpath?
+	//TODO: Our weighting isn't quite correct
 	OcclusionTester occlusion;
 	occlusion.set_points(cam_bsdf->dg.point, light_bsdf->dg.point);
 	if (!occlusion.occluded(scene)){
-		return light_illum * cam_throughput;
+		return light_illum * cam_throughput * (*cam_bsdf)(wo_cam, occlusion.ray.d)
+			* (*light_bsdf)(-occlusion.ray.d, wo_light) * occlusion.ray.d.dot(cam_bsdf->dg.normal);
 	}
 	return Colorf{0};
 }
