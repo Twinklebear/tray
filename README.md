@@ -92,6 +92,18 @@ The renderer supports materials from the [MERL BRDF database](http://www.merl.co
 <material type="merl" name="my_merl_material" file="./brdfs/alumina-oxide.binary"/>
 ```
 
+**Glass Material**
+```XML
+<material type="glass" name="my_glass_mat">
+	<!-- Color and strength of reflections -->
+	<reflection r="1" g="0.5" b="0.8"/>
+	<!-- Color and strength of transmission -->
+	<transmission r="0.4" g="0.2" b="1"/>
+	<!-- Index of refraction of the material, defaults to 1 (air) -->
+	<ior value="1.52"/>
+</material>
+```
+
 Lights
 -
 **Point Lights**
