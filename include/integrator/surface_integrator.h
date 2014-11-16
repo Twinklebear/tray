@@ -1,13 +1,16 @@
 #ifndef SURFACE_INTEGRATOR_H
 #define SURFACE_INTEGRATOR_H
 
-#include "scene.h"
 #include "samplers/sampler.h"
 #include "renderer/renderer.h"
 #include "linalg/ray.h"
 #include "geometry/differential_geometry.h"
 #include "memory_pool.h"
 #include "film/color.h"
+#include "material/bsdf.h"
+#include "lights/light.h"
+
+class Scene;
 
 /*
  * Compute the illumnation at a point on a surface in the scene

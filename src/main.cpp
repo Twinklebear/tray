@@ -23,7 +23,6 @@ const static std::string USAGE =
                     should evenly divide the image width. Default is image width.\n\
 -bh <num>         - Optional: specify the desired height of blocks to partition the scene into for the threads to work on,\n\
                     should evenly divide the image height. Default is image height.\n\
--d <num>          - Optional: specify the max recursion depth for reflected/refracted rays. Default is 8.\n\
 -pmesh [<files>]  - Specify a list of meshes to be run through the the obj -> binary obj (bobj) processor so that they\n\
                     can be loaded faster when doing a render. The renderer will check for bobj files with the same name\n\
                     when trying to load an obj file in a scene.\n"
@@ -75,12 +74,8 @@ int main(int argc, char **argv){
 	if (flag(argv, argv + argc, "-bh")){
 		bh = get_param<int>(argv, argv + argc, "-bh");
 	}
-	int depth = 8;
-	if (flag(argv, argv + argc, "-d")){
-		depth = get_param<int>(argv, argv + argc, "-d");
-	}
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
-	Scene scene = load_scene(scene_file, depth);
+	Scene scene = load_scene(scene_file);
 	scene.get_root().flatten_children();
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();

@@ -5,9 +5,9 @@
 #include "samplers/sampler.h"
 #include "linalg/ray.h"
 #include "memory_pool.h"
-#include "scene.h"
 
 class SurfaceIntegrator;
+class Scene;
 
 /*
  * Interface for renderers, given a ray to trace and a scene

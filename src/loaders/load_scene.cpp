@@ -9,17 +9,21 @@
 #include "linalg/transform.h"
 #include "film/camera.h"
 #include "film/render_target.h"
+#include "renderer/renderer.h"
 #include "geometry/sphere.h"
 #include "geometry/plane.h"
 #include "geometry/tri_mesh.h"
 #include "filters/box_filter.h"
 #include "samplers/stratified_sampler.h"
+#include "integrator/path_integrator.h"
 #include "loaders/load_filter.h"
+#include "loaders/load_renderer.h"
 #include "loaders/load_material.h"
 #include "loaders/load_light.h"
 #include "loaders/load_sampler.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_texture.h"
+#include "loaders/load_renderer.h"
 #include "scene.h"
 
 /*
@@ -47,7 +51,7 @@ static void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, cons
 static Geometry* get_geometry(const std::string &type, const std::string &name, Scene &scene, const std::string &file,
 	tinyxml2::XMLElement *elem);
 
-Scene load_scene(const std::string &file, int depth){
+Scene load_scene(const std::string &file){
 	using namespace tinyxml2;
 	XMLDocument doc;
 	XMLError err = doc.LoadFile(file.c_str());
@@ -76,17 +80,20 @@ Scene load_scene(const std::string &file, int depth){
 	XMLElement *cfg = xml->FirstChildElement("config");
 	std::unique_ptr<Filter> filter;
 	std::unique_ptr<Sampler> sampler;
+	std::unique_ptr<Renderer> renderer;
 	if (cfg){
 		filter = load_filter(cfg);
 		sampler = load_sampler(cfg, w, h);
+		renderer = std::make_unique<Renderer>(load_surface_integrator(cfg));
 	}
 	else {
 		filter = std::make_unique<BoxFilter>(0.5, 0.5);
 		sampler = std::make_unique<StratifiedSampler>(0, w, 0, h, 1);
+		renderer = std::make_unique<Renderer>(std::make_unique<PathIntegrator>(3, 8));
 	}
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
 		std::move(filter)};
-	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), depth};
+	Scene scene{std::move(camera), std::move(render_target), std::move(sampler), std::move(renderer)};
 	//See if we have any background or environment textures
 	XMLElement *tex = scene_node->FirstChildElement("background");
 	if (tex){

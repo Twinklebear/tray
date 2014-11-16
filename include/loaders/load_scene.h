@@ -19,7 +19,7 @@ const char PATH_SEP = '/';
  * set its max ray recursion depth to the desired value
  * Based off of Cem's load scene utility but migrated to TinyXML-2
  */
-Scene load_scene(const std::string &file, int depth);
+Scene load_scene(const std::string &file);
 /*
  * Read the x,y,z attributes of the XMLElement and return it
  */

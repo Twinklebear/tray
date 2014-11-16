@@ -11,6 +11,8 @@
 #include "film/camera.h"
 #include "samplers/sampler.h"
 #include "textures/texture.h"
+#include "renderer/renderer.h"
+#include "integrator/surface_integrator.h"
 
 /*
  * Describes a scene that we're rendering
@@ -23,9 +25,8 @@ class Scene {
 	Camera camera;
 	RenderTarget render_target;
 	std::unique_ptr<Sampler> sampler;
+	std::unique_ptr<Renderer> renderer;
 	Node root;
-	//The max recursion depth for reflected/refracted rays
-	int max_depth;
 	Texture *background, *environment;
 
 public:
@@ -34,7 +35,8 @@ public:
 	 * Geometry can be added by adding nodes to the root
 	 * and selecting from or adding to the geometry cache
 	 */
-	Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, int depth);
+	Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler,
+		std::unique_ptr<Renderer>);
 	GeometryCache& get_geom_cache();
 	MaterialCache& get_mat_cache();
 	TextureCache& get_tex_cache();
@@ -44,9 +46,9 @@ public:
 	RenderTarget& get_render_target();
 	const RenderTarget& get_render_target() const;
 	const Sampler& get_sampler() const;
+	const Renderer& get_renderer() const;
 	Node& get_root();
 	const Node& get_root() const;
-	int get_max_depth() const;
 	void set_background(Texture *t);
 	void set_environment(Texture *t);
 	const Texture* get_background() const;

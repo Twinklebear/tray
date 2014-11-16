@@ -167,6 +167,20 @@ The camera shutter open and close times can be specified as:
 </camera>
 ```
 
+Renderers
+-
+You can specify which renderer you want to have used to render your scene. Currently Whitted, path tracing and bidirectional
+path tracing are supported.
+
+- whitted - Use Whitted recursive ray tracing to render
+	- `max_depth` - max recursion depth for rays
+- path - Use camera path tracing to render
+	- `max_depth` - max path length
+	- `min_depth` - minimum path length
+- bidir - Use bidirectional path tracing to render
+	- `max_depth` - max path length
+	- `min_depth` - minimum path length
+
 Samplers
 -
 The type of sampler used to render the scene can be configured by the `<sampler type="">` tag. Available samplers and their

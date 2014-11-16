@@ -26,7 +26,7 @@ void Worker::render(){
 	Node &root = scene.get_root();
 	RenderTarget &target = scene.get_render_target();
 	Camera &camera = scene.get_camera();
-	auto renderer = std::make_unique<Renderer>(std::make_unique<BidirPathIntegrator>(3, scene.get_max_depth()));
+	const Renderer &renderer = scene.get_renderer();
 	MemoryPool pool;
 	std::vector<Sample> samples;
 	std::vector<RayDifferential> rays;
@@ -46,7 +46,7 @@ void Worker::render(){
 			for (const auto &s : samples){
 				rays.push_back(camera.generate_raydifferential(s));
 				rays.back().scale_differentials(1.f / std::sqrt(sampler->get_max_spp()));
-				colors.push_back(renderer->illumination(rays.back(), scene, *sampler, pool));
+				colors.push_back(renderer.illumination(rays.back(), scene, *sampler, pool));
 				//If we didn't hit anything and the scene has a background use that
 				if (scene.get_background() && rays.back().max_t == std::numeric_limits<float>::infinity()){
 					DifferentialGeometry dg;

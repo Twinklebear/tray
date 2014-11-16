@@ -6,9 +6,9 @@
 #include "textures/texture.h"
 #include "scene.h"
 
-Scene::Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, int depth)
+Scene::Scene(Camera camera, RenderTarget target, std::unique_ptr<Sampler> sampler, std::unique_ptr<Renderer> renderer)
 	: camera(std::move(camera)), render_target(std::move(target)), sampler(std::move(sampler)),
-	root(nullptr, nullptr, Transform{}, "root"), max_depth(depth), background(nullptr), environment(nullptr)
+	renderer(std::move(renderer)), root(nullptr, nullptr, Transform{}, "root"), background(nullptr), environment(nullptr)
 {}
 GeometryCache& Scene::get_geom_cache(){
 	return geom_cache;
@@ -37,14 +37,14 @@ const RenderTarget& Scene::get_render_target() const {
 const Sampler& Scene::get_sampler() const {
 	return *sampler;
 }
+const Renderer& Scene::get_renderer() const {
+	return *renderer;
+}
 Node& Scene::get_root(){
 	return root;
 }
 const Node& Scene::get_root() const {
 	return root;
-}
-int Scene::get_max_depth() const {
-	return max_depth;
 }
 void Scene::set_background(Texture *t){
 	background = t;

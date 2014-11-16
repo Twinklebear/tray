@@ -1,6 +1,8 @@
 #include <array>
+#include "scene.h"
 #include "material/material.h"
 #include "lights/light.h"
+#include "lights/area_light.h"
 #include "lights/occlusion_tester.h"
 #include "material/bsdf.h"
 #include "renderer/renderer.h"
