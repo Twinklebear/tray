@@ -62,7 +62,7 @@
 		<object type="sphere_r1.8" name="sphere_light" radius="1.8">
 			<translate x="0" y="0" z="23.5"/>
 			<light type="area" name="areaLight">
-				<intensity r="0.780131" g="0.780409" b="0.775833" value="25"/>
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="50"/>
 			</light>
 		</object>
 
@@ -99,7 +99,7 @@
 		<material type="metal" name="sphere5">
 			<ior spd="./spds/Ag.eta.spd"/>
 			<absorption spd="./spds/Ag.k.spd"/>
-			<roughness x="0.0039" y="0.0156"/>
+			<roughness value="0.0039"/>
 		</material>
 		<material type="metal" name="sphere6">
 			<ior spd="./spds/Ag.eta.spd"/>
@@ -124,6 +124,7 @@
 
 	<config>
 		<sampler type="adaptive" min="64" max="64"/>
+		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
 

@@ -84,6 +84,7 @@
 
 	<config>
 		<sampler type="adaptive" min="64" max="512"/>
+		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
 

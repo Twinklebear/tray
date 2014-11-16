@@ -83,6 +83,7 @@
 
 	<config>
 		<sampler type="adaptive" min="128" max="512"/>
+		<renderer type="bidir" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
 
