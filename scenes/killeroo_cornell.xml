@@ -69,7 +69,7 @@
 		<material type="metal" name="mtl2">
 			<ior spd="./spds/Au.eta.spd"/>
 			<absorption spd="./spds/Au.k.spd"/>
-			<roughness x="0.01" y="0.08"/>
+			<roughness value="0.01"/>
 		</material>
 	</scene>
 
