@@ -45,10 +45,10 @@
 			<rotate angle="30" y="1"/>
 			<translate x="-8" y="-6" z="4"/>
 		</object>
-		<object type="sphere_r1" name="sphere_light" radius="1.8">
-			<translate x="0" y="-4" z="23.5"/>
+		<object type="sphere_r1" name="sphere_light" radius="1.5" material="wall">
+			<translate x="0" y="0" z="23.8"/>
 			<light type="area" name="areaLight">
-				<intensity r="0.780131" g="0.780409" b="0.775833" value="225"/>
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="50"/>
 			</light>
 		</object>
 
@@ -63,7 +63,7 @@
 			<diffuse  r="0.25" g="0.25" b="0.75" value="0.85"/>
 		</material>
 		<material type="merl" name="dragon-mat" file="./brdfs/blue-acrylic.binary"/>
-		<material type="merl" name="buddha-mat" file="./brdfs/gold-paint.binary"/>
+		<material type="merl" name="buddha-mat" file="./brdfs/gold-metallic-paint.binary"/>
 		<material type="merl" name="sphere-mat" file="./brdfs/red-fabric.binary"/>
 	</scene>
 
