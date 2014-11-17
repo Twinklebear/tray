@@ -1,0 +1,72 @@
+<xml>
+	<scene>
+		<!-- Objects -->
+		<object name="box">
+			<translate x="0" y="0" z="12"/>
+			<object type="plane" name="WallBottom" material="wall">
+				<scale value="32"/>
+				<translate z="-12"/>
+			</object>
+			<object type="plane" name="WallTop" material="wall">
+				<scale value="32"/>
+				<rotate angle="180" x="1"/>
+				<translate z="12"/>
+			</object>
+			<object type="plane" name="WallBack" material="wall">
+				<scale value="32"/>
+				<rotate angle="90" x="1"/>
+				<translate y="20"/>
+			</object>
+			<object type="plane" name="WallLeft" material="wallRed">
+				<scale value="32"/>
+				<rotate angle="90" y="1"/>
+				<translate x="-15"/>
+			</object>
+			<object type="plane" name="WallRight" material="wallBlue">
+				<scale value="32"/>
+				<rotate angle="-90" y="1"/>
+				<translate x="15"/>
+			</object>
+		</object>
+
+		<object type="obj" name="./models/teapot_hres.obj" material="teapot_mat">
+			<scale value="0.75"/>
+			<rotate angle="30" z="1"/>
+			<translate x="-4.5" y="5" z="0"/>
+		</object>
+		<object type="obj" name="./models/bunny.obj" material="bunny_mat">
+			<scale value="3.5"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="-30" z="1"/>
+			<translate x="10" y="0" z="1.15"/>
+		</object>
+		<object type="sphere_r1" name="sphere_light" radius="1" material="wall">
+			<translate x="0" y="0" z="22"/>
+			<light type="area" name="areaLight">
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="150"/>
+			</light>
+		</object>
+
+		<!-- Materials -->
+		<material type="merl" name="wall" file="./brdfs/white-fabric.binary"/>
+		<material type="merl" name="wallRed" file="./brdfs/red-fabric.binary"/>
+		<material type="merl" name="wallBlue" file="./brdfs/blue-fabric.binary"/>
+		<material type="merl" name="teapot_mat" file="./brdfs/red-metallic-paint.binary"/>
+		<material type="merl" name="bunny_mat" file="./brdfs/color-changing-paint2.binary"/>
+	</scene>
+
+	<camera>
+		<position x="0" y="-60" z="12"/>
+		<target x="0" y="0" z="12"/>
+		<up x="0" y="0" z="1"/>
+		<fov value="30"/>
+		<width value="800"/>
+		<height value="600"/>
+	</camera>
+
+	<config>
+		<sampler type="adaptive" min="128" max="1024"/>
+		<renderer type="path" min_depth="3" max_depth="8"/>
+	</config>
+</xml>
+
