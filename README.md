@@ -104,6 +104,18 @@ The renderer supports materials from the [MERL BRDF database](http://www.merl.co
 </material>
 ```
 
+**Mix Material**
+Specify that the material is constructed by mixing two previously declared materials.
+```XML
+<material type="mix" name="my_mix_mat">
+	<material name="mix_mat_a" />
+	<material name="mix_mat_b" />
+	<!-- Materials are mixed by scaling the BxDFs by the color here
+		mat_a is scaled by scale, mat_b is scaled by 1 - scale -->
+	<scale r="0.2" g="0.8" b="0.5"/>
+</material>
+```
+
 Lights
 -
 **Point Lights**

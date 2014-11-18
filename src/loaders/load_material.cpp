@@ -7,6 +7,7 @@
 #include "material/metal_material.h"
 #include "material/merl_material.h"
 #include "material/glass_material.h"
+#include "material/mix_material.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_material.h"
 #include "loaders/load_texture.h"
@@ -41,6 +42,11 @@ static std::unique_ptr<Material> load_merl(tinyxml2::XMLElement *elem, TextureCa
  * elem should be root of the material being loaded
  */
 static std::unique_ptr<Material> load_glass(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+/*
+ * Load the Mix material properties and return the material
+ * elem should be root of the material being loaded
+ */
+static std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mcache);
 
 void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
@@ -72,6 +78,9 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 			}
 			else if (type == "glass"){
 				material = load_glass(m, tcache, file);
+			}
+			else if (type == "mix"){
+				material = load_mix(m, cache);
 			}
 			if (material != nullptr){
 				cache.add(name, std::move(material));
@@ -227,5 +236,28 @@ std::unique_ptr<Material> load_glass(tinyxml2::XMLElement *elem, TextureCache &t
 		std::exit(1);
 	}
 	return std::make_unique<GlassMaterial>(refl, trans, ior);
+}
+std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mcache){
+	using namespace tinyxml2;
+	Colorf scale{1};
+	const Material *mat_a = nullptr, *mat_b = nullptr;
+	XMLElement *e = elem->FirstChildElement("material");
+	if (e){
+		mat_a = mcache.get(e->Attribute("name"));
+	}
+	e = e->NextSiblingElement("material");
+	if (e){
+		mat_b = mcache.get(e->Attribute("name"));
+	}
+	e = elem->FirstChildElement("scale");
+	if (e){
+		read_color(e, scale);
+	}
+	if (mat_a == nullptr || mat_b == nullptr){
+		std::cout << "Scene error: mix materials require two material attributes which must be materials "
+			<< "declared prior to the mix material" << std::endl;
+		std::exit(1);
+	}
+	return std::make_unique<MixMaterial>(mat_a, mat_b, scale);
 }
 
