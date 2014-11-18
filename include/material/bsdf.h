@@ -80,6 +80,10 @@ public:
 	 * Compute the probability density function for BxDFs for the directions passed
 	 */
 	float pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags = BxDFTYPE::ALL) const;
+	/*
+	 * Get access to the BxDFs contained in the BSDF
+	 */
+	BxDF* operator[](int i);
 
 private:
 	/*

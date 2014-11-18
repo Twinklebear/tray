@@ -131,6 +131,9 @@ float BSDF::pdf(const Vector &wo_world, const Vector &wi_world, BxDFTYPE flags) 
 	}
 	return n_comps > 0 ? pdf_val / n_comps : 0;
 }
+BxDF* BSDF::operator[](int i){
+	return bxdfs[i];
+}
 const BxDF* BSDF::matching_at(int n, BxDFTYPE flags) const {
 	for (int i = 0; i < n_bxdfs; ++i){
 		if (bxdfs[i]->matches(flags) && n-- == 0){
