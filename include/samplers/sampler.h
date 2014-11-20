@@ -32,9 +32,10 @@ protected:
 public:
 	const int x_start, x_end, y_start, y_end;
 	/*
-	 * Create a sampler for some region
+	 * Create a sampler for some region, optionally specifying a value to divide
+	 * the time value by to intialize multiple samplers at the same time with different seeds
 	 */
-	Sampler(int x_start, int x_end, int y_start, int y_end);
+	Sampler(int x_start, int x_end, int y_start, int y_end, int rand_mod = 1);
 	/*
 	 * Get some 5D samples to sample the image plane, lens and time dimensions
 	 * If the sampler has finished sampling samples will be empty

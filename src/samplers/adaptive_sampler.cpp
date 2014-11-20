@@ -8,8 +8,8 @@
 #include "samplers/ld_sampler.h"
 #include "samplers/adaptive_sampler.h"
 
-AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp)
-	: Sampler{x_start, x_end, y_start, y_end}, min_spp(round_up_pow2(min_sp)), max_spp(round_up_pow2(max_sp)),
+AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp, int rand_mod)
+	: Sampler(x_start, x_end, y_start, y_end, rand_mod), min_spp(round_up_pow2(min_sp)), max_spp(round_up_pow2(max_sp)),
 	supersample_px(min_spp)
 {
 	if (min_sp % 2 != 0){
@@ -99,11 +99,13 @@ std::vector<std::unique_ptr<Sampler>> AdaptiveSampler::get_subsamplers(int w, in
 		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " samplers of the desired dimensions " << w << " x " << h << std::endl;
 	}
+	int rand_mod = 1;
 	for (int j = 0; j < n_rows; ++j){
 		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(std::make_unique<AdaptiveSampler>(i * x_dim + x_start,
 				(i + 1) * x_dim + x_start, j * y_dim + y_start,
-				(j + 1) * y_dim + y_start, min_spp, max_spp));
+				(j + 1) * y_dim + y_start, min_spp, max_spp, rand_mod));
+			++rand_mod;
 		}
 	}
 	return samplers;

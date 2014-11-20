@@ -15,7 +15,7 @@ class StratifiedSampler : public Sampler {
 	const int spp;
 
 public:
-	StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp);
+	StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp, int rand_mod = 1);
 	/*
 	 * Get some {x, y} positions to sample in the space being sampled
 	 * If the sampler has finished sampling samples will be empty

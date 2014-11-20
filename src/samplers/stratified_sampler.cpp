@@ -7,8 +7,8 @@
 #include <vector>
 #include "samplers/stratified_sampler.h"
 
-StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp)
-	: Sampler(x_start, x_end, y_start, y_end), spp(spp)
+StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp, int rand_mod)
+	: Sampler(x_start, x_end, y_start, y_end, rand_mod), spp(spp)
 {}
 void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
@@ -71,11 +71,13 @@ std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, 
 		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " samplers of the desired dimensions " << w << " x " << h << std::endl;
 	}
+	int rand_mod = 1;
 	for (int j = 0; j < n_rows; ++j){
 		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(std::make_unique<StratifiedSampler>(i * x_dim + x_start,
 				(i + 1) * x_dim + x_start, j * y_dim + y_start,
-				(j + 1) * y_dim + y_start, spp));
+				(j + 1) * y_dim + y_start, spp, rand_mod));
+			++rand_mod;
 		}
 	}
 	return samplers;
