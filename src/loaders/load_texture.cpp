@@ -22,7 +22,7 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	using namespace tinyxml2;
 	using namespace std::literals;
 	//Read the color as well to check if it's a scale texture we want
-	Colorf color{1, 1, 1};
+	Colorf color{0};
 	read_color(elem, color);
 	std::string name, gen_name, tex_map;
 	if (elem->Value() == "environment"s){
