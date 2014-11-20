@@ -9,6 +9,7 @@
 #include "film/color.h"
 #include "material/bsdf.h"
 #include "lights/light.h"
+#include "monte_carlo/distribution1d.h"
 
 class Scene;
 
@@ -52,6 +53,10 @@ public:
 	static Colorf estimate_direct(const Scene &scene, const Renderer &renderer, const Point &p,
 		const Normal &n, const Vector &w_o, const BSDF &bsdf, const Light &light, const LightSample &l_sample,
 		const BSDFSample &bsdf_sample, BxDFTYPE flags);
+	/*
+	 * Compute and return the light sampling CDF distribution
+	 */
+	static Distribution1D light_sampling_cdf(const Scene &scene);
 };
 
 #endif

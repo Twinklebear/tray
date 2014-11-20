@@ -3,6 +3,7 @@
 #include <cmath>
 #include "scene.h"
 #include "monte_carlo/util.h"
+#include "monte_carlo/distribution1d.h"
 #include "integrator/surface_integrator.h"
 
 void SurfaceIntegrator::preprocess(const Scene&){}
@@ -160,5 +161,13 @@ Colorf SurfaceIntegrator::estimate_direct(const Scene &scene, const Renderer &, 
 		}
 	}
 	return direct_light;
+}
+Distribution1D SurfaceIntegrator::light_sampling_cdf(const Scene &scene){
+	std::vector<float> light_power(scene.get_light_cache().size());
+	std::transform(scene.get_light_cache().begin(), scene.get_light_cache().end(), light_power.begin(),
+		[&](const auto &l){
+			return l.second->power(scene).luminance();
+		});
+	return Distribution1D{light_power};
 }
 
