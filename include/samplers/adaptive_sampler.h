@@ -24,7 +24,8 @@ public:
 	 * Initialize the adaptive sampler to sample some region taking at least min_spp samples
 	 * per pixel and at most max_spp samples per pixel if a pixel in the region needs supersampling
 	 */
-	AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_spp, int max_spp, int rand_mod = 1);
+	AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_spp, int max_spp, int seed);
+	AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_spp, int max_spp);
 	/*
 	 * Get some {x, y} positions to sample in the space being sampled
 	 * If the sampler has finished sampling samples will be empty

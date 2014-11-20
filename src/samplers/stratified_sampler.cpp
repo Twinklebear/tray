@@ -7,8 +7,12 @@
 #include <vector>
 #include "samplers/stratified_sampler.h"
 
-StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp, int rand_mod)
-	: Sampler(x_start, x_end, y_start, y_end, rand_mod), spp(spp)
+StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp, int seed)
+	: Sampler(x_start, x_end, y_start, y_end, seed), spp(spp)
+{}
+StratifiedSampler::StratifiedSampler(int x_start, int x_end, int y_start, int y_end, int spp)
+	: StratifiedSampler(x_start, x_end, y_start, y_end, spp, std::chrono::duration_cast<std::chrono::milliseconds>(
+	std::chrono::high_resolution_clock::now().time_since_epoch()).count())
 {}
 void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
@@ -71,14 +75,14 @@ std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, 
 		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " samplers of the desired dimensions " << w << " x " << h << std::endl;
 	}
-	std::minstd_rand rand_mod_rng{std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count()};
-	std::uniform_int_distribution<int> rand_mod;
+	std::minstd_rand seed_rng(std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+	std::uniform_int_distribution<int> seed;
 	for (int j = 0; j < n_rows; ++j){
 		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(std::make_unique<StratifiedSampler>(i * x_dim + x_start,
 				(i + 1) * x_dim + x_start, j * y_dim + y_start,
-				(j + 1) * y_dim + y_start, spp, rand_mod(rand_mod_rng)));
+				(j + 1) * y_dim + y_start, spp, seed(seed_rng)));
 		}
 	}
 	return samplers;

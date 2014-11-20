@@ -7,14 +7,18 @@
 #include "linalg/util.h"
 #include "samplers/ld_sampler.h"
 
-LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp, int rand_mod)
-	: Sampler(x_start, x_end, y_start, y_end, rand_mod), spp(round_up_pow2(sp))
+LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp, int seed)
+	: Sampler(x_start, x_end, y_start, y_end, seed), spp(round_up_pow2(sp))
 {
 	if (sp % 2 != 0){
 		std::cout << "Warning: LDSampler requires power of 2 samples per pixel."
 			<< " Rounded spp up to " << spp << std::endl;
 	}
 }
+LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp)
+	: LDSampler(x_start, x_end, y_start, y_end, sp, std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+{}
 void LDSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
 	if (!has_samples()){
@@ -75,14 +79,14 @@ std::vector<std::unique_ptr<Sampler>> LDSampler::get_subsamplers(int w, int h) c
 		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " samplers of the desired dimensions " << w << " x " << h << std::endl;
 	}
-	std::minstd_rand rand_mod_rng{std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count()};
-	std::uniform_int_distribution<int> rand_mod;
+	std::minstd_rand seed_rng(std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+	std::uniform_int_distribution<int> seed;
 	for (int j = 0; j < n_rows; ++j){
 		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(std::make_unique<LDSampler>(i * x_dim + x_start,
 				(i + 1) * x_dim + x_start, j * y_dim + y_start,
-				(j + 1) * y_dim + y_start, spp, rand_mod(rand_mod_rng)));
+				(j + 1) * y_dim + y_start, spp, seed(seed_rng)));
 		}
 	}
 	return samplers;

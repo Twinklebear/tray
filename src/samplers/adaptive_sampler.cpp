@@ -8,8 +8,8 @@
 #include "samplers/ld_sampler.h"
 #include "samplers/adaptive_sampler.h"
 
-AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp, int rand_mod)
-	: Sampler(x_start, x_end, y_start, y_end, rand_mod), min_spp(round_up_pow2(min_sp)), max_spp(round_up_pow2(max_sp)),
+AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp, int seed)
+	: Sampler(x_start, x_end, y_start, y_end, seed), min_spp(round_up_pow2(min_sp)), max_spp(round_up_pow2(max_sp)),
 	supersample_px(min_spp)
 {
 	if (min_sp % 2 != 0){
@@ -21,6 +21,11 @@ AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end,
 			<< " Rounded max_spp up to " << max_spp << std::endl;
 	}
 }
+AdaptiveSampler::AdaptiveSampler(int x_start, int x_end, int y_start, int y_end, int min_sp, int max_sp)
+	: AdaptiveSampler(x_start, x_end, y_start, y_end, min_sp, max_sp,
+	std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
+{}
 void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 	samples.clear();
 	if (supersample_px == min_spp && !has_samples()){
@@ -99,14 +104,14 @@ std::vector<std::unique_ptr<Sampler>> AdaptiveSampler::get_subsamplers(int w, in
 		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " samplers of the desired dimensions " << w << " x " << h << std::endl;
 	}
-	std::minstd_rand rand_mod_rng{std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count()};
-	std::uniform_int_distribution<int> rand_mod;
+	std::minstd_rand seed_rng(std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+	std::uniform_int_distribution<int> seed;
 	for (int j = 0; j < n_rows; ++j){
 		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(std::make_unique<AdaptiveSampler>(i * x_dim + x_start,
 				(i + 1) * x_dim + x_start, j * y_dim + y_start,
-				(j + 1) * y_dim + y_start, min_spp, max_spp, rand_mod(rand_mod_rng)));
+				(j + 1) * y_dim + y_start, min_spp, max_spp, seed(seed_rng)));
 		}
 	}
 	return samplers;

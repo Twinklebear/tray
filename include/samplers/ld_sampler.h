@@ -16,7 +16,8 @@ class LDSampler : public Sampler {
 	std::uniform_int_distribution<uint32_t> distrib;
 
 public:
-	LDSampler(int x_start, int x_end, int y_start, int y_end, int spp, int rand_mod = 1);
+	LDSampler(int x_start, int x_end, int y_start, int y_end, int spp, int seed);
+	LDSampler(int x_start, int x_end, int y_start, int y_end, int spp);
 	/*
 	 * Get some {x, y} positions to sample in the space being sampled
 	 * If the sampler has finished sampling samples will be empty

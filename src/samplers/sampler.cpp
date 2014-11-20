@@ -4,10 +4,12 @@
 #include <vector>
 #include "samplers/sampler.h"
 
-Sampler::Sampler(int x_start, int x_end, int y_start, int y_end, int rand_mod)
-	: x(x_start), y(y_start), rng(std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::high_resolution_clock::now().time_since_epoch()).count() / rand_mod),
-	 x_start(x_start), x_end(x_end), y_start(y_start), y_end(y_end)
+Sampler::Sampler(int x_start, int x_end, int y_start, int y_end, int seed)
+	: x(x_start), y(y_start), rng(seed), x_start(x_start), x_end(x_end), y_start(y_start), y_end(y_end)
+{}
+Sampler::Sampler(int x_start, int x_end, int y_start, int y_end)
+	: Sampler(x_start, x_end, y_start, y_end, std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count())
 {}
 float Sampler::random_float(){
 	return float_distrib(rng);
