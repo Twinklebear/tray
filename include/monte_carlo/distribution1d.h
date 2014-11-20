@@ -19,8 +19,9 @@ public:
 	/*
 	 * Sample one of the buckets of the function and return the bucket
 	 * number sampled, u should be in the range [0, 1)
+	 * optionally returns the pdf of sampling the bucket that was sampled
 	 */
-	int sample_discrete(float u) const;
+	int sample_discrete(float u, float *pdf_val = nullptr) const;
 };
 
 #endif

@@ -16,8 +16,12 @@ Distribution1D::Distribution1D(const std::vector<float> &fcn)
 	}
 }
 Distribution1D::Distribution1D(){}
-int Distribution1D::sample_discrete(float u) const {
+int Distribution1D::sample_discrete(float u, float *pdf_val) const {
 	auto a = std::lower_bound(cdf.begin(), cdf.end(), u);
-	return std::min(static_cast<int>(std::distance(cdf.begin(), a)), static_cast<int>(cdf.size() - 2));
+	int b = std::min(static_cast<int>(std::distance(cdf.begin(), a)), static_cast<int>(cdf.size() - 2));
+	if (pdf_val){
+		*pdf_val = function[b] / (integral * function.size());
+	}
+	return b;
 }
 
