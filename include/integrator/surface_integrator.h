@@ -18,6 +18,12 @@ class Scene;
 class SurfaceIntegrator {
 public:
 	/*
+	 * Preprocess the scene peforming any pre-process setup steps needed by the surface
+	 * integrator. Eg. build the photon maps for photon mapping. The default implementation
+	 * does nothing
+	 */
+	virtual void preprocess(const Scene &scene);
+	/*
 	 * Compute the illumination at a point on the surface in the scene
 	 */
 	virtual Colorf illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,

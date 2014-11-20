@@ -5,6 +5,7 @@
 #include "monte_carlo/util.h"
 #include "integrator/surface_integrator.h"
 
+void SurfaceIntegrator::preprocess(const Scene&){}
 Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
 	const Scene &scene, Sampler &sampler, MemoryPool &pool)
 {
