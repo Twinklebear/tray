@@ -1,7 +1,9 @@
 #ifndef KD_POINT_TREE_H
 #define KD_POINT_TREE_H
 
+#include <cassert>
 #include <algorithm>
+#include <functional>
 #include <type_traits>
 #include <vector>
 #include "linalg/point.h"
@@ -52,17 +54,34 @@ class KdPointTree {
 	std::vector<Node> nodes;
 	std::vector<P> data;
 public:
+	/*
+	 * Typedef for the query callback function, is passed the query point, the P data
+	 * that was found within the query radius, the squared distance to this data point and the
+	 * max query distance (by ref so it may be adjusted)
+	 */
+	using QueryCallback = std::function<void(const Point&, const P&, float, float&)>;
 
 	/*
 	 * Construct the KdPointTree about the set of point data passed
 	 */
 	KdPointTree(const std::vector<P> &points);
-
+	/*
+	 * Query the tree for a list of points within max_dist_sqr of the point, nodes within
+	 * the query range are passed to the user supplied callback. Note that it is possible
+	 * to modify the search radius during the query process as it will be passed by reference
+	 * allowing tuning of the query as it runs
+	 */
+	void query(const Point &p, float &max_dist_sqr, QueryCallback &callback) const;
+	
 private:
 	/*
 	 * Recursively build the Kd tree on the points from [start, end), returning the index of the next free node
 	 */
-	uint32_t recursive_build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data);
+	uint32_t build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data);
+	/*
+	 * Recursively query the tree looking for points that fall within the query region around the point
+	 */
+	void query(uint32_t node_id, const Point &p, float &max_dist_sqr, QueryCallback &callback) const;
 };
 
 template<typename P>
@@ -80,24 +99,10 @@ KdPointTree<P>::KdPointTree(const std::vector<P> &points){
 	data.resize(points.size());
 	std::vector<const P*> build_data(points.size());
 	std::transform(points.begin(), points.end(), build_data.begin(), [](const auto &p){ return &p; });
-	recursive_build(0, 0, points.size(), build_data);
-	for (uint32_t i = 0; i < nodes.size(); ++i){
-		std::cout << "Node id: " << i << "\n";
-		if (nodes[i].split_axis < 3){
-			std::cout << "\tinterior node"
-				<< "\n\tsplit_pos = " << nodes[i].split_pos
-				<< "\n\tsplit_axis = " << nodes[i].split_axis
-				<< "\n\thas_left_child = " << nodes[i].has_left_child
-				<< "\n\tright_child = " << nodes[i].right_child
-				<< "\n\tpoint = " << data[i].position << "\n";
-		}
-		else {
-			std::cout << "\tleaf node\n\tpoint = " << data[i].position << "\n";
-		}
-	}
+	build(0, 0, points.size(), build_data);
 }
 template<typename P>
-uint32_t KdPointTree<P>::recursive_build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data){
+uint32_t KdPointTree<P>::build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data){
 	//If we've hit the bottom make a leaf node
 	if (start + 1 == end){
 		nodes[node_id] = Node::leaf();
@@ -122,13 +127,48 @@ uint32_t KdPointTree<P>::recursive_build(uint32_t node_id, int start, int end, s
 	uint32_t next_free = node_id + 1;
 	if (start < median){
 		nodes[node_id].has_left_child = 1;
-		next_free = recursive_build(next_free, start, median, build_data);
+		next_free = build(next_free, start, median, build_data);
 	}
 	if (median + 1 < end){
 		nodes[node_id].right_child = next_free++;
-		next_free = recursive_build(nodes[node_id].right_child, median + 1, end, build_data);
+		next_free = build(nodes[node_id].right_child, median + 1, end, build_data);
 	}
 	return next_free;
+}
+template<typename P>
+void KdPointTree<P>::query(const Point &p, float &max_dist_sqr, QueryCallback &callback) const {
+	assert(!nodes.empty());
+	query(0, p, max_dist_sqr, callback);
+}
+template<typename P>
+void KdPointTree<P>::query(uint32_t node_id, const Point &p, float &max_dist_sqr, QueryCallback &callback) const {
+	const Node &node = nodes[node_id];
+	if (node.split_axis != 3){
+		//Traverse the side of the tree that the query point is in first
+		float dist_sqr = (p[node.split_axis] - node.split_pos) * (p[node.split_axis] - node.split_pos);
+		if (p[node.split_axis] <= node.split_pos){
+			if (node.has_left_child){
+				query(node_id + 1, p, max_dist_sqr, callback);
+			}
+			//If the query region also overlaps the other side query there as well
+			if (dist_sqr < max_dist_sqr && node.right_child != Node::NO_RIGHT_CHILD){
+				query(node.right_child, p, max_dist_sqr, callback);
+			}
+		}
+		else {
+			if (node.right_child != Node::NO_RIGHT_CHILD){
+				query(node.right_child, p, max_dist_sqr, callback);
+			}
+			//If the query region also overlaps the other side query there as well
+			if (dist_sqr < max_dist_sqr && node.has_left_child){
+				query(node_id + 1, p, max_dist_sqr, callback);
+			}
+		}
+	}
+	float dist_sqr = data[node_id].position.distance_sqr(p);
+	if (dist_sqr < max_dist_sqr){
+		callback(p, data[node_id], dist_sqr, max_dist_sqr);
+	}
 }
 
 #endif
