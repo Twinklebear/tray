@@ -1,8 +1,11 @@
 #ifndef KD_POINT_TREE_H
 #define KD_POINT_TREE_H
 
+#include <algorithm>
 #include <type_traits>
+#include <vector>
 #include "linalg/point.h"
+#include "geometry/bbox.h"
 
 /*
  * Walter Brown's void_t type and CWG 1558 workaround for detecting members of
@@ -19,10 +22,114 @@ template<typename T> struct has_position_member<T, void_t<decltype(T::position)>
  * to the KdTree in PBRT. Can store any type that has a position member
  * that is of type Point and performs k-nearest queries on the data
  */
-template<typename T>
+template<typename P>
 class KdPointTree {
-	static_assert(has_position_member<T>::value, "Type to build KdPointTree around must have an public member named position of type Point");
+	static_assert(has_position_member<P>::value, "Type to build KdPointTree around must have an public member named position of type Point");
+	/*
+	 * A node in the KdPointTree, stores information about its children and the split information
+	 * if it's an interior node, otherwise stores flags to indicate it's a leaf
+	 * Actual information for the node (eg. the point stored here) is kept in a cold array 
+	 * indexed by the node id for faster traversal
+	 */
+	struct Node {
+		float split_pos;
+		//Bitfields so we can fit the struct in a cacheline
+		//The left child is stored right after this one so we just need a flag, right_child
+		//is the offset to the right_child, if any (if no right child this is 2^29-1)
+		uint32_t split_axis:2, has_left_child:1, right_child:29;
+		const static uint32_t NO_RIGHT_CHILD = (1 << 29) - 1;
+
+		/*
+		 * Initialize an interior node
+		 */
+		static Node interior(float split_pos, uint32_t split_axis);
+		/*
+		 * Initialize a leaf node. A leaf node is indicated by the split_axis being set to 3
+		 */
+		static Node leaf();
+	};
+
+	std::vector<Node> nodes;
+	std::vector<P> data;
+public:
+
+	/*
+	 * Construct the KdPointTree about the set of point data passed
+	 */
+	KdPointTree(const std::vector<P> &points);
+
+private:
+	/*
+	 * Recursively build the Kd tree on the points from [start, end), returning the index of the next free node
+	 */
+	uint32_t recursive_build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data);
 };
+
+template<typename P>
+typename KdPointTree<P>::Node KdPointTree<P>::Node::interior(float split_pos, uint32_t split_axis){
+	return Node{split_pos, split_axis, 0, NO_RIGHT_CHILD};
+}
+template<typename P>
+typename KdPointTree<P>::Node KdPointTree<P>::Node::leaf(){
+	return Node{0, 3, 0, NO_RIGHT_CHILD};
+}
+
+template<typename P>
+KdPointTree<P>::KdPointTree(const std::vector<P> &points){
+	nodes.resize(points.size());
+	data.resize(points.size());
+	std::vector<const P*> build_data(points.size());
+	std::transform(points.begin(), points.end(), build_data.begin(), [](const auto &p){ return &p; });
+	recursive_build(0, 0, points.size(), build_data);
+	for (uint32_t i = 0; i < nodes.size(); ++i){
+		std::cout << "Node id: " << i << "\n";
+		if (nodes[i].split_axis < 3){
+			std::cout << "\tinterior node"
+				<< "\n\tsplit_pos = " << nodes[i].split_pos
+				<< "\n\tsplit_axis = " << nodes[i].split_axis
+				<< "\n\thas_left_child = " << nodes[i].has_left_child
+				<< "\n\tright_child = " << nodes[i].right_child
+				<< "\n\tpoint = " << data[i].position << "\n";
+		}
+		else {
+			std::cout << "\tleaf node\n\tpoint = " << data[i].position << "\n";
+		}
+	}
+}
+template<typename P>
+uint32_t KdPointTree<P>::recursive_build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data){
+	//If we've hit the bottom make a leaf node
+	if (start + 1 == end){
+		nodes[node_id] = Node::leaf();
+		data[node_id] = *build_data[start];
+		return node_id + 1;
+	}
+	//Find the longest extent of the box bounding the points and use it to split and do median split
+	BBox box;
+	for (auto i = build_data.begin() + start; i != build_data.begin() + end; ++i){
+		box = box.box_union((*i)->position);
+	}
+	uint32_t split_axis = box.max_extent();
+	int median = (start + end) / 2;
+	//If the positions are equivalent we fall back to comparing the pointer values to arbitrarily break ties
+	std::nth_element(build_data.begin() + start, build_data.begin() + median, build_data.begin() + end,
+		[=](const auto *a, const auto *b){
+			return a->position[split_axis] == b->position[split_axis] ? a < b : a->position[split_axis] < b->position[split_axis];
+		});
+	//Create this node as an interior and recursively build the left/right children
+	nodes[node_id] = Node::interior(build_data[median]->position[split_axis], split_axis);
+	data[node_id] = *build_data[median];
+	uint32_t next_free = node_id + 1;
+	if (start < median){
+		nodes[node_id].has_left_child = 1;
+		next_free = recursive_build(next_free, start, median, build_data);
+	}
+	if (median + 1 < end){
+		nodes[node_id].right_child = next_free++;
+		next_free = recursive_build(nodes[node_id].right_child, median + 1, end, build_data);
+	}
+	return next_free;
+}
 
 #endif
 
