@@ -71,13 +71,14 @@ std::vector<std::unique_ptr<Sampler>> StratifiedSampler::get_subsamplers(int w, 
 		std::cout << "WARNING: sampler could not be partitioned equally into"
 			<< " samplers of the desired dimensions " << w << " x " << h << std::endl;
 	}
-	int rand_mod = 1;
+	std::minstd_rand rand_mod_rng{std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now().time_since_epoch()).count()};
+	std::uniform_int_distribution<int> rand_mod;
 	for (int j = 0; j < n_rows; ++j){
 		for (int i = 0; i < n_cols; ++i){
 			samplers.emplace_back(std::make_unique<StratifiedSampler>(i * x_dim + x_start,
 				(i + 1) * x_dim + x_start, j * y_dim + y_start,
-				(j + 1) * y_dim + y_start, spp, rand_mod));
-			++rand_mod;
+				(j + 1) * y_dim + y_start, spp, rand_mod(rand_mod_rng)));
 		}
 	}
 	return samplers;
