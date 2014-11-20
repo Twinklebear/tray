@@ -17,7 +17,6 @@
 				<rotate angle="90" x="1"/>
 				<translate y="50"/>
 			</object>
-
 			<object type="plane" name="WallLeft" material="wall">
 				<scale value="32"/>
 				<rotate angle="90" y="1"/>
@@ -29,14 +28,14 @@
 				<translate x="50"/>
 			</object>
 		</object>
-		<object type="obj" name="./models/suzanne.obj" material="glass_mat">
+		<object type="obj" name="./models/smooth_suzanne.obj" material="orange_glass">
 			<scale value="8"/>
-			<rotate angle="60" x="1"/>
-			<rotate angle="25" z="1"/>
-			<translate y="-1" z="4"/>
+			<rotate angle="50" x="1"/>
+			<rotate angle="30" z="1"/>
+			<translate z="3.5"/>
 		</object>
-		<object type="sphere_r1.8" name="sphere_light" radius="2.5" material="wall">
-			<translate x="0" y="10" z="18"/>
+		<object type="sphere_r1.8" name="sphere_light" radius="2" material="wall">
+			<translate y="8" z="18"/>
 			<light type="area" name="areaLight">
 				<intensity r="0.780131" g="0.780409" b="0.775833" value="175"/>
 			</light>
@@ -46,9 +45,9 @@
 		<material type="matte" name="wall">
 			<diffuse  r="0.740063" g="0.742313" b="0.733934"/>
 		</material>
-		<material type="glass" name="glass_mat">
-			<reflection r="1" g="0.7" b="0"/>
-			<transmission r="1" g="0.7" b="0"/>
+		<material type="glass" name="orange_glass">
+			<reflection r="0.9607843" g="0.501960"/>
+			<transmission r="0.9607843" g="0.501960"/>
 			<ior value="1.52"/>
 		</material>
 	</scene>
