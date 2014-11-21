@@ -168,7 +168,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	}
 	//Compute radiance photon emittances now that we've got the photon maps built
 	if (!radiance_photons.empty()){
-		//launch tasks
+		//TODO: launch tasks
 		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(radiance_photons);
 	}
 }
