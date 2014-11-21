@@ -12,6 +12,12 @@
 #include "material/bsdf.h"
 #include "integrator/photon_map_integrator.h"
 
+
+bool PhotonMapIntegrator::NearPhoton::operator<(const PhotonMapIntegrator::NearPhoton &b) const {
+	//Arbitrarily break times the same way the KdPointTree does
+	return dist_sqr == b.dist_sqr ? photon < b.photon : dist_sqr < b.dist_sqr;
+}
+
 PhotonMapIntegrator::ShootingTask::ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene,
 	const Distribution1D &light_distrib, float seed)
 	: integrator(integrator), scene(scene), light_distrib(light_distrib),
@@ -55,6 +61,7 @@ void PhotonMapIntegrator::ShootingTask::shoot(){
 		}
 		int num_caustic = integrator.num_caustic.fetch_add(batch_size, std::memory_order_acq_rel) + batch_size;
 		int num_indirect = integrator.num_indirect.fetch_add(batch_size, std::memory_order_acq_rel) + batch_size;
+		integrator.num_direct.fetch_add(batch_size, std::memory_order_acq_rel);
 		caustic_done = num_caustic >= integrator.num_caustic_wanted;
 		indirect_done = num_indirect >= integrator.num_indirect_wanted;
 		if (caustic_done && indirect_done){
@@ -146,6 +153,48 @@ void PhotonMapIntegrator::ShootingTask::trace_photon(const RayDifferential &r, C
 	}
 }
 
+PhotonMapIntegrator::RadianceTask::RadianceTask(const PhotonMapIntegrator &integrator, int begin, int end,
+	std::vector<RadiancePhoton> &radiance_photons, const std::vector<Colorf> &radiance_reflectance,
+	const std::vector<Colorf> &radiance_transmittance)
+	: integrator(integrator), begin(begin), end(end), radiance_photons(radiance_photons),
+	radiance_reflectance(radiance_reflectance), radiance_transmittance(radiance_transmittance)
+{}
+void PhotonMapIntegrator::RadianceTask::compute(){
+	for (int i = begin; i < end; ++i){
+		auto &p = radiance_photons[i];
+		const auto &refl = radiance_reflectance[i];
+		const auto &trans = radiance_reflectance[i];
+		if (!refl.is_black()){
+			//Compute reflected radiance
+		}
+		if (!trans.is_black()){
+			//Compute transmitted radiance
+		}
+	}
+}
+
+void PhotonMapIntegrator::QueryCallback::operator()(const Point &pos, const Photon &photon, float dist_sqr,
+	float &max_dist_sqr)
+{
+	if (found < query_size){
+		queried_photons[found++] = NearPhoton{&photon, dist_sqr};
+		//If we've hit our query size start shrinking the search radius so we only get photons
+		//closer than our farthest one
+		if (found == query_size){
+			std::make_heap(queried_photons, queried_photons + query_size);
+			max_dist_sqr = queried_photons[0].dist_sqr;
+		}
+	}
+	//Any photons found after filling our desired number must be closer than the furthest one we found
+	//so replace it and shrink the search distance
+	else {
+		std::pop_heap(queried_photons, queried_photons + query_size);
+		queried_photons[query_size - 1] = NearPhoton{&photon, dist_sqr};
+		std::push_heap(queried_photons, queried_photons + query_size);
+		max_dist_sqr = queried_photons[0].dist_sqr;
+	}
+}
+
 PhotonMapIntegrator::PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth)
 	: num_caustic_wanted(num_caustic_wanted), num_indirect_wanted(num_indirect_wanted), max_depth(max_depth),
 	num_caustic(0), num_indirect(0)
@@ -171,7 +220,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	}
 	//Compute radiance photon emittances now that we've got the photon maps built
 	if (!radiance_photons.empty()){
-		//TODO: launch tasks
+		//TODO: launch tasks to compute radiance phonton emittance
 		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(radiance_photons);
 	}
 }
@@ -210,5 +259,9 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 		std::copy(task.radiance_transmittance.begin(), task.radiance_transmittance.end(),
 			std::back_inserter(radiance_transmittance));
 	}
+}
+Colorf PhotonMapIntegrator::photon_irradiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
+	NearPhoton *near_photons, float max_dist_sqr, const Point &p, const Normal &n)
+{
 }
 
