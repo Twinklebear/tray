@@ -55,13 +55,6 @@ class KdPointTree {
 	std::vector<P> data;
 public:
 	/*
-	 * Typedef for the query callback function, is passed the query point, the P data
-	 * that was found within the query radius, the squared distance to this data point and the
-	 * max query distance (by ref so it may be adjusted)
-	 */
-	using QueryCallback = std::function<void(const Point&, const P&, float, float&)>;
-
-	/*
 	 * Construct the KdPointTree about the set of point data passed
 	 */
 	KdPointTree(const std::vector<P> &points);
@@ -70,8 +63,10 @@ public:
 	 * the query range are passed to the user supplied callback. Note that it is possible
 	 * to modify the search radius during the query process as it will be passed by reference
 	 * allowing tuning of the query as it runs
+	 * the callback must define operator()(const Point&, const P&, float, float&)
 	 */
-	void query(const Point &p, float &max_dist_sqr, QueryCallback &callback) const;
+	template<typename Callback>
+	void query(const Point &p, float &max_dist_sqr, Callback &callback) const;
 	
 private:
 	/*
@@ -81,7 +76,8 @@ private:
 	/*
 	 * Recursively query the tree looking for points that fall within the query region around the point
 	 */
-	void query(uint32_t node_id, const Point &p, float &max_dist_sqr, QueryCallback &callback) const;
+	template<typename Callback>
+	void query(uint32_t node_id, const Point &p, float &max_dist_sqr, Callback &callback) const;
 };
 
 template<typename P>
@@ -136,12 +132,14 @@ uint32_t KdPointTree<P>::build(uint32_t node_id, int start, int end, std::vector
 	return next_free;
 }
 template<typename P>
-void KdPointTree<P>::query(const Point &p, float &max_dist_sqr, QueryCallback &callback) const {
+template<typename Callback>
+void KdPointTree<P>::query(const Point &p, float &max_dist_sqr, Callback &callback) const {
 	assert(!nodes.empty());
 	query(0, p, max_dist_sqr, callback);
 }
 template<typename P>
-void KdPointTree<P>::query(uint32_t node_id, const Point &p, float &max_dist_sqr, QueryCallback &callback) const {
+template<typename Callback>
+void KdPointTree<P>::query(uint32_t node_id, const Point &p, float &max_dist_sqr, Callback &callback) const {
 	const Node &node = nodes[node_id];
 	if (node.split_axis != 3){
 		//Traverse the side of the tree that the query point is in first
