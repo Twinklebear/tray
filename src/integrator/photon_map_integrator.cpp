@@ -173,9 +173,7 @@ void PhotonMapIntegrator::RadianceTask::compute(){
 	}
 }
 
-void PhotonMapIntegrator::QueryCallback::operator()(const Point &pos, const Photon &photon, float dist_sqr,
-	float &max_dist_sqr)
-{
+void PhotonMapIntegrator::QueryCallback::operator()(const Point&, const Photon &photon, float dist_sqr, float &max_dist_sqr){
 	if (found < query_size){
 		queried_photons[found++] = NearPhoton{&photon, dist_sqr};
 		//If we've hit our query size start shrinking the search radius so we only get photons
@@ -263,5 +261,18 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 Colorf PhotonMapIntegrator::photon_irradiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
 	NearPhoton *near_photons, float max_dist_sqr, const Point &p, const Normal &n)
 {
+	QueryCallback callback{near_photons, query_size, 0};
+	photons.query(p, max_dist_sqr, callback);
+	if (callback.found == 0){
+		return Colorf{0};
+	}
+	Colorf irrad;
+	//Compute average of the photons found that are on our side of the hemisphere
+	for (int i = 0; i < callback.found; ++i){
+		if (near_photons[i].photon->w_i.dot(n) > 0){
+			irrad += near_photons[i].photon->weight;
+		}
+	}
+	return irrad / (num_paths * max_dist_sqr * PI);
 }
 
