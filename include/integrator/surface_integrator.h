@@ -19,7 +19,7 @@ class Scene;
 class SurfaceIntegrator {
 public:
 	/*
-	 * Preprocess the scene peforming any pre-process setup steps needed by the surface
+	 * Pre-process the scene peforming any pre-process setup steps needed by the surface
 	 * integrator. Eg. build the photon maps for photon mapping. The default implementation
 	 * does nothing
 	 */

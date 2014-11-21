@@ -54,6 +54,9 @@ public:
 	size_t size() const {
 		return cache.size();
 	}
+	bool empty() const {
+		return cache.empty();
+	}
 };
 
 #endif
