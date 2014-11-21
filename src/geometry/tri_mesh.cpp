@@ -243,6 +243,7 @@ void TriMesh::load_model(const std::string &file, bool no_bobj){
 		std::ifstream fin{file};
 		if (!fin.good()){
 			std::cout << "Error: failed to load model " << file << std::endl;
+			std::exit(1);
 			return;
 		}
 		else {
