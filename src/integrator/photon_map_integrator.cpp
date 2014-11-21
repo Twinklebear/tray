@@ -240,6 +240,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){
 		return;
 	}
+	auto start = std::chrono::high_resolution_clock::now();
 	std::vector<Photon> caustic_photons, indirect_photons, direct_photons;
 	std::vector<RadiancePhoton> radiance_photons;
 	std::vector<Colorf> radiance_reflectance, radiance_transmittance;
@@ -280,6 +281,11 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 		}
 		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(radiance_photons);
 	}
+	auto end = std::chrono::high_resolution_clock::now();
+	auto elapsed = end - start;
+	std::cout << "PhotonMapIntegrator: building photon maps took: "
+		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
+		<< "ms\n";
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
