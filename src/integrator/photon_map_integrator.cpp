@@ -236,6 +236,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	std::vector<Photon> caustic_photons, indirect_photons, direct_photons;
 	std::vector<RadiancePhoton> radiance_photons;
 	std::vector<Colorf> radiance_reflectance, radiance_transmittance;
+	std::cout << "PhotonMapIntegrator: shooting photons" << std::endl;
 	shoot_photons(caustic_photons, indirect_photons, direct_photons, radiance_photons,
 		radiance_reflectance, radiance_transmittance, scene);
 	//Build our photon maps from the traced photons
@@ -250,7 +251,26 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	}
 	//Compute radiance photon emittances now that we've got the photon maps built
 	if (!radiance_photons.empty()){
-		//TODO: launch tasks to compute radiance phonton emittance
+		std::cout << "PhotonMapIntegrator: computing radiance photon emittance" << std::endl;
+		//We use the number of hw threads to compute radiance + 1 for any overflow photons
+		int hw_threads = std::thread::hardware_concurrency();
+		int phot_per_task = radiance_photons.size() / hw_threads;
+		int num_tasks = radiance_photons.size() % hw_threads == 0 ? hw_threads : hw_threads + 1;
+		std::vector<std::thread> threads;
+		std::vector<RadianceTask> tasks;
+		threads.reserve(num_tasks);
+		tasks.reserve(num_tasks);
+		for (int i = 0; i < num_tasks; ++i){
+			int begin = i * phot_per_task;
+			int end = (i + 1) * phot_per_task;
+			end = end < radiance_photons.size() ? end : radiance_photons.size();
+			tasks.emplace_back(*this, begin, end, radiance_photons, radiance_reflectance, radiance_transmittance);
+			threads.emplace_back(&RadianceTask::compute, &tasks.back());
+		}
+		//Wait for all radiance computation tasks to complete
+		for (auto &t : threads){
+			t.join();
+		}
 		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(radiance_photons);
 	}
 }
