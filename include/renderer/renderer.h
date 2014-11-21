@@ -19,6 +19,10 @@ class Renderer {
 public:
 	Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator);
 	/*
+	 * Have the renderer and its integrators perform any needed pre-processing of the scene
+	 */
+	void preprocess(const Scene &scene);
+	/*
 	 * Compute the incident radiance along the ray in the scene
 	 * The default implementation simply calls the surface integrator on
 	 * the hit geometry to compute the illumination

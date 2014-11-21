@@ -47,6 +47,7 @@ public:
 	const RenderTarget& get_render_target() const;
 	const Sampler& get_sampler() const;
 	const Renderer& get_renderer() const;
+	Renderer& get_renderer();
 	Node& get_root();
 	const Node& get_root() const;
 	void set_background(Texture *t);

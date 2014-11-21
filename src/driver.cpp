@@ -91,6 +91,7 @@ Driver::~Driver(){
 	cancel();
 }
 void Driver::render(){
+	scene.get_renderer().preprocess(scene);
 	//Run through and launch each thread
 	for (auto &w : workers){
 		w.thread = std::thread(&Worker::render, std::ref(w));

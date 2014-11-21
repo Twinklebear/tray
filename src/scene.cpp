@@ -40,6 +40,9 @@ const Sampler& Scene::get_sampler() const {
 const Renderer& Scene::get_renderer() const {
 	return *renderer;
 }
+Renderer& Scene::get_renderer(){
+	return *renderer;
+}
 Node& Scene::get_root(){
 	return root;
 }

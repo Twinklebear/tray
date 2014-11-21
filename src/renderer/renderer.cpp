@@ -8,6 +8,9 @@
 Renderer::Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator)
 	: surface_integrator(std::move(surface_integrator))
 {}
+void Renderer::preprocess(const Scene &scene){
+	surface_integrator->preprocess(scene);
+}
 Colorf Renderer::illumination(RayDifferential &ray, const Scene &scene, Sampler &sampler, MemoryPool &pool) const {
 	DifferentialGeometry dg;
 	if (scene.get_root().intersect(ray, dg)){
