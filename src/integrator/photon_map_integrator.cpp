@@ -160,15 +160,33 @@ PhotonMapIntegrator::RadianceTask::RadianceTask(const PhotonMapIntegrator &integ
 	radiance_reflectance(radiance_reflectance), radiance_transmittance(radiance_transmittance)
 {}
 void PhotonMapIntegrator::RadianceTask::compute(){
+	int caustic_paths = integrator.num_caustic.load(std::memory_order_consume);
+	int indirect_paths = integrator.num_indirect.load(std::memory_order_consume);
+	int direct_paths = integrator.num_direct.load(std::memory_order_consume);
+	std::vector<NearPhoton> near_photons(integrator.query_size);
 	for (int i = begin; i < end; ++i){
 		auto &p = radiance_photons[i];
 		const auto &refl = radiance_reflectance[i];
 		const auto &trans = radiance_reflectance[i];
+		//We compute the radiance photon using estimates of the reflectance and transmittance
+		//from the irradiance of photons in the maps
 		if (!refl.is_black()){
-			//Compute reflected radiance
+			Colorf irrad = photon_irradiance(*integrator.caustic_map, caustic_paths, integrator.query_size,
+				near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			irrad += photon_irradiance(*integrator.indirect_map, indirect_paths, integrator.query_size,
+				near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			irrad += photon_irradiance(*integrator.direct_map, direct_paths, integrator.query_size,
+				near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			p.emit += INV_PI * refl * irrad;
 		}
 		if (!trans.is_black()){
-			//Compute transmitted radiance
+			Colorf irrad = photon_irradiance(*integrator.caustic_map, caustic_paths, integrator.query_size,
+				near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			irrad += photon_irradiance(*integrator.indirect_map, indirect_paths, integrator.query_size,
+				near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			irrad += photon_irradiance(*integrator.direct_map, direct_paths, integrator.query_size,
+				near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			p.emit += INV_PI * trans * irrad;
 		}
 	}
 }
