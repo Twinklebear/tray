@@ -47,12 +47,12 @@ void LDSampler::get_samples(std::vector<Sample> &samples){
 		++y;
 	}
 }
-void LDSampler::get_samples(std::array<float, 2> *samples, int n_samples){
-	sample2d(samples, n_samples, distrib(rng), distrib(rng));
+void LDSampler::get_samples(std::array<float, 2> *samples, int n_samples, int offset){
+	sample2d(samples, n_samples, distrib(rng), distrib(rng), offset);
 	std::shuffle(samples, samples + n_samples, rng);
 }
-void LDSampler::get_samples(float *samples, int n_samples){
-	sample1d(samples, n_samples, distrib(rng));
+void LDSampler::get_samples(float *samples, int n_samples, int offset){
+	sample1d(samples, n_samples, distrib(rng), offset);
 	std::shuffle(samples, samples + n_samples, rng);
 }
 int LDSampler::get_max_spp() const {

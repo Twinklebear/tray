@@ -25,12 +25,14 @@ public:
 	void get_samples(std::vector<Sample> &samples) override;
 	/*
 	 * Get a set of 2D samples in range [0, 1)
+	 * Optionally specify an offset index to start sample generation at
 	 */
-	void get_samples(std::array<float, 2> *samples, int n_samples) override;
+	void get_samples(std::array<float, 2> *samples, int n_samples, int offset = 0) override;
 	/*
 	 * Get a set of 1D samples in range [0, 1)
+	 * Optionally specify an offset index to start sample generation at
 	 */
-	void get_samples(float *samples, int n_samples) override;
+	void get_samples(float *samples, int n_samples, int offset = 0) override;
 	/*
 	 * Get the max number of samples this sampler will take per pixel
 	 */

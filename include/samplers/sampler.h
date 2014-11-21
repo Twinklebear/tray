@@ -44,12 +44,14 @@ public:
 	virtual void get_samples(std::vector<Sample> &samples) = 0;
 	/*
 	 * Get a set of 2D samples in range [0, 1)
+	 * Optionally specify an offset index to start sample generation at
 	 */
-	virtual void get_samples(std::array<float, 2> *samples, int n_samples) = 0;
+	virtual void get_samples(std::array<float, 2> *samples, int n_samples, int offset = 0) = 0;
 	/*
 	 * Get a set of 1D samples in range [0, 1)
+	 * Optionally specify an offset index to start sample generation at
 	 */
-	virtual void get_samples(float *samples, int n_samples) = 0;
+	virtual void get_samples(float *samples, int n_samples, int offset = 0) = 0;
 	/*
 	 * Get a random float in the range [0, 1)
 	 */

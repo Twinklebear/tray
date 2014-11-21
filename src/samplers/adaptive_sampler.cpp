@@ -32,12 +32,15 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 		return;
 	}
 	int spp = supersample_px;
+	//Offset our sample sequence indices by the number of samples already taken
+	//so previous samples can still be used without introducing a pattern
+	int offset = supersample_px > min_spp ? supersample_px / 2 : 0;
 	samples.resize(spp);
 	std::vector<std::array<float, 2>> pos(spp), lens(spp);
 	std::vector<float> time(spp);
-	get_samples(pos.data(), pos.size());
-	get_samples(lens.data(), lens.size());
-	get_samples(time.data(), time.size());
+	get_samples(pos.data(), pos.size(), offset);
+	get_samples(lens.data(), lens.size(), offset);
+	get_samples(time.data(), time.size(), offset);
 	auto p = pos.begin();
 	auto l = lens.begin();
 	auto t = time.begin();
@@ -50,17 +53,11 @@ void AdaptiveSampler::get_samples(std::vector<Sample> &samples){
 		s.img[1] += y;
 	}
 }
-void AdaptiveSampler::get_samples(std::array<float, 2> *samples, int n_samples){
-	//Offset our sample sequence indices by the number of samples already taken
-	//so previous samples can still be used without introducing a pattern
-	int offset = supersample_px > min_spp ? supersample_px / 2 : 0;
+void AdaptiveSampler::get_samples(std::array<float, 2> *samples, int n_samples, int offset){
 	LDSampler::sample2d(samples, n_samples, distrib(rng), distrib(rng), offset);
 	std::shuffle(samples, samples + n_samples, rng);
 }
-void AdaptiveSampler::get_samples(float *samples, int n_samples){
-	//Offset our sample sequence indices by the number of samples already taken
-	//so previous samples can still be used without introducing a pattern
-	int offset = supersample_px > min_spp ? supersample_px / 2 : 0;
+void AdaptiveSampler::get_samples(float *samples, int n_samples, int offset){
 	LDSampler::sample1d(samples, n_samples, distrib(rng), offset);
 	std::shuffle(samples, samples + n_samples, rng);
 }

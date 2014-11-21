@@ -43,11 +43,11 @@ void StratifiedSampler::get_samples(std::vector<Sample> &samples){
 		++y;
 	}
 }
-void StratifiedSampler::get_samples(std::array<float, 2> *samples, int n_samples){
+void StratifiedSampler::get_samples(std::array<float, 2> *samples, int n_samples, int){
 	sample2d(samples, n_samples, rng);
 	std::shuffle(samples, samples + n_samples, rng);
 }
-void StratifiedSampler::get_samples(float *samples, int n_samples){
+void StratifiedSampler::get_samples(float *samples, int n_samples, int){
 	sample1d(samples, n_samples, rng);
 	std::shuffle(samples, samples + n_samples, rng);
 }
