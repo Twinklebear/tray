@@ -1,4 +1,6 @@
 #include <cmath>
+#include <chrono>
+#include <random>
 #include <array>
 #include <thread>
 #include "scene.h"
@@ -149,10 +151,44 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){
 		return;
 	}
+	std::vector<std::thread> threads;
+	std::vector<Photon> caustic_photons, indirect_photons, direct_photons;
+	std::vector<RadiancePhoton> radiance_photons;
+	std::vector<Colorf> radiance_reflectance, radiance_transmittance;
+	shoot_photons(threads, caustic_photons, indirect_photons, direct_photons, radiance_photons,
+		radiance_reflectance, radiance_transmittance, scene);
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
 	return Colorf{0};
+}
+void PhotonMapIntegrator::shoot_photons(std::vector<std::thread> &threads, std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
+	std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons, std::vector<Colorf> &radiance_reflectance,
+	std::vector<Colorf> &radiance_transmittance, const Scene &scene)
+{
+	Distribution1D light_distrib = light_sampling_cdf(scene);
+	//Allocate and launch the photon shooting tasks
+	std::vector<ShootingTask> shooting_tasks;
+	shooting_tasks.reserve(std::thread::hardware_concurrency());
+	threads.reserve(std::thread::hardware_concurrency());
+	std::minstd_rand rng (std::chrono::duration_cast<std::chrono::milliseconds>(
+				std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+	std::uniform_real_distribution<float> distrib;
+	for (unsigned int i = 0; i < std::thread::hardware_concurrency(); ++i){
+		shooting_tasks.emplace_back(*this, scene, light_distrib, distrib(rng));
+		threads.emplace_back(&ShootingTask::shoot, &shooting_tasks.back());
+	}
+	//Wait for all shooting tasks to complete, collecting results from each task
+	for (size_t i = 0; i < shooting_tasks.size(); ++i){
+		threads[i].join();
+		auto &task = shooting_tasks[i];
+		std::copy(task.caustic_photons.begin(), task.caustic_photons.end(), std::back_inserter(caustic_photons));
+		std::copy(task.indirect_photons.begin(), task.indirect_photons.end(), std::back_inserter(indirect_photons));
+		std::copy(task.direct_photons.begin(), task.direct_photons.end(), std::back_inserter(direct_photons));
+		std::copy(task.radiance_photons.begin(), task.radiance_photons.end(), std::back_inserter(radiance_photons));
+		std::copy(task.radiance_reflectance.begin(), task.radiance_reflectance.end(), std::back_inserter(radiance_reflectance));
+		std::copy(task.radiance_transmittance.begin(), task.radiance_transmittance.end(), std::back_inserter(radiance_transmittance));
+	}
 }
 
