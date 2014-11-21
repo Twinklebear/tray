@@ -344,9 +344,11 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 		threads.emplace_back(&ShootingTask::shoot, &shooting_tasks.back());
 	}
 	//Wait for all shooting tasks to complete, collecting results from each task
-	for (size_t i = 0; i < shooting_tasks.size(); ++i){
-		threads[i].join();
-		auto &task = shooting_tasks[i];
+	for (auto &t : threads){
+		t.join();
+	}
+	while (!shooting_tasks.empty()){
+		auto &task = shooting_tasks.back();
 		std::copy(task.caustic_photons.begin(), task.caustic_photons.end(), std::back_inserter(caustic_photons));
 		std::copy(task.indirect_photons.begin(), task.indirect_photons.end(), std::back_inserter(indirect_photons));
 		std::copy(task.direct_photons.begin(), task.direct_photons.end(), std::back_inserter(direct_photons));
@@ -355,6 +357,7 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 			std::back_inserter(radiance_reflectance));
 		std::copy(task.radiance_transmittance.begin(), task.radiance_transmittance.end(),
 			std::back_inserter(radiance_transmittance));
+		shooting_tasks.pop_back();
 	}
 }
 Colorf PhotonMapIntegrator::photon_irradiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
