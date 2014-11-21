@@ -130,7 +130,7 @@ uint32_t KdPointTree<P>::build(uint32_t node_id, int start, int end, std::vector
 		next_free = build(next_free, start, median, build_data);
 	}
 	if (median + 1 < end){
-		nodes[node_id].right_child = next_free++;
+		nodes[node_id].right_child = next_free;
 		next_free = build(nodes[node_id].right_child, median + 1, end, build_data);
 	}
 	return next_free;
