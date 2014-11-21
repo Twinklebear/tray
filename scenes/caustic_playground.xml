@@ -46,8 +46,8 @@
 			<diffuse  r="0.740063" g="0.742313" b="0.733934"/>
 		</material>
 		<material type="glass" name="orange_glass">
-			<reflection r="0.9607843" g="0.501960"/>
-			<transmission r="0.9607843" g="0.501960"/>
+			<reflection r="0.9607843" g="0.501960" b="0"/>
+			<transmission r="0.9607843" g="0.501960" b="0"/>
 			<ior value="1.52"/>
 		</material>
 	</scene>
