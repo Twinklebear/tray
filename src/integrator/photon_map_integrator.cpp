@@ -33,7 +33,6 @@ PhotonMapIntegrator::ShootingTask::ShootingTask(PhotonMapIntegrator &integrator,
 {}
 void PhotonMapIntegrator::ShootingTask::shoot(){
 	MemoryPool pool;
-	int paths_traced = 0;
 	bool caustic_done = integrator.num_caustic.load(std::memory_order_consume) == integrator.num_caustic_wanted;
 	bool indirect_done = integrator.num_indirect.load(std::memory_order_consume) == integrator.num_indirect_wanted;
 	//Trace batches of 2048 photons then check if we've reached the number of desired photons of each type
@@ -306,12 +305,11 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
-	/*
 	if (indirect_map != nullptr){
 		illum += photon_radiance(*indirect_map, indirect_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
-	if (indirect_map != nullptr){
+	if (caustic_map != nullptr){
 		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
@@ -320,7 +318,6 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);
 		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
 	}
-	*/
 	return illum;
 }
 void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
