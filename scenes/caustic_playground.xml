@@ -28,6 +28,20 @@
 				<translate x="50"/>
 			</object>
 		</object>
+		<!--
+		<object type="obj" name="./models/dragon.obj" material="orange_glass">
+			<scale value="23"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="100" z="1"/>
+			<rotate angle="-5" x="1"/>
+			<translate z="6.5"/>
+		</object>
+		<object type="obj" name="./models/bunny.obj" material="orange_glass">
+			<scale value="6"/>
+			<rotate angle="90" x="1"/>
+			<translate y="-3" z="2"/>
+		</object>
+		-->
 		<object type="obj" name="./models/smooth_suzanne.obj" material="orange_glass">
 			<scale value="8"/>
 			<rotate angle="50" x="1"/>
@@ -62,8 +76,8 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="1024"/>
-		<renderer type="path" min_depth="3" max_depth="8"/>
+		<sampler type="adaptive" min="32" max="32"/>
+		<renderer type="photon" max_depth="8" num_caustic="4000000" num_indirect="4000000"/>
 	</config>
 </xml>
 
