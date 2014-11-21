@@ -94,9 +94,9 @@ private:
 	/*
 	 * Run the photon shooting tasks and merge their results into the vectors passed
 	 */
-	void shoot_photons(std::vector<std::thread> &threads, std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
-		std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons, std::vector<Colorf> &radiance_reflectance,
-		std::vector<Colorf> &radiance_transmittance, const Scene &scene);
+	void shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
+		std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons,
+		std::vector<Colorf> &radiance_reflectance, std::vector<Colorf> &radiance_transmittance, const Scene &scene);
 };
 
 #endif

@@ -151,24 +151,39 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){
 		return;
 	}
-	std::vector<std::thread> threads;
 	std::vector<Photon> caustic_photons, indirect_photons, direct_photons;
 	std::vector<RadiancePhoton> radiance_photons;
 	std::vector<Colorf> radiance_reflectance, radiance_transmittance;
-	shoot_photons(threads, caustic_photons, indirect_photons, direct_photons, radiance_photons,
+	shoot_photons(caustic_photons, indirect_photons, direct_photons, radiance_photons,
 		radiance_reflectance, radiance_transmittance, scene);
+	//Build our photon maps from the traced photons
+	if (!caustic_photons.empty()){
+		caustic_map = std::make_unique<KdPointTree<Photon>>(caustic_photons);
+	}
+	if (!indirect_photons.empty()){
+		indirect_map = std::make_unique<KdPointTree<Photon>>(indirect_photons);
+	}
+	if (!direct_photons.empty()){
+		direct_map = std::make_unique<KdPointTree<Photon>>(direct_photons);
+	}
+	//Compute radiance photon emittances now that we've got the photon maps built
+	if (!radiance_photons.empty()){
+		//launch tasks
+		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(radiance_photons);
+	}
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
 	return Colorf{0};
 }
-void PhotonMapIntegrator::shoot_photons(std::vector<std::thread> &threads, std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
+void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
 	std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons, std::vector<Colorf> &radiance_reflectance,
 	std::vector<Colorf> &radiance_transmittance, const Scene &scene)
 {
 	Distribution1D light_distrib = light_sampling_cdf(scene);
 	//Allocate and launch the photon shooting tasks
+	std::vector<std::thread> threads;
 	std::vector<ShootingTask> shooting_tasks;
 	shooting_tasks.reserve(std::thread::hardware_concurrency());
 	threads.reserve(std::thread::hardware_concurrency());
