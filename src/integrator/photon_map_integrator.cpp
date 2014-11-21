@@ -13,6 +13,14 @@
 #include "integrator/photon_map_integrator.h"
 
 
+/*
+ * Simpson's kernel for density estimation of photons
+ */
+float simpson_kernel(const Point &a, const Point &b, float max_dist_sqr){
+	float s = (1 - a.distance_sqr(b) / max_dist_sqr);
+	return 3 * INV_PI * s * s;
+}
+
 bool PhotonMapIntegrator::NearPhoton::operator<(const PhotonMapIntegrator::NearPhoton &b) const {
 	//Arbitrarily break times the same way the KdPointTree does
 	return dist_sqr == b.dist_sqr ? photon < b.photon : dist_sqr < b.dist_sqr;
@@ -21,7 +29,7 @@ bool PhotonMapIntegrator::NearPhoton::operator<(const PhotonMapIntegrator::NearP
 PhotonMapIntegrator::ShootingTask::ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene,
 	const Distribution1D &light_distrib, float seed)
 	: integrator(integrator), scene(scene), light_distrib(light_distrib),
-	sampler(std::make_unique<LDSampler>(0, 1, 0, 1, 1, seed))
+	sampler(std::make_unique<LDSampler>(0, 1, 0, 1, 2, seed))
 {}
 void PhotonMapIntegrator::ShootingTask::shoot(){
 	MemoryPool pool;
@@ -277,7 +285,32 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
 {
-	return Colorf{0};
+	Colorf illum;
+	Vector w_o = -ray.d;
+	const AreaLight *area_light = dg.node->get_area_light();
+	if (area_light){
+		illum += area_light->radiance(dg.point, dg.normal, w_o);
+	}
+	if (dg.node->get_material() == nullptr){
+		return illum;
+	}
+	BSDF *bsdf = dg.node->get_material()->get_bsdf(dg, pool);
+	const Point &p = bsdf->dg.point;
+	const Normal &n = bsdf->dg.normal;
+	auto *near_photons = pool.alloc_array<NearPhoton>(query_size);
+	int caustic_paths = num_caustic.load(std::memory_order_consume);
+	int indirect_paths = num_indirect.load(std::memory_order_consume);
+	int direct_paths = num_direct.load(std::memory_order_consume);
+	//TODO: Replace this with regular direct light computation via uniform sample all lights
+	if (direct_map != nullptr){
+		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
+			*bsdf, sampler, pool, dg, w_o);
+	}
+	if (indirect_map != nullptr){
+		illum += photon_radiance(*indirect_map, indirect_paths, query_size, near_photons, max_dist_sqr,
+			*bsdf, sampler, pool, dg, w_o);
+	}
+	return illum;
 }
 void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
 	std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons,
@@ -326,5 +359,45 @@ Colorf PhotonMapIntegrator::photon_irradiance(const KdPointTree<Photon> &photons
 		}
 	}
 	return irrad / (num_paths * max_dist_sqr * PI);
+}
+Colorf PhotonMapIntegrator::photon_radiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
+	NearPhoton *near_photons, float max_dist_sqr, BSDF &bsdf, Sampler &sampler, MemoryPool &pool,
+	const DifferentialGeometry &dg, const Vector &w_o)
+{
+	Colorf rad;
+	const static BxDFTYPE NON_SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION
+		| BxDFTYPE::DIFFUSE | BxDFTYPE::GLOSSY);
+	if (bsdf.num_bxdfs(NON_SPECULAR_BXDF) > 0){
+		//Find the photons at the intersection point that we'll use to estimate radiance
+		QueryCallback callback{near_photons, query_size, 0};
+		photons.query(dg.point, max_dist_sqr, callback);
+		Normal n_fwd = w_o.dot(bsdf.dg.normal) < 0 ? -bsdf.dg.normal : bsdf.dg.normal;
+		//Handle glossy and diffuse separately since we can be more efficient for pure diffuse since
+		//their bsdf is constant, as described in PBR
+		if (bsdf.num_bxdfs(BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION | BxDFTYPE::GLOSSY)) > 0){
+			//Compute average radiance of photons w/ density estimate
+			for (int i = 0; i < callback.found; ++i){
+				const Photon &p = *near_photons[i].photon;
+				float k = simpson_kernel(p.position, dg.point, max_dist_sqr);
+				rad += k / (num_paths * max_dist_sqr) * bsdf(w_o, p.w_i) * p.weight;
+			}
+		}
+		else {
+			Colorf refl, trans;
+			for (int i = 0; i < callback.found; ++i){
+				const Photon &p = *near_photons[i].photon;
+				float k = simpson_kernel(p.position, dg.point, max_dist_sqr);
+				if (p.w_i.dot(n_fwd) > 0){
+					refl += k / (num_paths * max_dist_sqr) * p.weight;
+				}
+				else {
+					trans += k / (num_paths * max_dist_sqr) * p.weight;
+				}
+			}
+			rad += refl * bsdf.rho_hd(w_o, sampler, pool, BxDFTYPE::ALL_REFLECTION) * INV_PI
+				+ trans * bsdf.rho_hd(w_o, sampler, pool, BxDFTYPE::ALL_TRANSMISSION) * INV_PI;
+		}
+	}
+	return rad;
 }
 

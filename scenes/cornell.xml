@@ -72,8 +72,8 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="128" max="512"/>
-		<renderer type="path" min_depth="3" max_depth="8"/>
+		<sampler type="adaptive" min="64" max="64"/>
+		<renderer type="photon" max_depth="8" num_caustic="10" num_indirect="400000"/>
 	</config>
 </xml>
 

@@ -126,7 +126,7 @@ public:
 	 * Create the photon mapping integrator, specifying the number of desired
 	 * caustic and indirect photons and the max depth for paths and photons
 	 */
-	PhotonMapIntegrator(int num_caustic, int num_indirect, int max_depth);
+	PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth);
 	/*
 	 * Pre-process the scene and build the photon maps needed for rendering
 	 */
@@ -145,14 +145,22 @@ private:
 		std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons,
 		std::vector<Colorf> &radiance_reflectance, std::vector<Colorf> &radiance_transmittance, const Scene &scene);
 	/*
-	 * Compute an estimate of the irradiance the hemisphere at the point (centered about the normal) using
+	 * Compute the irradiance the hemisphere at the point (centered about the normal) using
 	 * the photons in the map provided
 	 * The buffer to store the found photons in is also provided to avoid having to allocate it every call
 	 * num_paths: total number of paths traced for photons in the map
-	 * query_size: number of near photons desired, near_photons should have ate least this much room
+	 * query_size: number of near photons desired, near_photons should have at least this much room
 	 */
 	static Colorf photon_irradiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
 		NearPhoton *near_photons, float max_dist_sqr, const Point &p, const Normal &n);
+	/*
+	 * Compute the radiance of the photons in the map reflecting of the BSDF passed in the direction w_o
+	 * num_paths: total number of paths traced for photons in the map
+	 * query_size: number of near photons desired, near_photons should have at least this much room
+	 */
+	static Colorf photon_radiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
+		NearPhoton *near_photons, float max_dist_sqr, BSDF &bsdf, Sampler &sampler, MemoryPool &pool,
+		const DifferentialGeometry &dg, const Vector &w_o);
 };
 
 #endif
