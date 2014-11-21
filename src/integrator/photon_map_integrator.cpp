@@ -41,7 +41,7 @@ void PhotonMapIntegrator::ShootingTask::shoot(){
 		const int batch_size = 2048;
 		for (int i = 0; i < batch_size; ++i){
 			std::array<float, 6> u;
-			sampler->get_samples(u.data(), 6, paths_traced);
+			std::generate(u.begin(), u.end(), std::bind(&Sampler::random_float, sampler.get()));
 			//Choose a light to sample from based on the light CDF for the scene
 			float light_pdf = 0;
 			int light_num = light_distrib.sample_discrete(u[0], &light_pdf);
