@@ -27,7 +27,7 @@ bool PhotonMapIntegrator::NearPhoton::operator<(const PhotonMapIntegrator::NearP
 }
 
 PhotonMapIntegrator::ShootingTask::ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene,
-	const Distribution1D &light_distrib, float seed)
+	const Distribution1D &light_distrib, int seed)
 	: integrator(integrator), scene(scene), light_distrib(light_distrib),
 	sampler(std::make_unique<LDSampler>(0, 1, 0, 1, 2, seed))
 {}
@@ -306,10 +306,21 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
+	/*
 	if (indirect_map != nullptr){
 		illum += photon_radiance(*indirect_map, indirect_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
+	if (indirect_map != nullptr){
+		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
+			*bsdf, sampler, pool, dg, w_o);
+	}
+	//We handle specular reflection and transmission through standard recursive ray tracing
+	if (ray.depth < max_depth){
+		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);
+		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
+	}
+	*/
 	return illum;
 }
 void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
@@ -324,9 +335,9 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 	threads.reserve(std::thread::hardware_concurrency());
 	std::minstd_rand rng (std::chrono::duration_cast<std::chrono::milliseconds>(
 				std::chrono::high_resolution_clock::now().time_since_epoch()).count());
-	std::uniform_real_distribution<float> distrib;
+	std::uniform_int_distribution<int> seed;
 	for (unsigned int i = 0; i < std::thread::hardware_concurrency(); ++i){
-		shooting_tasks.emplace_back(*this, scene, light_distrib, distrib(rng));
+		shooting_tasks.emplace_back(*this, scene, light_distrib, seed(rng));
 		threads.emplace_back(&ShootingTask::shoot, &shooting_tasks.back());
 	}
 	//Wait for all shooting tasks to complete, collecting results from each task

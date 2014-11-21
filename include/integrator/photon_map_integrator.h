@@ -67,7 +67,7 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 		 * Create the photon shooting task for the integrator on the scene also passing a seed
 		 * for the sampler to generate random samples for photons
 		 */
-		ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene, const Distribution1D &light_distrib, float seed);
+		ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene, const Distribution1D &light_distrib, int seed);
 		/*
 		 * Run the shooting task to generate samples of photons of each type
 		 */
