@@ -171,21 +171,35 @@ void PhotonMapIntegrator::RadianceTask::compute(){
 		//We compute the radiance photon using estimates of the reflectance and transmittance
 		//from the irradiance of photons in the maps
 		if (!refl.is_black()){
-			Colorf irrad = photon_irradiance(*integrator.caustic_map, caustic_paths, integrator.query_size,
-				near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
-			irrad += photon_irradiance(*integrator.indirect_map, indirect_paths, integrator.query_size,
-				near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
-			irrad += photon_irradiance(*integrator.direct_map, direct_paths, integrator.query_size,
-				near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			Colorf irrad;
+			if (integrator.caustic_map != nullptr){
+				irrad += photon_irradiance(*integrator.caustic_map, caustic_paths, integrator.query_size,
+					near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			}
+			if (integrator.indirect_map != nullptr){
+				irrad += photon_irradiance(*integrator.indirect_map, indirect_paths, integrator.query_size,
+					near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			}
+			if (integrator.direct_map != nullptr){
+				irrad += photon_irradiance(*integrator.direct_map, direct_paths, integrator.query_size,
+					near_photons.data(), integrator.max_dist_sqr, p.position, p.normal);
+			}
 			p.emit += INV_PI * refl * irrad;
 		}
 		if (!trans.is_black()){
-			Colorf irrad = photon_irradiance(*integrator.caustic_map, caustic_paths, integrator.query_size,
-				near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
-			irrad += photon_irradiance(*integrator.indirect_map, indirect_paths, integrator.query_size,
-				near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
-			irrad += photon_irradiance(*integrator.direct_map, direct_paths, integrator.query_size,
-				near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			Colorf irrad;
+			if (integrator.caustic_map != nullptr){
+				irrad += photon_irradiance(*integrator.caustic_map, caustic_paths, integrator.query_size,
+					near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			}
+			if (integrator.indirect_map != nullptr){
+				irrad += photon_irradiance(*integrator.indirect_map, indirect_paths, integrator.query_size,
+					near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			}
+			if (integrator.direct_map != nullptr){
+				irrad += photon_irradiance(*integrator.direct_map, direct_paths, integrator.query_size,
+					near_photons.data(), integrator.max_dist_sqr, p.position, -p.normal);
+			}
 			p.emit += INV_PI * trans * irrad;
 		}
 	}
