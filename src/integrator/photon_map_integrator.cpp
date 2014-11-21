@@ -12,8 +12,10 @@
 #include "material/bsdf.h"
 #include "integrator/photon_map_integrator.h"
 
-PhotonMapIntegrator::ShootingTask::ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene, const Distribution1D &light_distrib, float seed)
-	: integrator(integrator), scene(scene), light_distrib(light_distrib), sampler(std::make_unique<LDSampler>(0, 1, 0, 1, 1, seed))
+PhotonMapIntegrator::ShootingTask::ShootingTask(PhotonMapIntegrator &integrator, const Scene &scene,
+	const Distribution1D &light_distrib, float seed)
+	: integrator(integrator), scene(scene), light_distrib(light_distrib),
+	sampler(std::make_unique<LDSampler>(0, 1, 0, 1, 1, seed))
 {}
 void PhotonMapIntegrator::ShootingTask::shoot(){
 	MemoryPool pool;
@@ -103,7 +105,8 @@ void PhotonMapIntegrator::ShootingTask::trace_photon(const RayDifferential &r, C
 				//Make sure the normal of the surface faces the right direction when we save it (eg. in case of transmission)
 				Normal n = w_o.dot(dg.normal) < 0 ? -dg.normal : dg.normal;
 				radiance_photons.push_back(RadiancePhoton{dg.point, n, Colorf{0}});
-				//Also store the reflectance and transmittance at the point so we can compute the radiance after mapping all photons
+				//Also store the reflectance and transmittance at the point so we can compute
+				//the radiance after mapping all photons
 				radiance_reflectance.emplace_back(bsdf->rho_hh(sampler, pool, BxDFTYPE::ALL_REFLECTION));
 				radiance_transmittance.emplace_back(bsdf->rho_hh(sampler, pool, BxDFTYPE::ALL_TRANSMISSION));
 			}
@@ -178,8 +181,8 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	return Colorf{0};
 }
 void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
-	std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons, std::vector<Colorf> &radiance_reflectance,
-	std::vector<Colorf> &radiance_transmittance, const Scene &scene)
+	std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons,
+	std::vector<Colorf> &radiance_reflectance, std::vector<Colorf> &radiance_transmittance, const Scene &scene)
 {
 	Distribution1D light_distrib = light_sampling_cdf(scene);
 	//Allocate and launch the photon shooting tasks
@@ -202,8 +205,10 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 		std::copy(task.indirect_photons.begin(), task.indirect_photons.end(), std::back_inserter(indirect_photons));
 		std::copy(task.direct_photons.begin(), task.direct_photons.end(), std::back_inserter(direct_photons));
 		std::copy(task.radiance_photons.begin(), task.radiance_photons.end(), std::back_inserter(radiance_photons));
-		std::copy(task.radiance_reflectance.begin(), task.radiance_reflectance.end(), std::back_inserter(radiance_reflectance));
-		std::copy(task.radiance_transmittance.begin(), task.radiance_transmittance.end(), std::back_inserter(radiance_transmittance));
+		std::copy(task.radiance_reflectance.begin(), task.radiance_reflectance.end(),
+			std::back_inserter(radiance_reflectance));
+		std::copy(task.radiance_transmittance.begin(), task.radiance_transmittance.end(),
+			std::back_inserter(radiance_transmittance));
 	}
 }
 

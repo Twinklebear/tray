@@ -63,7 +63,8 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 		/*
 		 * Trace a single photon's path through the scene depositing it on surfaces as we go
 		 */
-		void trace_photon(const RayDifferential &r, Colorf weight, bool caustic_done, bool indirect_done, Sampler &sampler, MemoryPool &pool);
+		void trace_photon(const RayDifferential &r, Colorf weight, bool caustic_done, bool indirect_done,
+			Sampler &sampler, MemoryPool &pool);
 	};
 	friend struct ShootingTask;
 
