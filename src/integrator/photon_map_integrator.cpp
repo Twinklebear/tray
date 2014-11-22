@@ -10,8 +10,8 @@
 #include "samplers/ld_sampler.h"
 #include "lights/light.h"
 #include "material/bsdf.h"
+#include "monte_carlo/util.h"
 #include "integrator/photon_map_integrator.h"
-
 
 /*
  * Simpson's kernel for density estimation of photons
@@ -212,7 +212,7 @@ void PhotonMapIntegrator::RadianceTask::compute(){
 	}
 }
 
-void PhotonMapIntegrator::QueryCallback::operator()(const Point&, const Photon &photon, float dist_sqr, float &max_dist_sqr){
+void PhotonMapIntegrator::PhotonQueryCallback::operator()(const Point&, const Photon &photon, float dist_sqr, float &max_dist_sqr){
 	if (found < query_size){
 		queried_photons[found++] = NearPhoton{&photon, dist_sqr};
 		//If we've hit our query size start shrinking the search radius so we only get photons
@@ -229,6 +229,14 @@ void PhotonMapIntegrator::QueryCallback::operator()(const Point&, const Photon &
 		queried_photons[query_size - 1] = NearPhoton{&photon, dist_sqr};
 		std::push_heap(queried_photons, queried_photons + query_size);
 		max_dist_sqr = queried_photons[0].dist_sqr;
+	}
+}
+
+void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const RadiancePhoton &p, float dist_sqr, float &max_dist_sqr){
+	//Since we narrow the search radius any photon we find will be closer than the last
+	if (normal.dot(p.normal) > 0){
+		photon = &p;
+		max_dist_sqr = dist_sqr;
 	}
 }
 
@@ -286,6 +294,8 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	std::cout << "PhotonMapIntegrator: building photon maps took: "
 		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
 		<< "ms\n";
+	//We don't need the direct lighting map unless we're doing the comparison render
+	direct_map = nullptr;
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
@@ -305,19 +315,30 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	auto *near_photons = pool.alloc_array<NearPhoton>(query_size);
 	int caustic_paths = num_caustic.load(std::memory_order_consume);
 	int indirect_paths = num_indirect.load(std::memory_order_consume);
+	illum += uniform_sample_all_lights(scene, renderer, p, n, w_o, *bsdf, sampler, pool);
+	/*
+	//The direct lighting map should only be used to show some demo renderers of using it vs normal
+	//direct lighting calculation
 	int direct_paths = num_direct.load(std::memory_order_consume);
-	//TODO: Replace this with regular direct light computation via uniform sample all lights
 	if (direct_map != nullptr){
 		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
-	if (indirect_map != nullptr){
-		illum += photon_radiance(*indirect_map, indirect_paths, query_size, near_photons, max_dist_sqr,
-			*bsdf, sampler, pool, dg, w_o);
-	}
+	*/
 	if (caustic_map != nullptr){
 		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
+	}
+	const static BxDFTYPE NON_SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION
+		| BxDFTYPE::DIFFUSE | BxDFTYPE::GLOSSY);
+	if (indirect_map != nullptr){
+		if (radiance_map != nullptr && bsdf->num_bxdfs(NON_SPECULAR_BXDF) > 0){
+			illum += final_gather(scene, renderer, ray, p, n, *bsdf, sampler, pool);
+		}
+		else {
+			illum += photon_radiance(*indirect_map, indirect_paths, query_size, near_photons, max_dist_sqr,
+				*bsdf, sampler, pool, dg, w_o);
+		}
 	}
 	//We handle specular reflection and transmission through standard recursive ray tracing
 	if (ray.depth < max_depth){
@@ -325,6 +346,105 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
 	}
 	return illum;
+}
+Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, const RayDifferential &ray,
+	const Point &p, const Normal &n, const BSDF &bsdf, Sampler &sampler, MemoryPool &pool) const
+{
+	Vector w_o = -ray.d;
+	//Query nearby indirect photons to get an estimate of the average direction of incident illumination at the point
+	PhotonQueryCallback phot_query{pool.alloc_array<NearPhoton>(query_size), query_size, 0};
+	for (float query_dist_sqr = max_dist_sqr; phot_query.found < query_size; query_dist_sqr *= 2){
+		phot_query.found = 0;
+		float dist = query_dist_sqr;
+		indirect_map->query(p, dist, phot_query);
+	}
+	auto *indirect_dirs = pool.alloc_array<Vector>(phot_query.found);
+	std::transform(phot_query.queried_photons, phot_query.queried_photons + phot_query.found, indirect_dirs,
+		[](const auto &p){ return p.photon->w_i; });
+
+	//Use the BSDF to perform final gathering
+	auto *bsdf_samples_u = pool.alloc_array<std::array<float, 2>>(final_gather_samples);
+	auto *bsdf_samples_comp = pool.alloc_array<float>(final_gather_samples);
+	sampler.get_samples(bsdf_samples_u, final_gather_samples);
+	sampler.get_samples(bsdf_samples_comp, final_gather_samples);
+	Colorf gathered;
+	for (int i = 0; i < final_gather_samples; ++i){
+		//Sample direction from the BSDF for a gather ray
+		Vector w_i;
+		float pdf_val = 0;
+		Colorf f = bsdf.sample(w_o, w_i, bsdf_samples_u[i], bsdf_samples_comp[i], pdf_val,
+			BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR));
+		if (f.is_black() || pdf_val == 0){
+			continue;
+		}
+		//Trace the gather ray in the scene and use the nearest radiance photon at the hit point
+		//to estimate illumination
+		RayDifferential gather_ray{p, w_i, ray, 0.001};
+		DifferentialGeometry dg;
+		if (scene.get_root().intersect(gather_ray, dg)){
+			Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
+			RadianceQueryCallback rad_query{n_gather, nullptr}; 
+			float query_dist = std::numeric_limits<float>::infinity();
+			radiance_map->query(dg.point, query_dist, rad_query);
+			Colorf emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
+
+			//Compute overall pdf of sampling w_i direction from the photon distribution using a gather angle sized cone
+			float photon_pdf = 0;
+			float cone_pdf = uniform_cone_pdf(gather_angle);
+			for (int j = 0; j < phot_query.found; ++j){
+				if (indirect_dirs[j].dot(w_i) > 0.999 * gather_angle){
+					photon_pdf += cone_pdf;
+				}
+			}
+			photon_pdf /= phot_query.found;
+			float weight = power_heuristic(final_gather_samples, pdf_val, final_gather_samples, photon_pdf);
+			gathered += f * emit * std::abs(w_i.dot(n)) * weight / pdf_val;
+		}
+	}
+	Colorf illum = gathered / final_gather_samples;
+
+	//Now use nearby photons to do final gathering
+	gathered = Colorf{0};
+	sampler.get_samples(bsdf_samples_u, final_gather_samples, final_gather_samples);
+	sampler.get_samples(bsdf_samples_comp, final_gather_samples, final_gather_samples);
+	for (int i = 0; i < final_gather_samples; ++i){
+		//Uniformly select a photon and use it to sample a vector along the cone centered about its incident direction
+		int photon_id = std::min(phot_query.found - 1,
+			static_cast<int>(bsdf_samples_comp[i] * (phot_query.found - 1)));
+		Vector w_x, w_y;
+		coordinate_system(indirect_dirs[photon_id], w_x, w_y);
+		Vector w_i = uniform_sample_cone(bsdf_samples_u[i], gather_angle, w_x, w_y, indirect_dirs[photon_id]);
+
+		Colorf f = bsdf(w_o, w_i);
+		if (f.is_black()){
+			continue;
+		}
+		//Trace the gather ray in the scene and use the nearest radiance photon at the hit point
+		//to estimate illumination
+		RayDifferential gather_ray{p, w_i, ray, 0.001};
+		DifferentialGeometry dg;
+		if (scene.get_root().intersect(gather_ray, dg)){
+			Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
+			RadianceQueryCallback rad_query{n_gather, nullptr}; 
+			float query_dist = std::numeric_limits<float>::infinity();
+			radiance_map->query(dg.point, query_dist, rad_query);
+			Colorf emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
+
+			//Compute overall pdf of sampling w_i direction from the photon distribution using a gather angle sized cone
+			float photon_pdf = 0;
+			float cone_pdf = uniform_cone_pdf(gather_angle);
+			for (int j = 0; j < phot_query.found; ++j){
+				if (indirect_dirs[j].dot(w_i) > 0.999 * gather_angle){
+					photon_pdf += cone_pdf;
+				}
+			}
+			photon_pdf /= phot_query.found;
+			float pdf_val = bsdf.pdf(w_o, w_i);
+			float weight = power_heuristic(final_gather_samples, pdf_val, final_gather_samples, photon_pdf);
+			gathered += f * emit * std::abs(w_i.dot(n)) * weight / photon_pdf;
+		}
+	}
+	return illum + gathered / final_gather_samples;
 }
 void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
 	std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons,
@@ -363,7 +483,7 @@ void PhotonMapIntegrator::shoot_photons(std::vector<Photon> &caustic_photons, st
 Colorf PhotonMapIntegrator::photon_irradiance(const KdPointTree<Photon> &photons, int num_paths, int query_size,
 	NearPhoton *near_photons, float max_dist_sqr, const Point &p, const Normal &n)
 {
-	QueryCallback callback{near_photons, query_size, 0};
+	PhotonQueryCallback callback{near_photons, query_size, 0};
 	photons.query(p, max_dist_sqr, callback);
 	if (callback.found == 0){
 		return Colorf{0};
@@ -386,7 +506,7 @@ Colorf PhotonMapIntegrator::photon_radiance(const KdPointTree<Photon> &photons, 
 		| BxDFTYPE::DIFFUSE | BxDFTYPE::GLOSSY);
 	if (bsdf.num_bxdfs(NON_SPECULAR_BXDF) > 0){
 		//Find the photons at the intersection point that we'll use to estimate radiance
-		QueryCallback callback{near_photons, query_size, 0};
+		PhotonQueryCallback callback{near_photons, query_size, 0};
 		photons.query(dg.point, max_dist_sqr, callback);
 		Normal n_fwd = w_o.dot(bsdf.dg.normal) < 0 ? -bsdf.dg.normal : bsdf.dg.normal;
 		//Handle glossy and diffuse separately since we can be more efficient for pure diffuse since

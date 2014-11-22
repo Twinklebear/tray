@@ -104,11 +104,22 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	/*
 	 * Stores information about a photon query as it's performed on a map
 	 */
-	struct QueryCallback {
+	struct PhotonQueryCallback {
 		NearPhoton *queried_photons;
 		int query_size, found;
 
 		void operator()(const Point &pos, const Photon &photon, float dist_sqr, float &max_dist_sqr);
+	};
+
+	/*
+	 * Stores information about a radiance photon query, where we just want the nearest radiance photon
+	 * that is on the side we're sampling
+	 */
+	struct RadianceQueryCallback {
+		const Normal &normal;
+		const RadiancePhoton *photon;
+
+		void operator()(const Point &pos, const RadiancePhoton &p, float dist_sqr, float &max_dist_sqr);
 	};
 
 	//The desired number of caustic/indirect photons we want
@@ -118,7 +129,7 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	std::unique_ptr<KdPointTree<Photon>> caustic_map, indirect_map, direct_map;
 	std::unique_ptr<KdPointTree<RadiancePhoton>> radiance_map;
 	//Some default configuration values for the photon mapping, TODO: make configurable?
-	const int query_size = 50, final_gather = 32;
+	const int query_size = 50, final_gather_samples = 32;
 	const float max_dist_sqr = 0.1, gather_angle = 10;
 
 public:
@@ -138,6 +149,13 @@ public:
 		DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const;
 
 private:
+	/*
+	 * Compute indirect illumination contribution using final gathering, this is done by combining 
+	 * sampling a distribution based on the BSDF and a distribution based on the
+	 * average indirect illumination direction
+	 */
+	Colorf final_gather(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
+		const Point &p, const Normal &n, const BSDF &bsdf, Sampler &sampler, MemoryPool &pool) const;
 	/*
 	 * Run the photon shooting tasks and merge their results into the vectors passed
 	 */
