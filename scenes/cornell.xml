@@ -73,7 +73,7 @@
 
 	<config>
 		<sampler type="adaptive" min="64" max="64"/>
-		<renderer type="photon" max_depth="8" num_caustic="10" num_indirect="400000"/>
+		<renderer type="photon" max_depth="8" num_caustic="10" num_indirect="10000000"/>
 	</config>
 </xml>
 
