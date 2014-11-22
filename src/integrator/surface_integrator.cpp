@@ -88,6 +88,31 @@ Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &
 	}
 	return transmitted;
 }
+Colorf SurfaceIntegrator::uniform_sample_all_lights(const Scene &scene, const Renderer &renderer, const Point &p,
+	const Normal &n, const Vector &w_o, const BSDF &bsdf, Sampler &sampler, MemoryPool &pool)
+{
+	Colorf illum;
+	for (const auto &lit : scene.get_light_cache()){
+		const auto &light = *lit.second;
+		auto *l_samples_u = pool.alloc_array<std::array<float, 2>>(light.n_samples);
+		auto *l_samples_comp = pool.alloc_array<float>(light.n_samples);
+		auto *bsdf_samples_u = pool.alloc_array<std::array<float, 2>>(light.n_samples);
+		auto *bsdf_samples_comp = pool.alloc_array<float>(light.n_samples);
+		sampler.get_samples(l_samples_u, light.n_samples);
+		sampler.get_samples(l_samples_comp, light.n_samples);
+		sampler.get_samples(bsdf_samples_u, light.n_samples);
+		sampler.get_samples(bsdf_samples_comp, light.n_samples);
+		Colorf light_illum;
+		for (int i = 0; i < light.n_samples; ++i){
+			BSDFSample bsdf_sample{bsdf_samples_u[i], bsdf_samples_comp[i]};
+			LightSample l_sample{l_samples_u[i], l_samples_comp[i]};
+			light_illum += estimate_direct(scene, renderer, p, n, w_o, bsdf, light, l_sample,
+				bsdf_sample, BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR));
+		}
+		illum += light_illum / light.n_samples;
+	}
+	return illum;
+}
 Colorf SurfaceIntegrator::uniform_sample_one_light(const Scene &scene, const Renderer &renderer, const Point &p,
 	const Normal &n, const Vector &w_o, const BSDF &bsdf, const LightSample &l_sample, const BSDFSample &bsdf_sample)
 {
