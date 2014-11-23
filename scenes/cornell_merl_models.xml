@@ -32,18 +32,18 @@
 			<scale value="23"/>
 			<rotate angle="90" x="1"/>
 			<rotate angle="110" z="1"/>
-			<translate x="2" y="7" z="6"/>
+			<translate x="1" y="7" z="6.3"/>
 		</object>
 		<object type="obj" name="./models/buddha.obj" material="buddha-mat">
-			<scale value="15"/>
+			<scale value="17"/>
 			<rotate angle="90" x="1"/>
-			<rotate angle="145" z="1"/>
-			<translate x="9" y="2" z="6"/>
+			<rotate angle="140" z="1"/>
+			<translate x="10" z="7.5"/>
 		</object>
 		<object type="sphere" name="sphere2" material="sphere-mat">
 			<scale value="4"/>
 			<rotate angle="30" y="1"/>
-			<translate x="-8" y="-6" z="4"/>
+			<translate x="-10" y="-6" z="4"/>
 		</object>
 		<object type="sphere_r1" name="sphere_light" radius="1" material="wall">
 			<translate x="0" y="0" z="22"/>
