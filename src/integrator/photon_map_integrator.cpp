@@ -257,13 +257,13 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 		radiance_reflectance, radiance_transmittance, scene);
 	//Build our photon maps from the traced photons
 	if (!caustic_photons.empty()){
-		caustic_map = std::make_unique<KdPointTree<Photon>>(caustic_photons);
+		caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
 	}
 	if (!indirect_photons.empty()){
-		indirect_map = std::make_unique<KdPointTree<Photon>>(indirect_photons);
+		indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
 	}
 	if (!direct_photons.empty()){
-		direct_map = std::make_unique<KdPointTree<Photon>>(direct_photons);
+		direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
 	}
 	//Compute radiance photon emittances now that we've got the photon maps built
 	if (!radiance_photons.empty()){

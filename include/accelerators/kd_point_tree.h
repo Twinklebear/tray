@@ -51,13 +51,14 @@ class KdPointTree {
 		static Node leaf();
 	};
 
-	std::vector<Node> nodes;
 	std::vector<P> data;
+	std::vector<Node> nodes;
 public:
 	/*
 	 * Construct the KdPointTree about the set of point data passed
 	 */
 	KdPointTree(const std::vector<P> &points);
+	KdPointTree(std::vector<P> &&points);
 	/*
 	 * Query the tree for a list of points within max_dist_sqr of the point, nodes within
 	 * the query range are passed to the user supplied callback. Note that it is possible
@@ -96,6 +97,13 @@ KdPointTree<P>::KdPointTree(const std::vector<P> &points){
 	std::vector<const P*> build_data(points.size());
 	std::transform(points.begin(), points.end(), build_data.begin(), [](const auto &p){ return &p; });
 	build(0, 0, points.size(), build_data);
+}
+template<typename P>
+KdPointTree<P>::KdPointTree(std::vector<P> &&points) : data(std::move(points)){
+	nodes.resize(data.size());
+	std::vector<const P*> build_data(data.size());
+	std::transform(data.begin(), data.end(), build_data.begin(), [](const auto &p){ return &p; });
+	build(0, 0, data.size(), build_data);
 }
 template<typename P>
 uint32_t KdPointTree<P>::build(uint32_t node_id, int start, int end, std::vector<const P*> &build_data){
