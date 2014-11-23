@@ -15,6 +15,7 @@
  * following the photon mapping implementation described in PBR
  */
 class PhotonMapIntegrator : public SurfaceIntegrator {
+	enum MAP_TYPE {CAUSTIC, INDIRECT, DIRECT};
 	/*
 	 * A photon stored in the photon mapping process with its location,
 	 * weight and incident vector
@@ -102,6 +103,26 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	friend struct RadianceTask;
 
 	/*
+	 * Object that handles construction of one of the photon maps in the background
+	 */
+	struct TreeBuildTask {
+		PhotonMapIntegrator &integrator;
+		std::vector<Photon> &photons;
+		MAP_TYPE type;
+
+		/*
+		 * Create the tree building task and specify the photons to use to build the desired tree
+		 * note that the photons will be consumed by the build process and moved into the tree
+		 */
+		TreeBuildTask(PhotonMapIntegrator &integrator, std::vector<Photon> &photons, MAP_TYPE type);
+		/*
+		 * Build the tree and set the integrator's unique_ptr for the tree that was built
+		 */
+		void build();
+	};
+	friend struct TreeBuildTask;
+
+	/*
 	 * Stores information about a photon query as it's performed on a map
 	 */
 	struct PhotonQueryCallback {
@@ -162,6 +183,11 @@ private:
 	void shoot_photons(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
 		std::vector<Photon> &direct_photons, std::vector<RadiancePhoton> &radiance_photons,
 		std::vector<Colorf> &radiance_reflectance, std::vector<Colorf> &radiance_transmittance, const Scene &scene);
+	/*
+	 * Build the caustic, indirect and direct photon maps in parallel
+	 */
+	void build_maps(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
+		std::vector<Photon> &direct_photons);
 	/*
 	 * Compute the irradiance the hemisphere at the point (centered about the normal) using
 	 * the photons in the map provided
