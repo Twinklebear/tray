@@ -28,7 +28,6 @@
 				<translate x="15"/>
 			</object>
 		</object>
-		<!--
 		<object type="obj" name="./models/cube.obj" material="plastic_white">
 			<scale x="4" y="4" z="10"/>
 			<rotate angle="20" z="1"/>
@@ -39,7 +38,6 @@
 			<rotate angle="-15" z="1"/>
 			<translate x="4" y="-3" z="2.5"/>
 		</object>
-		-->
 		<object type="sphere_r1.8" name="sphere_light" radius="1" material="wall">
 			<translate x="0" y="0" z="22"/>
 			<light type="area" name="areaLight">
@@ -75,7 +73,7 @@
 
 	<config>
 		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="photon" max_depth="8" num_caustic="10" num_indirect="1000"/>
+		<renderer type="photon" max_depth="8" num_caustic="10" num_indirect="5000000"/>
 	</config>
 </xml>
 
