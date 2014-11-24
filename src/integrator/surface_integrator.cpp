@@ -15,11 +15,10 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 	Vector w_o = -ray.d;
 	Vector w_i;
 	float pdf_val = 0;
-	int n_samples = 1;
 	std::array<float, 2> u_sample;
 	float c_sample = 0;
-	sampler.get_samples(&u_sample, n_samples);
-	sampler.get_samples(&c_sample, n_samples);
+	sampler.get_samples(&u_sample, 1);
+	sampler.get_samples(&c_sample, 1);
 	//Compute the color reflected off the BSDF
 	Colorf reflected{0};
 	Colorf f = bsdf.sample(w_o, w_i, u_sample, c_sample, pdf_val,
@@ -43,7 +42,7 @@ Colorf SurfaceIntegrator::spec_reflect(const RayDifferential &ray, const BSDF &b
 		Colorf li = renderer.illumination(refl, scene, sampler, pool);
 		reflected = f * li * std::abs(w_i.dot(n)) / pdf_val;
 	}
-	return reflected / n_samples;
+	return reflected;
 }
 Colorf SurfaceIntegrator::spec_transmit(const RayDifferential &ray, const BSDF &bsdf, const Renderer &renderer,
 	const Scene &scene, Sampler &sampler, MemoryPool &pool)
