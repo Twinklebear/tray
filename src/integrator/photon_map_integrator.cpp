@@ -299,7 +299,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 		for (auto &t : threads){
 			t.join();
 		}
-		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(radiance_photons);
+		radiance_map = std::make_unique<KdPointTree<RadiancePhoton>>(std::move(radiance_photons));
 	}
 	auto end = std::chrono::high_resolution_clock::now();
 	auto elapsed = end - start;

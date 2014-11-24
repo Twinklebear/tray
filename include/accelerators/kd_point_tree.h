@@ -52,6 +52,7 @@ class KdPointTree {
 	};
 
 	std::vector<P> data;
+	std::vector<const P*> node_data;
 	std::vector<Node> nodes;
 public:
 	/*
@@ -91,16 +92,17 @@ typename KdPointTree<P>::Node KdPointTree<P>::Node::leaf(){
 }
 
 template<typename P>
-KdPointTree<P>::KdPointTree(const std::vector<P> &points){
-	nodes.resize(points.size());
-	data.resize(points.size());
-	std::vector<const P*> build_data(points.size());
-	std::transform(points.begin(), points.end(), build_data.begin(), [](const auto &p){ return &p; });
-	build(0, 0, points.size(), build_data);
+KdPointTree<P>::KdPointTree(const std::vector<P> &points) : data(points){
+	nodes.resize(data.size());
+	node_data.resize(data.size());
+	std::vector<const P*> build_data(data.size());
+	std::transform(data.begin(), data.end(), build_data.begin(), [](const auto &p){ return &p; });
+	build(0, 0, data.size(), build_data);
 }
 template<typename P>
 KdPointTree<P>::KdPointTree(std::vector<P> &&points) : data(std::move(points)){
 	nodes.resize(data.size());
+	node_data.resize(data.size());
 	std::vector<const P*> build_data(data.size());
 	std::transform(data.begin(), data.end(), build_data.begin(), [](const auto &p){ return &p; });
 	build(0, 0, data.size(), build_data);
@@ -110,7 +112,7 @@ uint32_t KdPointTree<P>::build(uint32_t node_id, int start, int end, std::vector
 	//If we've hit the bottom make a leaf node
 	if (start + 1 == end){
 		nodes[node_id] = Node::leaf();
-		data[node_id] = *build_data[start];
+		node_data[node_id] = build_data[start];
 		return node_id + 1;
 	}
 	//Find the longest extent of the box bounding the points and use it to split and do median split
@@ -127,7 +129,7 @@ uint32_t KdPointTree<P>::build(uint32_t node_id, int start, int end, std::vector
 		});
 	//Create this node as an interior and recursively build the left/right children
 	nodes[node_id] = Node::interior(build_data[median]->position[split_axis], split_axis);
-	data[node_id] = *build_data[median];
+	node_data[node_id] = build_data[median];
 	uint32_t next_free = node_id + 1;
 	if (start < median){
 		nodes[node_id].has_left_child = 1;
@@ -171,9 +173,9 @@ void KdPointTree<P>::query(uint32_t node_id, const Point &p, float &max_dist_sqr
 			}
 		}
 	}
-	float dist_sqr = data[node_id].position.distance_sqr(p);
+	float dist_sqr = node_data[node_id]->position.distance_sqr(p);
 	if (dist_sqr < max_dist_sqr){
-		callback(p, data[node_id], dist_sqr, max_dist_sqr);
+		callback(p, *node_data[node_id], dist_sqr, max_dist_sqr);
 	}
 }
 
