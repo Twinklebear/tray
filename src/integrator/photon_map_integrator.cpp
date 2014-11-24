@@ -274,6 +274,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	std::cout << "PhotonMapIntegrator: shooting photons" << std::endl;
 	shoot_photons(caustic_photons, indirect_photons, direct_photons, radiance_photons,
 		radiance_reflectance, radiance_transmittance, scene);
+	std::cout << "PhotonMapIntegrator: building photon maps" << std::endl;
 	build_maps(caustic_photons, indirect_photons, direct_photons);
 
 	//Compute radiance photon emittances now that we've got the photon maps built

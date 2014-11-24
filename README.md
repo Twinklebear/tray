@@ -146,52 +146,40 @@ light transformation matrices don't have scaling.
 	</light>
 </object>
 ```
-
-
-Extras
--
-The ray tracer also supports some extra scene options that can be specified within a <config> block in the scene file.
-
-Objects in Motion (Not currently supported)
--
-Objects can be specified to be in motion during the rendering, resulting in motion blur. To do this you can specify the
-start and end transformations along with their time points and specify the camera shutter open and close times.
-
-The object transformation should look like:
-```XML
-<start time="1.5">
-    <scale value="1.5"/>
-	<rotate angle="45" x="1" y="0" z="0"/>
-	<translate x="2" y="1" z="0"/>
-</start>
-<end time="5.5">
-    <scale value="2"/>
-	<rotate angle="0" x="1" y="0" z="0"/>
-	<translate x="0" y="3" z="0"/>
-</end>
-```
-
-The camera shutter open and close times can be specified as:
-```XML
-<camera>
-    <!-- Your other camera properties -->
-	<shutter open="0.5" close="5.5"/>
-</camera>
-```
-
 Renderers
 -
 You can specify which renderer you want to have used to render your scene. Currently Whitted, path tracing and bidirectional
 path tracing are supported.
 
-- whitted - Use Whitted recursive ray tracing to render
-	- `max_depth` - max recursion depth for rays
-- path - Use camera path tracing to render
-	- `max_depth` - max path length
-	- `min_depth` - minimum path length
-- bidir - Use bidirectional path tracing to render
-	- `max_depth` - max path length
-	- `min_depth` - minimum path length
+**Whitted Recursive Ray Tracing**
+Use Whitted recursive ray tracing
+```XML
+<!-- max_depth specifies the max ray recursion depth -->
+<renderer type="whitted" max_depth="8"/>
+```
+
+**Path Tracing**
+Use path tracing with explicit light sampling
+```XML
+<!-- min/max depth specify the min/max path lengths -->
+<renderer type="path" min_depth="3" max_depth="8"/>
+```
+
+**Bidirectional Path Tracing**
+Use bidirectional path tracing
+```XML
+<!-- min/max depth specify the min/max path lengths -->
+<renderer type="bidir" min_depth="3" max_depth="8"/>
+```
+
+**Photon Mapping**
+Use photon mapping
+```XML
+<!-- max depth specifies max bounces for photons and depth for rays
+	num_caustic/indirect specify the desired number of caustic/indirect photons to shoot.
+	note that less than this number may be created depening on the scene -->
+<renderer type="photon" max_depth="8" num_caustic="1000000" num_indirect="1000000"/>
+```
 
 Samplers
 -
