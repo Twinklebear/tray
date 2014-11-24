@@ -61,7 +61,7 @@
 		</material>
 		<material type="glass" name="glass_mat">
 			<reflection value="1"/>
-			<transmission value="2.2"/>
+			<transmission value="1"/>
 			<ior value="1.52"/>
 		</material>
 	</scene>
@@ -76,8 +76,8 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="128" max="1024"/>
-		<renderer type="path" min_depth="3" max_depth="8"/>
+		<sampler type="adaptive" min="16" max="16"/>
+		<renderer type="photon" max_depth="4" num_caustic="100000" num_indirect="100000"/>
 	</config>
 </xml>
 
