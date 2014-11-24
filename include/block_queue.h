@@ -12,7 +12,7 @@
 class BlockQueue {
 	std::vector<std::unique_ptr<Sampler>> samplers;
 	//The index of the next sampler to be handed out
-	std::atomic_int sampler_idx, loops;
+	std::atomic_uint sampler_idx, loops;
 
 public:
 	/*

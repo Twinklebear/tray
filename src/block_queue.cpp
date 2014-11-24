@@ -34,21 +34,17 @@ BlockQueue::BlockQueue(const Sampler &sampler, int bwidth, int bheight)
 		});
 }
 Sampler* BlockQueue::get_block(){
-	int n = samplers.size();
-	if (sampler_idx.compare_exchange_strong(n, n, std::memory_order_acq_rel)){
+	//I doubt I'll ever run this on an image big enough to make overflowing back to the 1st sampler
+	//a concern here, especially since threads exit after getting a null sampler
+	unsigned int s = sampler_idx.fetch_add(1, std::memory_order_acq_rel);
+	if (s >= samplers.size()){
 		return nullptr;
 	}
-	int s = sampler_idx.fetch_add(1, std::memory_order_acq_rel);
 	if (s % (samplers.size() / 10) == 0){
 		std::cout << "Starting work on block " << s << " of " << samplers.size()
 			<< " : ~" << 100.f * static_cast<float>(s) / samplers.size() << "% of pixels completed"
 			<< std::endl;
 	}
-	//Potential race condition if we would have gotten the last block but some other
-	//thread beat us from the cmp_exg to the fetch_add, so we need to double check
-	if (s < samplers.size()){
-		return samplers[s].get();
-	}
-	return nullptr;
+	return samplers[s].get();
 }
 
