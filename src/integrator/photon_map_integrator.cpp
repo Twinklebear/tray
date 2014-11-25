@@ -36,8 +36,8 @@ void PhotonMapIntegrator::ShootingTask::shoot(){
 	bool caustic_done = integrator.num_caustic.load(std::memory_order_consume) == integrator.num_caustic_wanted;
 	bool indirect_done = integrator.num_indirect.load(std::memory_order_consume) == integrator.num_indirect_wanted;
 	//Trace batches of 2048 photons then check if we've reached the number of desired photons of each type
+	const static int batch_size = 2048;
 	while (true){
-		const int batch_size = 2048;
 		for (int i = 0; i < batch_size; ++i){
 			std::array<float, 6> u;
 			std::generate(u.begin(), u.end(), std::bind(&Sampler::random_float, sampler.get()));
@@ -212,25 +212,6 @@ void PhotonMapIntegrator::RadianceTask::compute(){
 	}
 }
 
-PhotonMapIntegrator::TreeBuildTask::TreeBuildTask(PhotonMapIntegrator &integrator, std::vector<Photon> &&photons, MAP_TYPE type)
-	: integrator(integrator), photons(std::move(photons)), type(type)
-{}
-void PhotonMapIntegrator::TreeBuildTask::build(){
-	switch (type){
-		case CAUSTIC:
-			integrator.caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(photons));
-			break;
-		case INDIRECT:
-			integrator.indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(photons));
-			break;
-		case DIRECT:
-			integrator.direct_map = std::make_unique<KdPointTree<Photon>>(std::move(photons));
-			break;
-		default:
-			break;
-	}
-}
-
 void PhotonMapIntegrator::PhotonQueryCallback::operator()(const Point&, const Photon &photon, float dist_sqr, float &max_dist_sqr){
 	if (found < query_size){
 		queried_photons[found++] = NearPhoton{&photon, dist_sqr};
@@ -261,7 +242,7 @@ void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const 
 
 PhotonMapIntegrator::PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth)
 	: num_caustic_wanted(num_caustic_wanted), num_indirect_wanted(num_indirect_wanted), max_depth(max_depth),
-	num_caustic(0), num_indirect(0)
+	num_caustic(0), num_indirect(0), num_direct(0)
 {}
 void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){
@@ -275,7 +256,16 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	shoot_photons(caustic_photons, indirect_photons, direct_photons, radiance_photons,
 		radiance_reflectance, radiance_transmittance, scene);
 	std::cout << "PhotonMapIntegrator: building photon maps" << std::endl;
-	build_maps(caustic_photons, indirect_photons, direct_photons);
+
+	if (!caustic_photons.empty()){
+		caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
+	}
+	if (!indirect_photons.empty()){
+		indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
+	}
+	if (!direct_photons.empty()){
+		direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
+	}
 
 	//Compute radiance photon emittances now that we've got the photon maps built
 	if (!radiance_photons.empty()){
@@ -307,7 +297,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
 		<< "ms\n";
 	//We don't need the direct lighting map anymore
-	direct_map = nullptr;
+	//direct_map = nullptr;
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	DifferentialGeometry &dg, Sampler &sampler, MemoryPool &pool) const
@@ -327,7 +317,13 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	auto *near_photons = pool.alloc_array<NearPhoton>(query_size);
 	int caustic_paths = num_caustic.load(std::memory_order_consume);
 	int indirect_paths = num_indirect.load(std::memory_order_consume);
-	illum += uniform_sample_all_lights(scene, renderer, p, n, w_o, *bsdf, sampler, pool);
+	//illum += uniform_sample_all_lights(scene, renderer, p, n, w_o, *bsdf, sampler, pool);
+	//TODO: After done debugging direct paths switch this to uniform sample all lights
+	int direct_paths = num_direct.load(std::memory_order_consume);
+	if (direct_map != nullptr){
+		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
+			*bsdf, sampler, pool, dg, w_o);
+	}
 	if (caustic_map != nullptr){
 		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
@@ -539,29 +535,5 @@ Colorf PhotonMapIntegrator::photon_radiance(const KdPointTree<Photon> &photons, 
 		}
 	}
 	return rad;
-}
-void PhotonMapIntegrator::build_maps(std::vector<Photon> &caustic_photons, std::vector<Photon> &indirect_photons,
-	std::vector<Photon> &direct_photons)
-{
-	std::vector<std::thread> threads;
-	std::vector<TreeBuildTask> tasks;
-	if (!caustic_photons.empty()){
-		std::cout << "Caustic map build launched" << std::endl;
-		tasks.emplace_back(*this, std::move(caustic_photons), MAP_TYPE::CAUSTIC);
-		threads.emplace_back(&TreeBuildTask::build, &tasks.back());
-	}
-	if (!indirect_photons.empty()){
-		std::cout << "Indirect map build launched" << std::endl;
-		tasks.emplace_back(*this, std::move(indirect_photons), MAP_TYPE::INDIRECT);
-		threads.emplace_back(&TreeBuildTask::build, &tasks.back());
-	}
-	if (!direct_photons.empty()){
-		std::cout << "Direct map build launched" << std::endl;
-		tasks.emplace_back(*this, std::move(direct_photons), MAP_TYPE::DIRECT);
-		threads.emplace_back(&TreeBuildTask::build, &tasks.back());
-	}
-	for (auto &t : threads){
-		t.join();
-	}
 }
 
