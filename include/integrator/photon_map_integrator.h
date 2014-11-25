@@ -107,14 +107,14 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	 */
 	struct TreeBuildTask {
 		PhotonMapIntegrator &integrator;
-		std::vector<Photon> &photons;
+		std::vector<Photon> photons;
 		MAP_TYPE type;
 
 		/*
 		 * Create the tree building task and specify the photons to use to build the desired tree
 		 * note that the photons will be consumed by the build process and moved into the tree
 		 */
-		TreeBuildTask(PhotonMapIntegrator &integrator, std::vector<Photon> &photons, MAP_TYPE type);
+		TreeBuildTask(PhotonMapIntegrator &integrator, std::vector<Photon> &&photons, MAP_TYPE type);
 		/*
 		 * Build the tree and set the integrator's unique_ptr for the tree that was built
 		 */

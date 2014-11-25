@@ -212,8 +212,8 @@ void PhotonMapIntegrator::RadianceTask::compute(){
 	}
 }
 
-PhotonMapIntegrator::TreeBuildTask::TreeBuildTask(PhotonMapIntegrator &integrator, std::vector<Photon> &photons, MAP_TYPE type)
-	: integrator(integrator), photons(photons), type(type)
+PhotonMapIntegrator::TreeBuildTask::TreeBuildTask(PhotonMapIntegrator &integrator, std::vector<Photon> &&photons, MAP_TYPE type)
+	: integrator(integrator), photons(std::move(photons)), type(type)
 {}
 void PhotonMapIntegrator::TreeBuildTask::build(){
 	switch (type){
@@ -306,7 +306,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	std::cout << "PhotonMapIntegrator: building photon maps took: "
 		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
 		<< "ms\n";
-	//We don't need the direct lighting map unless we're doing the comparison render
+	//We don't need the direct lighting map anymore
 	direct_map = nullptr;
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
@@ -328,15 +328,6 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	int caustic_paths = num_caustic.load(std::memory_order_consume);
 	int indirect_paths = num_indirect.load(std::memory_order_consume);
 	illum += uniform_sample_all_lights(scene, renderer, p, n, w_o, *bsdf, sampler, pool);
-	/*
-	//The direct lighting map should only be used to show some demo renderers of using it vs normal
-	//direct lighting calculation
-	int direct_paths = num_direct.load(std::memory_order_consume);
-	if (direct_map != nullptr){
-		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
-			*bsdf, sampler, pool, dg, w_o);
-	}
-	*/
 	if (caustic_map != nullptr){
 		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
@@ -555,15 +546,18 @@ void PhotonMapIntegrator::build_maps(std::vector<Photon> &caustic_photons, std::
 	std::vector<std::thread> threads;
 	std::vector<TreeBuildTask> tasks;
 	if (!caustic_photons.empty()){
-		tasks.emplace_back(*this, caustic_photons, MAP_TYPE::CAUSTIC);
+		std::cout << "Caustic map build launched" << std::endl;
+		tasks.emplace_back(*this, std::move(caustic_photons), MAP_TYPE::CAUSTIC);
 		threads.emplace_back(&TreeBuildTask::build, &tasks.back());
 	}
 	if (!indirect_photons.empty()){
-		tasks.emplace_back(*this, indirect_photons, MAP_TYPE::INDIRECT);
+		std::cout << "Indirect map build launched" << std::endl;
+		tasks.emplace_back(*this, std::move(indirect_photons), MAP_TYPE::INDIRECT);
 		threads.emplace_back(&TreeBuildTask::build, &tasks.back());
 	}
 	if (!direct_photons.empty()){
-		tasks.emplace_back(*this, direct_photons, MAP_TYPE::DIRECT);
+		std::cout << "Direct map build launched" << std::endl;
+		tasks.emplace_back(*this, std::move(direct_photons), MAP_TYPE::DIRECT);
 		threads.emplace_back(&TreeBuildTask::build, &tasks.back());
 	}
 	for (auto &t : threads){
