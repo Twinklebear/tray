@@ -212,7 +212,9 @@ void PhotonMapIntegrator::RadianceTask::compute(){
 	}
 }
 
-void PhotonMapIntegrator::PhotonQueryCallback::operator()(const Point&, const Photon &photon, float dist_sqr, float &max_dist_sqr){
+void PhotonMapIntegrator::PhotonQueryCallback::operator()(const Point&, const Photon &photon, float dist_sqr,
+	float &max_dist_sqr)
+{
 	if (found < query_size){
 		queried_photons[found++] = NearPhoton{&photon, dist_sqr};
 		//If we've hit our query size start shrinking the search radius so we only get photons
@@ -232,7 +234,9 @@ void PhotonMapIntegrator::PhotonQueryCallback::operator()(const Point&, const Ph
 	}
 }
 
-void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const RadiancePhoton &p, float dist_sqr, float &max_dist_sqr){
+void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const RadiancePhoton &p, float dist_sqr,
+	float &max_dist_sqr)
+{
 	//Since we narrow the search radius any photon we find will be closer than the last
 	if (normal.dot(p.normal) > 0){
 		photon = &p;
@@ -240,9 +244,11 @@ void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const 
 	}
 }
 
-PhotonMapIntegrator::PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth)
+PhotonMapIntegrator::PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth,
+	int query_size, int final_gather_samples, float max_dist_sqr, float gather_angle)
 	: num_caustic_wanted(num_caustic_wanted), num_indirect_wanted(num_indirect_wanted), max_depth(max_depth),
-	num_caustic(0), num_indirect(0), num_direct(0)
+	query_size(query_size), final_gather_samples(final_gather_samples), max_dist_sqr(max_dist_sqr),
+   	gather_angle(gather_angle), num_caustic(0), num_indirect(0), num_direct(0)
 {}
 void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){

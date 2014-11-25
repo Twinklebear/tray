@@ -124,21 +124,21 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	};
 
 	//The desired number of caustic/indirect photons we want
-	int num_caustic_wanted, num_indirect_wanted, max_depth;
+	int num_caustic_wanted, num_indirect_wanted, max_depth, query_size, final_gather_samples;
+	float max_dist_sqr, gather_angle;
 	//Atomic counters to synchronize the number of caustic and indirect photons mapped so far
 	std::atomic<int> num_caustic, num_indirect, num_direct;
 	std::unique_ptr<KdPointTree<Photon>> caustic_map, indirect_map, direct_map;
 	std::unique_ptr<KdPointTree<RadiancePhoton>> radiance_map;
-	//Some default configuration values for the photon mapping, TODO: make configurable?
-	const int query_size = 50, final_gather_samples = 32;
-	const float max_dist_sqr = 0.1, gather_angle = 10;
 
 public:
 	/*
 	 * Create the photon mapping integrator, specifying the number of desired
 	 * caustic and indirect photons and the max depth for paths and photons
 	 */
-	PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth);
+	PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth,
+		int query_size = 50, int final_gather_samples = 32, float max_dist_sqr = 0.1,
+		float gather_angle = 10);
 	/*
 	 * Pre-process the scene and build the photon maps needed for rendering
 	 */
