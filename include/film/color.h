@@ -17,6 +17,14 @@ struct Color24 {
 	uint8_t& operator[](int i);
 };
 
+//32bit color we use for simplifying writing BMPs
+struct Color32 {
+	uint8_t r, g, b, a;
+
+	Color32(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 0);
+	uint8_t& operator[](int i);
+};
+
 /*
  * A struct representing a sample value for a spectrum at some wavelength
  */
@@ -72,9 +80,10 @@ struct Colorf {
 	float& operator[](int i);
 	const float& operator[](int i) const;
 	/*
-	 * Easily convert to the 8-bit/channel color representation
+	 * Easily convert to the 24bpp and 32bpp color representations
 	 */
 	operator Color24() const;	
+	operator Color32() const;	
 };
 Colorf operator+(const Colorf &a, const Colorf &b);
 Colorf operator-(const Colorf &a, const Colorf &b);

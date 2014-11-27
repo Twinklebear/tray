@@ -16,6 +16,22 @@ uint8_t& Color24::operator[](int i){
 	}
 }
 
+Color32::Color32(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r), g(g), b(b), a(a) {}
+uint8_t& Color32::operator[](int i){
+	switch (i){
+		case 0:
+			return r;
+		case 1:
+			return g;
+		case 2:
+			return b;
+		default:
+			return a;
+	}
+}
+
+
+
 bool operator<(const SpectrumSample &a, const SpectrumSample &b){
 	return a.lambda < b.lambda;
 }
@@ -119,6 +135,10 @@ const float& Colorf::operator[](int i) const {
 }
 Colorf::operator Color24() const {
 	return Color24(static_cast<uint8_t>(r * 255), static_cast<uint8_t>(g * 255),
+		static_cast<uint8_t>(b * 255));
+}
+Colorf::operator Color32() const {
+	return Color32(static_cast<uint8_t>(r * 255), static_cast<uint8_t>(g * 255),
 		static_cast<uint8_t>(b * 255));
 }
 Colorf operator+(const Colorf &a, const Colorf &b){
