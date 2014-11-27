@@ -29,33 +29,6 @@ void main(void){\n\
 	color = texture(tex, fuv);\n\
 }\n";
 
-/*
- * Lookup the path for the application icon, which is assumed to be in the
- * scenes directory
- */
-std::string get_icon_path(){
-#ifdef _WIN32
-	const char PATH_SEP = '\\';
-#else
-	const char PATH_SEP = '/';
-#endif
-	static std::string icon_path;
-	if (icon_path.empty()){
-		char *s = SDL_GetBasePath();
-		if (s){
-			icon_path = s;
-			SDL_free(s);
-		}
-		else {
-			std::cout << "Error getting icon path: " << SDL_GetError() << std::endl;
-			return "";
-		}
-		size_t pos = icon_path.rfind("bin");
-		icon_path = icon_path.substr(0, pos) + "scenes" + PATH_SEP + "eye.bmp";
-	}
-	return icon_path;
-}
-
 bool render_with_preview(Driver &driver){
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0){
 		std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
@@ -115,8 +88,6 @@ bool render_with_preview(Driver &driver){
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-
-	std::cout << "Viewer Commands: press d to view the depth buffer and c to view the color buffer\n";
 
 	//Run the driver so it renders while we update the texture with the
 	//new output from it
