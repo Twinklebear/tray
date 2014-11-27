@@ -1,233 +1,57 @@
-CS6620 - Will Usher
-=
-The project should build easily with CMake but does require a C++14 compliant compiler.
-I did choose to use TinyXML2 instead of TinyXML1, since the library is so small I've included its source under tinyxml2/
-so there are no additional dependencies that need to be downloaded to build the renderer.
+tray - A Toy Ray Tracer
+===
+tray was initially written for the [ray tracing course at the University of Utah](http://www.cemyuksel.com/courses/utah/cs6620/fall2014/) but has continued development as a side project. To follow tray from its humble beginnings you can browse my [projects page](http://www.willusher.io/courses/cs6620/) for the course. A lot of the design of the renderer and its modularity is based off of the techniques discussed in [Physically Based Rendering](http://pbrt.org/) so some details may feel quite familiar if you've worked through the book (and if you haven't, you should!).
 
-Select the build mode when compiling with CMake, `-DCMAKE_BUILD_TYPE=Debug` will build with debugging symbols
-while `-DCMAKE_BUILD_TYPE=Release` will compile with full optimizations.
+Building
+---
+A compliant C++14 compiler is required, or at least one that implements just the C++11/14 features I use (I don't have a list of required features though). GCC 4.9.x+ or Clang 3.4+ should definitely work, I haven't yet tested on the VS2015 CTP but I'll update this note when I do.
 
-If you want to build the renderer with the live preview you'll need [SDL2](http://libsdl.org/) installed and
-can then run CMake with the `-DBUILD_PREVIEWER=1` flag to compile the previewer. To view the live preview
-when rendering run with the `-p` flag.
+The project should build easily with CMake and if you aren't building the live previewer will download the minimal dependencies it requires. I also strongly recommend compiling in release mode to avoid the ray tracer being incredibly slow.
 
-Textures
--
-The ray tracer supports PNG (8bit channel only), BMP (non-1bpp, non-RLE), and PPM image formats for textures.
-Note that texture names beginning with \_\_ are reserved for generated texture names the ray tracer may need to create
-and should not be used. If you want to compare trilinear filtering to EWA filtering for textures you can pass
-`-DTEX_TRILINEAR=1` to indicate that trilinear filtering should be used for texture sampling instead of the default (EWA).
+### Building the Live Previewer
 
-Materials
--
-The ray tracer uses are very different material model than what is discussed in class, aiming to be more physically accurate.
-As such no BlinnPhong material is provided. The supported materials are listed below along with the parameters they require.
-Note that material names (as with all other names) should not conflict.
+The live previewer lets you optionally open a window and see the render update live as the image is computed. This is useful if you're trying to get some objects positioned correctly or just don't want to have to open a separate image viewer. To build the live previewer you'll need [SDL2](http://libsdl.org/) and when running CMake should pass `-DBUILD_PREVIEWER=1` to build it.
 
-**Matte Material**
-```XML
-<material type="matte" name="my_matte_material">
-	<!-- The color (or texture) for the material, required -->
-	<diffuse r="1" g="0" b="0.5"/>
-</material>
-```
-
-**Plastic Material**
-```XML
-<material type="plastic" name="my_plastic_material">
-	<!-- The diffuse color (or texture) for the material, required -->
-	<diffuse  r="0.8" g="0.2" b="0.2"/>
-	<!-- The color (or texture) of specular highlights of the material, required -->
-	<specular r="1.0" g="1.0" b="1.0" value="0.9"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
-	<roughness value="0.5"/>
-</material>
-```
-
-**Translucent Material**
-Translucent material colors are computed by multiplying the base colors with the effect occuring, eg. the color
-for diffuse reflection is `reflection * diffuse` and so on.
-```XML
-<material type="translucent" name="my_translucent_material">
-	<!-- The base diffuse color (or texture) for the material, required -->
-	<diffuse  r="0.8" g="0.2" b="0.2"/>
-	<!-- The base color (or texture) of specular highlights of the material, required -->
-	<specular r="1.0" g="1.0" b="1.0" value="0.9"/>
-	<!-- The color (or texture) for reflections, required -->
-	<reflection r="1.0" g="0.4" b="1.0" value="0.9"/>
-	<!-- The color (or texture) for transmission, required -->
-	<transmission r="1.0" g="1.0" b="0.2"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
-	<roughness value="0.5"/>
-	<!-- The material's index of refraction, defaults to 1 (air) -->
-	<ior value="1.6"/>
-</material>
-```
-
-**Metal Material**
-```XML
-<material type="metal" name="my_metal_material">
-	<!-- The metal's index of refraction (can be a texture), required -->
-	<ior r="1.3" g="1.1" b="0.4"/>
-	<!-- The metal's absoprtion coefficient (can be a texture), required -->
-	<absorption r="1.9" g="2.5" b="4.3"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest)
-		 can also specify x="0.01" y="0.09" to get an anisotropic metal -->
-	<roughness value="0.01"/>
-</material>
-```
-Metals can also be specified using PBRT's [spd](https://github.com/mmp/pbrt-v2/tree/master/scenes/spds/metals) files which
-contain measured metal properties over the visible light spectrum.
-```XML
-<material type="metal" name="my_pbrt_metal">
-	<ior spd="./spds/Cu.eta.spd"/>
-	<absorption spd="./spds/Cu.k.spd"/>
-	<roughness value="0.000976"/>
-</material>
-```
-
-**MERL Material**
-The renderer supports materials from the [MERL BRDF database](http://www.merl.com/brdf/) from "A Data-Driven Reflectance Model", by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769.
-```XML
-<material type="merl" name="my_merl_material" file="./brdfs/alumina-oxide.binary"/>
-```
-
-**Glass Material**
-```XML
-<material type="glass" name="my_glass_mat">
-	<!-- Color and strength of reflections -->
-	<reflection r="1" g="0.5" b="0.8"/>
-	<!-- Color and strength of transmission -->
-	<transmission r="0.4" g="0.2" b="1"/>
-	<!-- Index of refraction of the material, defaults to 1 (air) -->
-	<ior value="1.52"/>
-</material>
-```
-
-**Mix Material**
-Specify that the material is constructed by mixing two previously declared materials.
-```XML
-<material type="mix" name="my_mix_mat">
-	<material name="mix_mat_a" />
-	<material name="mix_mat_b" />
-	<!-- Materials are mixed by scaling the BxDFs by the color here
-		mat_a is scaled by scale, mat_b is scaled by 1 - scale -->
-	<scale r="0.2" g="0.8" b="0.5"/>
-</material>
-```
-
-Lights
--
-**Point Lights**
-```XML
-<light type="point" name="my_point_light">
-	<!-- Position for the point light, required -->
-	<position x="0" y="10" z="18"/>
-	<!-- Emitted light color, required -->
-	<intensity r="0.5" g="0.25" b="1"/>
-</light>
-```
-
-**Area Lights**
-An area light is attached to some geometry in the scene, making it emissive. Currently only spheres are supported.
-The object is specified as normal but should not have a scaling attribute as the system has explicit assumptions that
-light transformation matrices don't have scaling.
-```XML
-<!-- To adjust the size of the sphere light don't scale, change the radius -->
-<object type="sphere" name="sphere_light" radius="1">
-	<!-- Translate and rotate the light as a normal object -->
-	<translate x="0" y="-10" z="22"/>
-	<!-- Specify the light to be attached, only area lights are valid, a name is auto-generated -->
-	<light type="area">
-		<!-- Emitted light color, required -->
-		<intensity r="0.5" g="0.25" b="1"/>
-		<!-- Number of samples to take of the light, used in photon mapping. Default 6 -->
-		<nsamples value="4"/>
-	</light>
-</object>
-```
-Renderers
--
-You can specify which renderer you want to have used to render your scene. Currently Whitted, path tracing and bidirectional
-path tracing are supported.
-
-**Whitted Recursive Ray Tracing**
-Use Whitted recursive ray tracing
-```XML
-<!-- max_depth specifies the max ray recursion depth -->
-<renderer type="whitted" max_depth="8"/>
-```
-
-**Path Tracing**
-Use path tracing with explicit light sampling
-```XML
-<!-- min/max depth specify the min/max path lengths -->
-<renderer type="path" min_depth="3" max_depth="8"/>
-```
-
-**Bidirectional Path Tracing**
-Use bidirectional path tracing
-```XML
-<!-- min/max depth specify the min/max path lengths -->
-<renderer type="bidir" min_depth="3" max_depth="8"/>
-```
-
-**Photon Mapping**
-Use photon mapping
-```XML
-<!-- max depth specifies max bounces for photons and depth for rays
-	num_caustic/indirect specify the desired number of caustic/indirect photons to shoot.
-	note that less than this number may be created depening on the scene
-	query_size: optionally specify number of photons to query from the maps, default 50
-	final_gather_samples: optionally specify the number of final gather rays to shoot, default 32
-	max_dist_sqr: optionally specify the square distance to look for photons in the map, default 0.1
-	gather_angle: optionally specify the angle of the cone for final gathering, default 10.0 -->
-<renderer type="photon" max_depth="8" num_caustic="1000000" num_indirect="1000000" query_size="50"
-	final_gather_samples="32" max_dist_sqr="0.1" gather_angle="10"/>
-```
-
-Samplers
--
-The type of sampler used to render the scene can be configured by the `<sampler type="">` tag. Available samplers and their
-parameters are listed below by the type string that selects them.
-
-- stratified - Selects a stratified sampler which renders the image using some desired number of jittered samples per pixel.
-	- spp - number of samples to be taken per pixel in x & y, eg. sampler takes spp\*spp samples per pixel
-- lowdiscrepancy - Selects a low-discrepancy which uses a (0, 2) sequence to generate sample positions
-	- spp - number of samples to be taken per pixel
-- adaptive - Selects the number of samples to take based on variance of the luminance of a lower number of samples. Uses
-	(0, 2) sequence to pick sample positions.
-	- min - number of samples to take when determining variance in luminance
-	- max - number of samples to take in high-variance regions
-
-Filters
--
-The type of filter used when reconstructing the image can be configured by the `<filter type="">` tag. Available filters
-and their parameters are listed below by the type string that selects them. The width/height of a single pixel is 0.5.
-
-- box - Select a standard box filter (Default)
-	- w - width of the filter to apply (Default 0.5)
-	- h - height of the filter to apply (Default 0.5)
-- triangle - Select a triangle filter
-	- w - width of the filter to apply
-	- h - height of the filter to apply
-- gaussian - Select a Gaussian filter
-	- w - width of the filter to apply
-	- h - height of the filter to apply
-	- alpha - alpha value for the Gaussian function
-- mitchell - Select a Mitchell filter
-	- w - width of the filter to apply
-	- h - height of the filter to apply
-	- b - b parameter for the filter
-	- c - c parameter for the filter
-- lanczos - Select a Lanczos filter
-	- w - width of the filter to apply
-	- h - height of the filter to apply
-	- a - a parameter for the filter window size
+### Building With Trilinear Texture Filtering
+tray defaults to using elliptically weighted averaging for high quality texture filtering results but if you want to trade the quality of the texture filtering for speed you can tell tray to use trilinear texture filtering instead. This is done by passing `-DTEX_TRILINEAR=1` when building the project. This was done as a compile flag to try and keep extraneous checks and work out of the texture filtering code as it's called a lot when rendering.
 
 Dependencies
--
-- [SDL2](http://libsdl.org/) is used for the live previewer.
-- [TinyXML-2](https://github.com/leethomason/tinyxml2) is used to parse the scene files.
-- [stb_image](https://github.com/nothings/stb) is used to support a wider range of texture formats
+---
+- [SDL2](http://libsdl.org/)
+- [TinyXML-2](https://github.com/leethomason/tinyxml2), downloaded by CMake
+- [stb_image](https://github.com/nothings/stb), downloaded by CMake
+- [glLoadGen](https://bitbucket.org/alfonse/glloadgen/wiki/Home), GL3.3 files included
 
+Usage
+---
+tray accepts a few options to specify some parameters for the render, eg. the number of threads, scene file, output image file and so on. Information about the options can be printed at any time by running with `-h` and are listed in detail below.
+
+- `-f <file>` Specify the scene file to render, should be an XML scene file, for specifics on the scene file format see `doc`.
+- `-o <out_file>` Specify the output image file name, currently only supports PPM but BMP and PNG support is planned via stb_image_write.
+- `-n <num>` Optional: specify the number of threads to use when rendering, the default is 1
+- `-bw <num>` Optional: specify the desired width of blocks to partition the image into for the threads to work on, this size must evenly divide the image width. The default value is the image width.
+- `-bh <num>` Optional: specify the desired height of blocks to partition the image into for the threads to work on, this size must evenly divide the image height. The default value is the image height.
+- `-pmesh [<files>]` Specify a list of meshes to be run through the the obj -> binary obj  (bobj) processor so that they can be loaded faster when rendering. The renderer will check for bobj files with the same name when trying to load an obj file in a scene.
+- `-p` Show a live preview of the image as it's rendered, this is only available if tray was built with the previewer. Rendering performance measurements won't be printed in this mode
+- `-h` Print the help information
+
+Scene File Format
+---
+Scene files are in XML and should have the following structure:
+```XML
+<xml>
+	<scene>
+		<!-- Objects -->
+		<!-- Materials -->
+	</scene>
+    
+	<camera>
+		<!-- Camera settings -->
+	</camera>
+
+	<config>
+		<!-- Config for sampling rates and renderer -->
+	</config>
+</xml>
+```
+Some example scenes can be found under `scene` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `OBJECTS.md` discusses the object types supported by tray and their usage.
