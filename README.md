@@ -54,4 +54,4 @@ Scene files are in XML and should have the following structure:
 	</config>
 </xml>
 ```
-Some example scenes can be found under `scene` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `OBJECTS.md` discusses the object types supported by tray and their usage.
+Some example scenes can be found under `scene` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `Objects.md` discusses the object types supported by tray and their usage.
