@@ -84,10 +84,16 @@ Colorf BSDF::sample(const Vector &wo_world, Vector &wi_world, const std::array<f
 
 	//Compute the overall sampling PDF for the direction we sampled. This is skipped for specular BxDFs
 	//since they contain a delta distribution which would make this incorrect
-	if (!(bxdf->type & BxDFTYPE::SPECULAR) && n_matching > 1){
-		pdf_val = pdf(wo_world, wi_world, flags);
+	if (!(bxdf->type & BxDFTYPE::SPECULAR)){
+		if (n_matching > 1){
+			pdf_val = pdf(wo_world, wi_world, flags);
+		}
 		//Compute the total contribution from all BxDFs matching the flags along this direction
 		f = (*this)(wo_world, wi_world, flags);
+	}
+	//We do still need to normalize properly though for specular objects
+	else if (n_matching > 1){
+		pdf_val /= n_matching;
 	}
 	return f;
 }
