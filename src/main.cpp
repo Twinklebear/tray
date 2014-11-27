@@ -14,10 +14,10 @@
 #endif
 
 const static std::string USAGE =
-"Usage for ray tracer:\n\
+"Usage for tray:\n\
 ----------------------------\n\
 -f <file>         - Specify the scene file to render\n\
--o <prefix>       - Specify the prefix name for the output files color is written to <prefix>.ppm and depth to <prefix>.pgm\n\
+-o <out_file>     - Specify the output image file name\n\
 -n <num>          - Optional: specify the number of threads to render with. Default is 1\n\
 -bw <num>         - Optional: specify the desired width of blocks to partition the scene into for the threads to work on,\n\
                     should evenly divide the image width. Default is image width.\n\
