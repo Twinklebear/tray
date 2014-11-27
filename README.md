@@ -27,7 +27,7 @@ Usage
 tray accepts a few options to specify some parameters for the render, eg. the number of threads, scene file, output image file and so on. Information about the options can be printed at any time by running with `-h` and are listed in detail below.
 
 - `-f <file>` Specify the scene file to render, should be an XML scene file, for specifics on the scene file format see `doc`.
-- `-o <out_file>` Specify the output image file name, currently only supports PPM but BMP and PNG support is planned via stb_image_write.
+- `-o <out_file>` Specify the output image file name, currently supports PPM and BMP image output.
 - `-n <num>` Optional: specify the number of threads to use when rendering, the default is 1
 - `-bw <num>` Optional: specify the desired width of blocks to partition the image into for the threads to work on, this size must evenly divide the image width. The default value is the image width.
 - `-bh <num>` Optional: specify the desired height of blocks to partition the image into for the threads to work on, this size must evenly divide the image height. The default value is the image height.
@@ -54,4 +54,4 @@ Scene files are in XML and should have the following structure:
 	</config>
 </xml>
 ```
-Some example scenes can be found under `scene` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `Objects.md` discusses the object types supported by tray and their usage.
+Some example scenes can be found under `scenes` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `Objects.md` discusses the object types supported by tray and their usage.
