@@ -69,7 +69,6 @@ void Worker::render(){
 			if (sampler->report_results(samples, rays, colors)){
 				for (size_t i = 0; i < samples.size(); ++i){
 					target.write_pixel(samples[i].img[0], samples[i].img[1], colors[i]);
-					target.write_float(samples[i].img[0], samples[i].img[1], samples.size());
 				}
 				rays.clear();
 				colors.clear();

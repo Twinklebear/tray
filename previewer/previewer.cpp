@@ -106,7 +106,8 @@ bool render_with_preview(Driver &driver){
 		return false;
 	}
 	glUseProgram(program);
-	GLint tex_unif = glGetUniformLocation(program, "tex");
+	//Should default to 0 right?
+	//GLint tex_unif = glGetUniformLocation(program, "tex");
 
 	GLuint color;
 	glGenTextures(1, &color);
@@ -116,20 +117,6 @@ bool render_with_preview(Driver &driver){
 	//Disable linear filtering so the image is only as nice as the ray tracer renders it
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glActiveTexture(GL_TEXTURE1);
-	GLuint depth;
-	glGenTextures(1, &depth);
-	glBindTexture(GL_TEXTURE_2D, depth);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, target.get_width(), target.get_height(), 0, GL_RED,
-		GL_UNSIGNED_BYTE, NULL);
-	//Disable linear filtering so the image is only as nice as the ray tracer renders it
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//Set swizzle to give only the red channel so we see the depth map properly
-	GLint swizzle[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
-	glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
-
 
 	//A dummy vao, required for core profile but we don't really need it
 	GLuint vao;
@@ -144,8 +131,7 @@ bool render_with_preview(Driver &driver){
 	driver.render();
 	//We also track if we're done so we can stop updating the textures after doing a last
 	//update
-	bool quit = false, color_done = false, depth_done = false, heat_map = false;
-	int shown_tex = 0;
+	bool quit = false, render_done = false;
 	while (!quit){
 		SDL_Event e;
 		while (SDL_PollEvent(&e)){
@@ -153,53 +139,17 @@ bool render_with_preview(Driver &driver){
 				driver.cancel();
 				quit = true;
 			}
-			else if (e.type == SDL_KEYDOWN){
-				switch (e.key.keysym.sym){
-					case SDLK_d:
-						shown_tex = 1;
-						glUniform1i(tex_unif, shown_tex);
-						depth_done = false;
-						break;
-					case SDLK_h:
-						shown_tex = 0;
-						glUniform1i(tex_unif, shown_tex);
-						color_done = false;
-						heat_map = true;
-						break;
-					case SDLK_c:
-						shown_tex = 0;
-						glUniform1i(tex_unif, shown_tex);
-						color_done = false;
-						heat_map = false;
-						break;
-					default:
-						break;
-				}
-			}
 		}
 		//Let the driver do some work
 		SDL_Delay(16);
 		//Update the texture with new data.
 		//We could do better and only update blocks of updated pixels, but this is more
 		//work than I want to put into this
-		if (!color_done && shown_tex == 0){
-			color_done = driver.done();
-			glActiveTexture(GL_TEXTURE0);
-			if (heat_map){
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
-					GL_UNSIGNED_BYTE, target.generate_heat_img().data());
-			}
-			else {
-				target.get_colorbuf(color_buf);
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
-					GL_UNSIGNED_BYTE, color_buf.data());
-			}
-		}
-		else if (!depth_done){
-			depth_done = driver.done();
-			glActiveTexture(GL_TEXTURE1);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RED,
-				GL_UNSIGNED_BYTE, target.generate_depth_img().data());
+		if (!render_done){
+			render_done = driver.done();
+			target.get_colorbuf(color_buf);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, target.get_width(), target.get_height(), GL_RGB,
+				GL_UNSIGNED_BYTE, color_buf.data());
 		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -208,7 +158,6 @@ bool render_with_preview(Driver &driver){
 	}
 	glDeleteProgram(program);
 	glDeleteTextures(1, &color);
-	glDeleteTextures(1, &depth);
 	glDeleteVertexArrays(1, &vao);
 	SDL_FreeSurface(icon);
 	SDL_GL_DeleteContext(context);
