@@ -85,11 +85,6 @@ bool render_with_preview(Driver &driver){
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClearDepth(1.f);
 
-	SDL_Surface *icon = SDL_LoadBMP(get_icon_path().c_str());
-	if (icon){
-		SDL_SetWindowIcon(win, icon);
-	}
-
 #ifdef DEBUG
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 	glDebugMessageCallbackARB(util::gldebug_callback, NULL);
@@ -106,8 +101,6 @@ bool render_with_preview(Driver &driver){
 		return false;
 	}
 	glUseProgram(program);
-	//Should default to 0 right?
-	//GLint tex_unif = glGetUniformLocation(program, "tex");
 
 	GLuint color;
 	glGenTextures(1, &color);
@@ -159,7 +152,6 @@ bool render_with_preview(Driver &driver){
 	glDeleteProgram(program);
 	glDeleteTextures(1, &color);
 	glDeleteVertexArrays(1, &vao);
-	SDL_FreeSurface(icon);
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
