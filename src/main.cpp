@@ -97,7 +97,7 @@ int main(int argc, char **argv){
 				return 1;
 			}
 			RenderTarget &target = scene.get_render_target();
-			target.save_image(out_file + ".ppm");
+			target.save_image(out_file);
 		}
 		return 0;
 	}
@@ -124,7 +124,7 @@ int main(int argc, char **argv){
 		return 1;
 	}
 	RenderTarget &target = scene.get_render_target();
-	target.save_image(out_file + ".ppm");
+	target.save_image(out_file);
 	return 0;
 }
 

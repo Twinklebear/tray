@@ -139,7 +139,7 @@ Colorf::operator Color24() const {
 }
 Colorf::operator Color32() const {
 	return Color32(static_cast<uint8_t>(r * 255), static_cast<uint8_t>(g * 255),
-		static_cast<uint8_t>(b * 255));
+		static_cast<uint8_t>(b * 255), 255);
 }
 Colorf operator+(const Colorf &a, const Colorf &b){
 	return Colorf{a.r + b.r, a.g + b.g, a.b + b.b};

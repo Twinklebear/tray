@@ -58,6 +58,7 @@ public:
 	 * stored in img
 	 */
 	void get_colorbuf(std::vector<Color24> &img) const;
+	void get_colorbuf(std::vector<Color32> &img) const;
 
 private:
 	/*
@@ -65,6 +66,13 @@ private:
 	 * RGB8 data and have width * height elements
 	 */
 	bool save_ppm(const std::string &file, const uint8_t *data) const;
+	/*
+	 * Save color data as a BMP image to the file, data should be
+	 * RGBA8 data and have width * height elements
+	 * The image data should be flipped appropriately already for the BMP
+	 * file format (eg. starting at bottom left)
+	 */
+	bool save_bmp(const std::string &file, const uint8_t *data) const;
 };
 
 #endif
