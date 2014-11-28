@@ -263,14 +263,30 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 		radiance_reflectance, radiance_transmittance, scene);
 	std::cout << "PhotonMapIntegrator: building photon maps" << std::endl;
 
+	std::vector<std::thread> threads;
+	threads.reserve(3);
 	if (!caustic_photons.empty()){
-		caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
+		//TODO: Keep in the serial tree building until comparison times are
+		//recorded for it
+		//caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
+		threads.emplace_back([this, &caustic_photons](){
+			caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
+		});
 	}
 	if (!indirect_photons.empty()){
-		indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
+		//indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
+		threads.emplace_back([this, &indirect_photons](){
+			indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
+		});
 	}
 	if (!direct_photons.empty()){
-		direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
+		//direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
+		threads.emplace_back([this, &direct_photons](){
+			direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
+		});
+	}
+	for (auto &t : threads){
+		t.join();
 	}
 
 	//Compute radiance photon emittances now that we've got the photon maps built
@@ -280,8 +296,8 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 		int hw_threads = std::thread::hardware_concurrency();
 		int phot_per_task = radiance_photons.size() / hw_threads;
 		int num_tasks = radiance_photons.size() % hw_threads == 0 ? hw_threads : hw_threads + 1;
-		std::vector<std::thread> threads;
 		std::vector<RadianceTask> tasks;
+		threads.clear();
 		threads.reserve(num_tasks);
 		tasks.reserve(num_tasks);
 		for (int i = 0; i < num_tasks; ++i){
