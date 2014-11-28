@@ -25,6 +25,32 @@ static float atomic_addf(std::atomic<float> &f, float d){
 	return desired;
 }
 
+/*
+ * Convenient wrapper for BMP header information for a 32bpp BMP
+ */
+#pragma pack(1)
+struct BMPHeader {
+	const uint8_t header[2] = {'B', 'M'};
+	const uint32_t file_size;
+	//4 reserved bytes we don't care about
+	const uint32_t dont_care = 0;
+	//Offset in the file to the pixel array
+	const uint32_t px_array = 54;
+	const uint32_t header_size = 40;
+	const std::array<int32_t, 2> dims;
+	const uint16_t color_planes = 1;
+	const uint16_t bpp = 32;
+	const uint32_t compression = 0;
+	const uint32_t img_size;
+	const int32_t res[2] = {2835, 2835};
+	const uint32_t color_palette = 0;
+	const uint32_t important_colors = 0;
+
+	BMPHeader(uint32_t img_size, int32_t w, int32_t h)
+		: file_size(54 + img_size), dims{w, h}, img_size(img_size)
+	{}
+};
+
 Pixel::Pixel() : r(0), g(0), b(0), weight(0){}
 Pixel::Pixel(const Pixel &p) : r(p.r.load(std::memory_order_consume)), g(p.g.load(std::memory_order_consume)),
 	b(p.b.load(std::memory_order_consume)), weight(p.weight.load(std::memory_order_consume))
@@ -155,7 +181,10 @@ bool RenderTarget::save_ppm(const std::string &file, const uint8_t *data) const 
 		return false;
 	}
 	fprintf(fp, "P6\n%d %d\n255\n", static_cast<int>(width), static_cast<int>(height));
-	fwrite(data, 1, 3 * width * height, fp);
+	if (fwrite(data, 1, 3 * width * height, fp) != 3 * width * height){
+		fclose(fp);
+		return false;
+	}
 	fclose(fp);
 	return true;
 }
@@ -166,47 +195,17 @@ bool RenderTarget::save_bmp(const std::string &file, const uint8_t *data) const 
 			<< file << std::endl;
 		return false;
 	}
-	static const std::array<uint8_t, 2> bmp_magic{'B', 'M'};
-	fwrite(bmp_magic.data(), 1, 2, fp);
-
-	const uint32_t file_size = 54 + width * height * 4;
-	fwrite(&file_size, sizeof(uint32_t), 1, fp);
-
-	//Write the 4 reserved bytes we don't care about
-	const uint32_t dont_care = 0;
-	fwrite(&dont_care, sizeof(uint32_t), 1, fp);
-
-	const uint32_t px_array = 54;
-	fwrite(&px_array, sizeof(uint32_t), 1, fp);
-
-	const uint32_t info_header_size = 40;
-	fwrite(&info_header_size, sizeof(uint32_t), 1, fp);
-
-	const std::array<int32_t, 2> dims{static_cast<int32_t>(width),
-		static_cast<int32_t>(height)};
-	fwrite(dims.data(), sizeof(int32_t), 2, fp);
-
-	const uint16_t color_planes = 1;
-	fwrite(&color_planes, sizeof(uint16_t), 1, fp);
-
-	const uint16_t bpp = 32;
-	fwrite(&bpp, sizeof(uint16_t), 1, fp);
-
-	const uint32_t compression = 0;
-	fwrite(&compression, sizeof(uint32_t), 1, fp);
-
-	const uint32_t px_data_size = width * height * 4;
-	fwrite(&px_data_size, sizeof(uint32_t), 1, fp);
-
-	const std::array<int32_t, 2> res{2835, 2835};
-	fwrite(res.data(), sizeof(int32_t), 2, fp);
-
-	//color palette and important colors are both 0
-	const std::array<uint32_t, 2> color_palette{0, 0};
-	fwrite(color_palette.data(), sizeof(uint32_t), 2, fp);
-
-	//Finally we can write the pixel data
-	fwrite(data, 1, px_data_size, fp);
+	uint32_t w = width, h = height;
+	BMPHeader bmp_header{4 * w * h, static_cast<int32_t>(w),
+		static_cast<int32_t>(h)};
+	if (fwrite(&bmp_header, sizeof(BMPHeader), 1, fp) != 1){
+		fclose(fp);
+		return false;
+	}
+	if (fwrite(data, 1, 4 * w * h, fp) != 4 * w * h){
+		fclose(fp);
+		return false;
+	}
 	fclose(fp);
 	return true;
 }
