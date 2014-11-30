@@ -60,7 +60,7 @@ Select a Mitchell-Netravali filter to be used for image reconstruction. The Mitc
 
 Adding Your Own Filters
 ===
-It is also possible to add your own filters to tray by writing a struct implementing the [Filter interface](../include/filters/filter.h) and adding it to the filter loader in [load_filter.cpp](../src/loaders/load_filter.cpp).
+It's also possible to add your own filters to tray by writing a struct implementing the [Filter interface](../include/filters/filter.h) and adding it to the filter loader in [load_filter.cpp](../src/loaders/load_filter.cpp).
 
 The only function that needs to be provided by your filter is one that evaluates its weight at some position, defined by the Filter interface below. You should also call the filter constructor with the width and height of the filter when your filter is constructed.
 ```c++

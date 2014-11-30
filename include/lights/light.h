@@ -27,6 +27,7 @@ protected:
 	const Transform to_world, to_light;
 
 public:
+	//Specify number of samples to take of the light when uniformly sampling all lights
 	const int n_samples;
 
 	/*
