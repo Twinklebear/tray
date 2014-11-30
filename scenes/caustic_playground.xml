@@ -36,10 +36,20 @@
 			<rotate angle="-5" x="1"/>
 			<translate z="6.5"/>
 		</object>
+		<object type="obj" name="./models/buddha.obj" material="orange_glass">
+			<scale value="17"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="180" z="1"/>
+			<translate y="1" z="7.5"/>
+		</object>
 		<object type="obj" name="./models/bunny.obj" material="orange_glass">
 			<scale value="6"/>
 			<rotate angle="90" x="1"/>
 			<translate y="-3" z="2"/>
+		</object>
+		<object type="obj" name="./models/teapot_hres.obj" material="orange_glass">
+			<scale value="0.8"/>
+			<rotate angle="-50" z="1"/>
 		</object>
 		-->
 		<object type="obj" name="./models/smooth_suzanne.obj" material="orange_glass">
@@ -77,7 +87,9 @@
 
 	<config>
 		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="photon" max_depth="8" num_caustic="10000000" num_indirect="10000000"/>
+		<renderer type="photon" min_depth="3" max_depth="6"
+			num_caustic="500000" num_indirect="500000"
+			final_gather_samples="8" query_size="20"/>
 	</config>
 </xml>
 
