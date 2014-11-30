@@ -6,7 +6,7 @@ Building
 ---
 A compliant C++14 compiler is required, or at least one that implements just the C++11/14 features I use (I don't have a list of required features though). GCC 4.9.x+ or Clang 3.4+ should definitely work, I haven't yet tested on the VS2015 CTP but I'll update this note when I do.
 
-The project should build easily with CMake and if you aren't building the live previewer will download the minimal dependencies it requires. I also strongly recommend compiling in release mode to avoid the ray tracer being incredibly slow.
+The project should build easily with CMake and if you aren't building the live previewer will download the minimal dependencies it requires. I also *strongly* recommend compiling in release mode to avoid the ray tracer being incredibly slow.
 
 ### Building the Live Previewer
 
