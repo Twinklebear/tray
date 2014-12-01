@@ -165,6 +165,7 @@ IF(NOT SDL2_BUILDING_LIBRARY)
 				NAMES SDL2main
 				HINTS
 				$ENV{SDL2}
+				${SDL2}
 				PATH_SUFFIXES lib64 lib
 				lib/x64
 				x86_64-w64-mingw32/lib
