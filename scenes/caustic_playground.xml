@@ -87,7 +87,7 @@
 
 	<config>
 		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="photon" min_depth="3" max_depth="6"
+		<renderer type="photon" max_depth="6"
 			num_caustic="500000" num_indirect="500000"
 			final_gather_samples="8" query_size="20"/>
 	</config>
