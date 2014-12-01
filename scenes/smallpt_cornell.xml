@@ -60,7 +60,7 @@
 			<roughness value="0.000001"/>
 		</material>
 		<material type="glass" name="glass_mat">
-			<reflection value="0"/>
+			<reflection value="1"/>
 			<transmission value="1"/>
 			<ior value="1.52"/>
 		</material>
