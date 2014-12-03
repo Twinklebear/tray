@@ -530,6 +530,9 @@ Colorf PhotonMapIntegrator::photon_radiance(const KdPointTree<Photon> &photons, 
 		//Find the photons at the intersection point that we'll use to estimate radiance
 		PhotonQueryCallback callback{near_photons, query_size, 0};
 		photons.query(dg.point, max_dist_sqr, callback);
+		if (callback.found == 0){
+			return rad;
+		}
 		Normal n_fwd = w_o.dot(bsdf.dg.normal) < 0 ? -bsdf.dg.normal : bsdf.dg.normal;
 		//Handle glossy and diffuse separately since we can be more efficient for pure diffuse since
 		//their bsdf is constant, as described in PBR

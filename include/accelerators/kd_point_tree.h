@@ -151,9 +151,10 @@ template<typename P>
 template<typename Callback>
 void KdPointTree<P>::query(uint32_t node_id, const Point &p, float &max_dist_sqr, Callback &callback) const {
 	const Node &node = nodes[node_id];
+	float dist_sqr = 0;
 	if (node.split_axis != 3){
 		//Traverse the side of the tree that the query point is in first
-		float dist_sqr = (p[node.split_axis] - node.split_pos) * (p[node.split_axis] - node.split_pos);
+		dist_sqr = (p[node.split_axis] - node.split_pos) * (p[node.split_axis] - node.split_pos);
 		if (p[node.split_axis] <= node.split_pos){
 			if (node.has_left_child){
 				query(node_id + 1, p, max_dist_sqr, callback);
@@ -173,9 +174,13 @@ void KdPointTree<P>::query(uint32_t node_id, const Point &p, float &max_dist_sqr
 			}
 		}
 	}
-	float dist_sqr = node_data[node_id]->position.distance_sqr(p);
+	//If the node is within dist_sqr of the point then the distance from the point to
+	//the splitting axis must also be < max_dist_sqr
 	if (dist_sqr < max_dist_sqr){
-		callback(p, *node_data[node_id], dist_sqr, max_dist_sqr);
+		dist_sqr = node_data[node_id]->position.distance_sqr(p);
+		if (dist_sqr < max_dist_sqr){
+			callback(p, *node_data[node_id], dist_sqr, max_dist_sqr);
+		}
 	}
 }
 
