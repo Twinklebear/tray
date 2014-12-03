@@ -125,7 +125,7 @@ void PhotonMapIntegrator::ShootingTask::trace_photon(const RayDifferential &r, C
 				radiance_transmittance.emplace_back(bsdf->rho_hh(sampler, pool, BxDFTYPE::ALL_TRANSMISSION));
 			}
 		}
-		if (photon_depth > integrator.max_depth){
+		if (photon_depth > integrator.max_phot_depth){
 			break;
 		}
 		//Sample an outgoing direction from the BSDF to continue tracing the photon in and weights and path info
@@ -245,10 +245,10 @@ void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const 
 }
 
 PhotonMapIntegrator::PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth,
-	int query_size, int final_gather_samples, float max_dist_sqr, float gather_angle)
+	int max_phot_depth, int query_size, int final_gather_samples, float max_dist_sqr, float gather_angle)
 	: num_caustic_wanted(num_caustic_wanted), num_indirect_wanted(num_indirect_wanted), max_depth(max_depth),
-	query_size(query_size), final_gather_samples(final_gather_samples), max_dist_sqr(max_dist_sqr),
-   	gather_angle(gather_angle), num_caustic(0), num_indirect(0), num_direct(0)
+	max_phot_depth(max_phot_depth), query_size(query_size), final_gather_samples(final_gather_samples),
+	max_dist_sqr(max_dist_sqr), gather_angle(gather_angle), num_caustic(0), num_indirect(0), num_direct(0)
 {}
 void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){
