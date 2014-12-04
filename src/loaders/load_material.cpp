@@ -111,7 +111,7 @@ std::unique_ptr<Material> load_plastic(tinyxml2::XMLElement *elem, TextureCache 
 {
 	using namespace tinyxml2;
 	Texture *diff = nullptr, *spec = nullptr;
-	float rough = 1;
+	float rough_x = 1, rough_y = -1;
 	std::string name = elem->Attribute("name");
 	XMLElement *e = elem->FirstChildElement("diffuse");
 	if (e){
@@ -123,13 +123,19 @@ std::unique_ptr<Material> load_plastic(tinyxml2::XMLElement *elem, TextureCache 
 	}
 	e = elem->FirstChildElement("roughness");
 	if (e){
-		read_float(e, rough);
+		if (e->Attribute("x") && e->Attribute("y")){
+			read_float(e, rough_x, "x");
+			read_float(e, rough_y, "y");
+		}
+		else {
+			read_float(e, rough_x);
+		}
 	}
 	if (diff == nullptr || spec == nullptr){
 		std::cout << "Scene error: plastic materials require a diffuse and specular attribute" << std::endl;
 		std::exit(1);
 	}
-	return std::make_unique<PlasticMaterial>(diff, spec, rough);
+	return std::make_unique<PlasticMaterial>(diff, spec, rough_x, rough_y);
 }
 std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;

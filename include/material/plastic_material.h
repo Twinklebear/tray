@@ -10,14 +10,14 @@
  */
 class PlasticMaterial : public Material {
 	const Texture *diffuse, *specular;
-	const float roughness;
+	const float rough_x, rough_y;
 
 public:
 	/*
 	 * Create the plastic material specifying the textures to be used for
 	 * the diffuse and specular colors
 	 */
-	PlasticMaterial(const Texture *diffuse, const Texture *specular, float roughness);
+	PlasticMaterial(const Texture *diffuse, const Texture *specular, float rough_x, float rough_y);
 	/*
 	 * Get the BSDF to compute the shading for the material at this
 	 * piece of geometry
