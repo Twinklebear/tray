@@ -136,8 +136,8 @@ Mix Material
 The mix material can be used to construct a new material as the mixture of two previously declared materials. The resulting BSDF for the surface is the scaled combination of the BSDFs created by the materials being mixed, computed as `(1 - scale) * mat_a + scale * mat_b`, you can think of it as a LERP between the two materials.
 ```XML
 <material type="mix" name="my_mix_mat">
-	<material name="mix_mat_a" />
-	<material name="mix_mat_b" />
+	<material name="mix_mat_a"/>
+	<material name="mix_mat_b"/>
 	<!-- Mix weight for the materials (can also be a texture) -->
 	<scale r="0.2" g="0.8" b="0.5"/>
 </material>
