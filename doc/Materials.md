@@ -48,6 +48,8 @@ The plastic material is constructed by combining a Lambertian BRDF and a Torranc
 Translucent Material
 ---
 The translucent BSDF is constructed by combining reflective and transmissive versions of the plastic material BSDF, wich the colors of the reflective and transmissive components multiplied by the reflective and transmissive colors set for the material. The index of refraction is used for the dielectric Fresnel component of the Torrance-Sparrow BRDFs in the material.
+
+Note that there is currently a bug in the translucent material where light doesn't refract when passing through it, regardless of the index of refraction set for the material.
 ```XML
 <material type="translucent" name="my_translucent_material">
 	<!-- Lambertian color (or texture) for the material, required -->
