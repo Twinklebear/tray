@@ -50,6 +50,7 @@ Examples of both uniform and anisotropic models are shown below.
 <material type="plastic" name="aniso_plastic_mat">
     <diffuse  r="0.2" g="0.2" b="0.8" value="0.9"/>
     <specular r="0.6" g="0.6" b="1.0" value="0.7"/>
+	<!-- The material's anisotropic roughness x/y between (0, 1], defaults to 1 (roughest) -->
     <roughness x="0.05" y="0.005"/>
 </material>
 ```
