@@ -14,7 +14,7 @@ to be drawn in the scene is defined within an `<object>` tag within which its tr
 
 Spheres
 ---
-The built in sphere is defined as a sphere centered at the origin with unit radius specified by setting the geometry type to sphere. It can be scaled, rotated and translated by specifying these operations within its tag. Note that the order transformations are specified is the order they're applied, so for the below sphere the model matrix created will be `T x R x S`. Spheres can also be passed an additional parameter to specify their radius explicitly as `radius="2"` to use in the case of attaching a light to a sphere where a scaling matrix can no longer be used.
+The built in sphere is defined as a sphere centered at the origin with unit radius specified by setting the geometry type to sphere and specifying any desired transformations within the tag. Spheres can also be passed an additional parameter to specify their radius explicitly as `radius="2"` to use in the case of attaching a light to a sphere where a scaling matrix can no longer be used.
 ```XML
 <object type="sphere" name="my_sphere" material="sphere_mat">
 	<scale value="5"/>
