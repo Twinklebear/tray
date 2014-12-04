@@ -42,3 +42,8 @@ Colorf FresnelNoOp::operator()(float) const {
 	return Colorf{1};
 }
 
+FresnelFlip::FresnelFlip(const Fresnel *fresnel) : fresnel(fresnel){}
+Colorf FresnelFlip::operator()(float cos_i) const {
+	return 1 - (*fresnel)(cos_i);
+}
+

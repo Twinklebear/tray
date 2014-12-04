@@ -36,7 +36,7 @@ BSDF* TranslucentMaterial::get_bsdf(const DifferentialGeometry &dg, MemoryPool &
 		}
 		if (!kt.is_black()){
 			bsdf->add(pool.alloc<BTDFAdapter>(pool.alloc<TorranceSparrow>(kt * ks,
-				pool.alloc<FresnelDielectric>(refr_index, 1.f),
+				pool.alloc<FresnelFlip>(pool.alloc<FresnelDielectric>(refr_index, 1.f)),
 				pool.alloc<BlinnDistribution>(1.f / roughness))));
 		}
 	}

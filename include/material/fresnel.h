@@ -72,5 +72,21 @@ public:
 	Colorf operator()(float cos_i) const override;
 };
 
+/*
+ * FresnelFlip takes the Fresnel value computed by the one passed and returns
+ * 1 - fresnel_value, eg. given a reflective Fresnel value this will return the
+ * transmission Fresnel value
+ */
+class FresnelFlip : public Fresnel {
+	const Fresnel *fresnel;
+
+public:
+	FresnelFlip(const Fresnel *fresnel);
+	/*
+	 * Evaluate the Fresnel reflectance term for light incident along some angle
+	 */
+	Colorf operator()(float cos_i) const override;
+};
+
 #endif
 
