@@ -33,15 +33,24 @@ The matte material can be used to select between two types of BRDFs that describ
 
 Plastic Material
 ---
-The plastic material is constructed by combining a Lambertian BRDF and a Torrance-Sparrow microfacet model using a Blinn distribution and a dielectric Fresnel component to form the material BSDF.
+The plastic material is constructed by combining a Lambertian BRDF and a Torrance-Sparrow microfacet model and a dielectric Fresnel component to form the material BSDF. If the roughness of the plastic is uniform a Blinn microfacet distribution is used, if the roughness is specified to be anisotropic an [Ashikhmin-Shirley](http://www.cs.utah.edu/~shirley/papers/jgtbrdf.pdf) anisotropic microfacet distribution is used.
+
+Examples of both uniform and anisotropic models are shown below.
 ```XML
-<material type="plastic" name="plastic_mat">
+<material type="plastic" name="uniform_plastic_mat">
 	<!-- Lambertian color (or texture) for the material, required -->
     <diffuse  r="0.2" g="0.2" b="0.8" value="0.9"/>
     <!-- Torrance-Sparrow color (or texture) for the material, required -->
     <specular r="0.6" g="0.6" b="1.0" value="0.7"/>
     <!-- Blinn microfacet distribution roughness between (0, 1], defaults to 1 (roughest) -->
     <roughness value="0.05"/>
+</material>
+```
+```XML
+<material type="plastic" name="aniso_plastic_mat">
+    <diffuse  r="0.2" g="0.2" b="0.8" value="0.9"/>
+    <specular r="0.6" g="0.6" b="1.0" value="0.7"/>
+    <roughness x="0.05" y="0.005"/>
 </material>
 ```
 
