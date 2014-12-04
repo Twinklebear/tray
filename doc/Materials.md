@@ -73,53 +73,60 @@ The metal's index of refraction and absorption coefficients can also be loaded f
 
 Examples for uniform, anisotropic and usage of PBRT's spd files are shown below.
 ```XML
-<material type="metal" name="my_metal_material">
+<material type="metal" name="metal_uniform_rough">
 	<!-- The metal's index of refraction (can be a texture), required -->
 	<ior r="1.3" g="1.1" b="0.4"/>
 	<!-- The metal's absoprtion coefficient (can be a texture), required -->
 	<absorption r="1.9" g="2.5" b="4.3"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest)
-		 can also specify x="0.01" y="0.09" to get an anisotropic metal -->
+	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
 	<roughness value="0.01"/>
 </material>
 ```
 ```XML
-<material type="metal" name="my_pbrt_metal">
+<material type="metal" name="metal_aniso_rough">
+	<ior r="1.3" g="1.1" b="0.4"/>
+	<absorption r="1.9" g="2.5" b="4.3"/>
+	<!-- The material's anisotropic roughness x/y between (0, 1], defaults to 1 (roughest) -->
+	<roughness x="0.01" y="0.001"/>
+</material>
+```
+```XML
+<material type="metal" name="pbrt_spd_metal">
+	<!-- PBRT SPD files are specified by an spd attribute with the spd file path -->
 	<ior spd="./spds/Cu.eta.spd"/>
 	<absorption spd="./spds/Cu.k.spd"/>
+    <!-- Can also specify an anisotropic roughness -->
 	<roughness value="0.000976"/>
 </material>
 ```
 
 MERL Material
 ---
-The renderer supports materials from the [MERL BRDF database](http://www.merl.com/brdf/) from "A Data-Driven Reflectance Model", by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769.
+The MERL material uses measured BRDFs from the [MERL BRDF database](http://www.merl.com/brdf/) introduced in "A Data-Driven Reflectance Model", by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769. MERL materials are specified by just passing the file path to the measured BRDF data.
 ```XML
 <material type="merl" name="my_merl_material" file="./brdfs/alumina-oxide.binary"/>
 ```
 
 Glass Material
 ---
+The glass material defines glass as a combination of specular reflection and transmission components to define a specular glass BSDF.
 ```XML
 <material type="glass" name="my_glass_mat">
-	<!-- Color and strength of reflections -->
 	<reflection r="1" g="0.5" b="0.8"/>
-	<!-- Color and strength of transmission -->
 	<transmission r="0.4" g="0.2" b="1"/>
-	<!-- Index of refraction of the material, defaults to 1 (air) -->
+	<!-- Index of refraction of the glass, defaults to 1 (air) -->
 	<ior value="1.52"/>
 </material>
 ```
 
 Mix Material
 ---
-Specify that the material is constructed by mixing two previously declared materials.
+The mix material can be used to construct a new material as the mixture of two previously declared materials. The resulting BSDF for the surface is the scaled combination of the BSDFs created by the materials being mixed, computed as `(1 - scale) * mat_a + scale * mat_b`, you can think of it as a LERP between the two materials.
 ```XML
 <material type="mix" name="my_mix_mat">
 	<material name="mix_mat_a" />
 	<material name="mix_mat_b" />
-	<!-- Materials are mixed by scaling the BxDFs by the color here
-		mat_a is scaled by scale, mat_b is scaled by 1 - scale -->
+	<!-- Mix weight for the materials (can also be a texture) -->
 	<scale r="0.2" g="0.8" b="0.5"/>
 </material>
 ```
