@@ -1,20 +1,39 @@
+
 Materials
 ===
-TODO: Clean up doc and complete
+The renderer uses a physically based material model supporting a range of materials from microfacet models to different types of measured data. The materials selected specify a set of [BRDFs](https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function) to be returned that describe the material properties at some point on the surface.
 
-The ray tracer uses are very different material model than what is discussed in class, aiming to be more physically accurate.
-As such no BlinnPhong material is provided. The supported materials are listed below along with the parameters they require.
-Note that material names (as with all other names) should not conflict.
-
-**Matte Material**
+Materials in tray are placed in a block at the bottom of the scene tag (or at the top if you like) and must have unique names to avoid conflicts in the cache. To assign a material to some geometry you specify the name of the material to be used as the material attribute. See the [Geometry](Geometry.md) documentation for more information.
 ```XML
-<material type="matte" name="my_matte_material">
+<xml>
+	<scene>
+		<!-- Geometry -->
+		<!-- Materials -->
+	</scene>
+    ...	
+</xml>
+```
+
+Matte Material
+---
+The matte material can be used to select between two types of BRDFs that describe diffuse surfaces, based on the roughness attribute (or lack thereof). A [Lambertian](https://en.wikipedia.org/wiki/Lambertian_reflectance) BRDF is selected by setting the roughness to 0, or omitting the tag entirely. The [Oren-Nayar](http://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model) microfacet model for rough diffuse surfaces can be selected by specifying a roughness value in (0, 1]. Samples of both Lambertian and Oren-Nayar matte materials are shown below.
+
+```XML
+<material type="matte" name="lambertian_model">
 	<!-- The color (or texture) for the material, required -->
-	<diffuse r="1" g="0" b="0.5"/>
+    <diffuse r="0.2" g="1" b="1"/>
+    <!-- roughness defaults to 0, selecting Lambertian -->
+</material>
+```
+```XML
+<material type="matte" name="oren_nayar_model">
+	<diffuse r="0.2" g="1" b="1"/>
+	<roughness value="0.3"/>
 </material>
 ```
 
-**Plastic Material**
+Plastic Material
+---
 ```XML
 <material type="plastic" name="my_plastic_material">
 	<!-- The diffuse color (or texture) for the material, required -->
@@ -26,7 +45,8 @@ Note that material names (as with all other names) should not conflict.
 </material>
 ```
 
-**Translucent Material**
+Translucent Material
+---
 Translucent material colors are computed by multiplying the base colors with the effect occuring, eg. the color
 for diffuse reflection is `reflection * diffuse` and so on.
 ```XML
@@ -46,7 +66,8 @@ for diffuse reflection is `reflection * diffuse` and so on.
 </material>
 ```
 
-**Metal Material**
+Metal Material
+---
 ```XML
 <material type="metal" name="my_metal_material">
 	<!-- The metal's index of refraction (can be a texture), required -->
@@ -68,13 +89,15 @@ contain measured metal properties over the visible light spectrum.
 </material>
 ```
 
-**MERL Material**
+MERL Material
+---
 The renderer supports materials from the [MERL BRDF database](http://www.merl.com/brdf/) from "A Data-Driven Reflectance Model", by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769.
 ```XML
 <material type="merl" name="my_merl_material" file="./brdfs/alumina-oxide.binary"/>
 ```
 
-**Glass Material**
+Glass Material
+---
 ```XML
 <material type="glass" name="my_glass_mat">
 	<!-- Color and strength of reflections -->
@@ -86,7 +109,8 @@ The renderer supports materials from the [MERL BRDF database](http://www.merl.co
 </material>
 ```
 
-**Mix Material**
+Mix Material
+---
 Specify that the material is constructed by mixing two previously declared materials.
 ```XML
 <material type="mix" name="my_mix_mat">
