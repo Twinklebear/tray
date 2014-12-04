@@ -1,4 +1,3 @@
-
 Materials
 ===
 The renderer uses a physically based material model supporting a range of materials from microfacet models to different types of measured data. The materials selected specify a set of [BRDFs](https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function) to be returned that describe the material properties at some point on the surface.
@@ -34,32 +33,32 @@ The matte material can be used to select between two types of BRDFs that describ
 
 Plastic Material
 ---
+The plastic material is constructed by combining a Lambertian BRDF and a Torrance-Sparrow microfacet model using a Blinn distribution and a dielectric Fresnel component to form the material BSDF.
 ```XML
-<material type="plastic" name="my_plastic_material">
-	<!-- The diffuse color (or texture) for the material, required -->
-	<diffuse  r="0.8" g="0.2" b="0.2"/>
-	<!-- The color (or texture) of specular highlights of the material, required -->
-	<specular r="1.0" g="1.0" b="1.0" value="0.9"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
-	<roughness value="0.5"/>
+<material type="plastic" name="plastic_mat">
+	<!-- Lambertian color (or texture) for the material, required -->
+    <diffuse  r="0.2" g="0.2" b="0.8" value="0.9"/>
+    <!-- Torrance-Sparrow color (or texture) for the material, required -->
+    <specular r="0.6" g="0.6" b="1.0" value="0.7"/>
+    <!-- Blinn microfacet distribution roughness between (0, 1], defaults to 1 (roughest) -->
+    <roughness value="0.05"/>
 </material>
 ```
 
 Translucent Material
 ---
-Translucent material colors are computed by multiplying the base colors with the effect occuring, eg. the color
-for diffuse reflection is `reflection * diffuse` and so on.
+The translucent BSDF is constructed by combining reflective and transmissive versions of the plastic material BSDF, wich the colors of the reflective and transmissive components multiplied by the reflective and transmissive colors set for the material. The index of refraction is used for the dielectric Fresnel component of the Torrance-Sparrow BRDFs in the material.
 ```XML
 <material type="translucent" name="my_translucent_material">
-	<!-- The base diffuse color (or texture) for the material, required -->
+	<!-- Lambertian color (or texture) for the material, required -->
 	<diffuse  r="0.8" g="0.2" b="0.2"/>
-	<!-- The base color (or texture) of specular highlights of the material, required -->
+    <!-- Torrance-Sparrow color (or texture) for the material, required -->
 	<specular r="1.0" g="1.0" b="1.0" value="0.9"/>
-	<!-- The color (or texture) for reflections, required -->
-	<reflection r="1.0" g="0.4" b="1.0" value="0.9"/>
-	<!-- The color (or texture) for transmission, required -->
-	<transmission r="1.0" g="1.0" b="0.2"/>
-	<!-- The material's roughness between (0, 1], defaults to 1 (roughest) -->
+	<!-- The color (or texture) to multiply in for reflections, required -->
+	<reflection r="1.0" g="0.4" b="1.0" value="0.2"/>
+	<!-- The color (or texture) to multiply in for transmission, required -->
+	<transmission r="1.0" g="1.0" b="0.2" value="0.8"/>
+    <!-- Blinn microfacet distribution roughness between (0, 1], defaults to 1 (roughest) -->
 	<roughness value="0.5"/>
 	<!-- The material's index of refraction, defaults to 1 (air) -->
 	<ior value="1.6"/>
@@ -68,6 +67,11 @@ for diffuse reflection is `reflection * diffuse` and so on.
 
 Metal Material
 ---
+The metal material describes the metal BSDF using a Torrance-Sparrow BRDF with a conductor Fresnel component. The metal's index of refraction and absorption coefficient are used for the conductor Fresnel component and the roughness, both uniform and anisotropic can be specified. If the roughness of the metal is uniform a Blinn microfacet distribution is used, if the roughness is specified to be anisotropic an [Ashikhmin-Shirley](http://www.cs.utah.edu/~shirley/papers/jgtbrdf.pdf) anisotropic microfacet distribution is used.
+
+The metal's index of refraction and absorption coefficients can also be loaded from measured metal data from PBRT's [spd](https://github.com/mmp/pbrt-v2/tree/master/scenes/spds/metals) files, which have measurements for a wide range of metals.
+
+Examples for uniform, anisotropic and usage of PBRT's spd files are shown below.
 ```XML
 <material type="metal" name="my_metal_material">
 	<!-- The metal's index of refraction (can be a texture), required -->
@@ -79,8 +83,6 @@ Metal Material
 	<roughness value="0.01"/>
 </material>
 ```
-Metals can also be specified using PBRT's [spd](https://github.com/mmp/pbrt-v2/tree/master/scenes/spds/metals) files which
-contain measured metal properties over the visible light spectrum.
 ```XML
 <material type="metal" name="my_pbrt_metal">
 	<ior spd="./spds/Cu.eta.spd"/>
