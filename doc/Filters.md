@@ -8,7 +8,7 @@ The filter specifier tag should be placed within the config section of your scen
 ```XML
 <xml>
 	<scene>
-		<!-- Objects -->
+		<!-- Geometry -->
 		<!-- Materials -->
 	</scene>
     

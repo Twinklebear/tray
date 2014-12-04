@@ -41,7 +41,7 @@ Scene files are in XML and should have the following structure:
 ```XML
 <xml>
 	<scene>
-		<!-- Objects -->
+		<!-- Geometry -->
 		<!-- Materials -->
 	</scene>
     

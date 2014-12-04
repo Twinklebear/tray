@@ -5,7 +5,7 @@ Currently only two types of lights are supported, point lights and area lights. 
 ```XML
 <xml>
 	<scene>
-		<!-- Objects -->
+		<!-- Geometry -->
 		<!-- Materials -->
         
         <!-- Lights without associated geometry go here -->
