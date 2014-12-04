@@ -89,15 +89,22 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 	}
 }
 std::unique_ptr<Material> load_matte(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
+	using namespace tinyxml2;
 	Texture *tex = nullptr;
-	if (elem->FirstChildElement("diffuse")){
-		tex = load_texture(elem->FirstChildElement("diffuse"), elem->Attribute("name"), tcache, file);
+	float rough = 0;
+	XMLElement *e = elem->FirstChildElement("diffuse");
+	if (e){
+		tex = load_texture(e, elem->Attribute("name"), tcache, file);
+	}
+	e = elem->FirstChildElement("roughness");
+	if (e){
+		read_float(e, rough);
 	}
 	if (tex == nullptr){
 		std::cout << "Scene error: matte materials require a diffuse attribute" << std::endl;
 		std::exit(1);
 	}
-	return std::make_unique<MatteMaterial>(tex, 0);
+	return std::make_unique<MatteMaterial>(tex, rough);
 }
 std::unique_ptr<Material> load_plastic(tinyxml2::XMLElement *elem, TextureCache &tcache,
 	const std::string &file)
