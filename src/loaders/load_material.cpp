@@ -86,11 +86,6 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 				cache.add(name, std::move(material));
 			}
 		}
-		else {
-			//The materials are all passed in a block, so once
-			//we hit something not a material we're done loading
-			return;
-		}
 	}
 }
 std::unique_ptr<Material> load_matte(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
