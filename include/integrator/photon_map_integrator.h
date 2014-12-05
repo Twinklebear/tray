@@ -126,7 +126,7 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	//The desired number of caustic/indirect photons we want
 	const int num_caustic_wanted, num_indirect_wanted, max_depth, max_phot_depth,
 		query_size, final_gather_samples;
-	const float max_dist_sqr, gather_angle;
+	const float max_dist_sqr, gather_angle, max_radiance_dist;
 	//Atomic counters to synchronize the number of caustic and indirect photons mapped so far
 	std::atomic<int> num_caustic, num_indirect, num_direct;
 	int caustic_paths, indirect_paths;
@@ -140,7 +140,7 @@ public:
 	 */
 	PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth,
 		int max_phot_depth, int query_size = 50, int final_gather_samples = 32,
-		float max_dist_sqr = 0.1, float gather_angle = 10);
+		float max_dist_sqr = 0.1, float gather_angle = 10, float max_radiance_dist = -1);
 	/*
 	 * Pre-process the scene and build the photon maps needed for rendering
 	 */

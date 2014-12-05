@@ -21,14 +21,16 @@ std::unique_ptr<SurfaceIntegrator> load_surface_integrator(tinyxml2::XMLElement 
 		int num_caustic = r->IntAttribute("num_caustic");
 		int num_indirect = r->IntAttribute("num_indirect");
 		int max_phot_depth = 6, query_size = 50, final_gather_samples = 32;
-		float max_dist_sqr = 0.1, gather_angle = 10;
+		float max_dist_sqr = 0.1, gather_angle = 10, max_radiance_dist = -1;
 		r->QueryIntAttribute("max_phot_depth", &max_phot_depth);
 		r->QueryIntAttribute("query_size", &query_size);
 		r->QueryIntAttribute("final_gather_samples", &final_gather_samples);
 		r->QueryFloatAttribute("max_dist_sqr", &max_dist_sqr);
 		r->QueryFloatAttribute("gather_angle", &gather_angle);
+		r->QueryFloatAttribute("max_radiance_dist", &max_radiance_dist);
 		return std::make_unique<PhotonMapIntegrator>(num_caustic, num_indirect, max_depth,
-			max_phot_depth, query_size, final_gather_samples, max_dist_sqr, gather_angle);
+			max_phot_depth, query_size, final_gather_samples, max_dist_sqr, gather_angle,
+			max_radiance_dist);
 	}
 
 	int min_depth = r->IntAttribute("min_depth");

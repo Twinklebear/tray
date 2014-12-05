@@ -245,10 +245,13 @@ void PhotonMapIntegrator::RadianceQueryCallback::operator()(const Point&, const 
 }
 
 PhotonMapIntegrator::PhotonMapIntegrator(int num_caustic_wanted, int num_indirect_wanted, int max_depth,
-	int max_phot_depth, int query_size, int final_gather_samples, float max_dist_sqr, float gather_angle)
+	int max_phot_depth, int query_size, int final_gather_samples, float max_dist_sqr, float gather_angle,
+	float max_rad_dist)
 	: num_caustic_wanted(num_caustic_wanted), num_indirect_wanted(num_indirect_wanted), max_depth(max_depth),
 	max_phot_depth(max_phot_depth), query_size(query_size), final_gather_samples(final_gather_samples),
-	max_dist_sqr(max_dist_sqr), gather_angle(gather_angle), num_caustic(0), num_indirect(0), num_direct(0)
+	max_dist_sqr(max_dist_sqr), gather_angle(gather_angle),
+	max_radiance_dist(max_rad_dist <= 0 ? std::numeric_limits<float>::infinity() : max_rad_dist),
+   	num_caustic(0), num_indirect(0), num_direct(0)
 {}
 void PhotonMapIntegrator::preprocess(const Scene &scene){
 	if (scene.get_light_cache().empty()){
@@ -398,7 +401,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, co
 		if (scene.get_root().intersect(gather_ray, dg)){
 			Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
 			RadianceQueryCallback rad_query{n_gather, nullptr}; 
-			float query_dist = std::numeric_limits<float>::infinity();
+			float query_dist = max_radiance_dist;
 			radiance_map->query(dg.point, query_dist, rad_query);
 			Colorf emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
 
@@ -440,7 +443,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, co
 		if (scene.get_root().intersect(gather_ray, dg)){
 			Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
 			RadianceQueryCallback rad_query{n_gather, nullptr}; 
-			float query_dist = std::numeric_limits<float>::infinity();
+			float query_dist = max_radiance_dist;
 			radiance_map->query(dg.point, query_dist, rad_query);
 			Colorf emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
 
