@@ -5,6 +5,7 @@
 #include "material/plastic_material.h"
 #include "material/translucent_material.h"
 #include "material/metal_material.h"
+#include "material/specular_metal_material.h"
 #include "material/merl_material.h"
 #include "material/glass_material.h"
 #include "material/mix_material.h"
@@ -32,6 +33,10 @@ static std::unique_ptr<Material> load_translucent(tinyxml2::XMLElement *elem, Te
  * elem should be root of the material being loaded
  */
 static std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
+/*
+ * Load the specular metal material properties and return the material
+ */
+static std::unique_ptr<Material> load_specular_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file);
 /*
  * Load the MERL measured material properties and return the material
  * elem should be root of the material being loaded
@@ -72,6 +77,9 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 			}
 			else if (type == "metal"){
 				material = load_metal(m, tcache, file);
+			}
+			else if (type == "specular_metal"){
+				material = load_specular_metal(m, tcache, file);
 			}
 			else if (type == "merl"){
 				material = load_merl(m, tcache, file);
@@ -211,6 +219,34 @@ std::unique_ptr<Material> load_metal(tinyxml2::XMLElement *elem, TextureCache &t
 		std::exit(1);
 	}
 	return std::make_unique<MetalMaterial>(ior, absorp_coef, rough_x, rough_y);
+}
+std::unique_ptr<Material> load_specular_metal(tinyxml2::XMLElement *elem, TextureCache &tcache, const std::string &file){
+	using namespace tinyxml2;
+	Texture *ior = nullptr, *absorp_coef = nullptr;
+	std::string name = elem->Attribute("name");
+	XMLElement *e = elem->FirstChildElement("ior");
+	if (e){
+		if (e->Attribute("spd")){
+			ior = load_spd(e, name, tcache, file);
+		}
+		else {
+			ior = load_texture(e, name, tcache, file);
+		}
+	}
+	e = elem->FirstChildElement("absorption");
+	if (e){
+		if (e->Attribute("spd")){
+			absorp_coef = load_spd(e, name, tcache, file);
+		}
+		else {
+			absorp_coef = load_texture(e, name, tcache, file);
+		}
+	}
+	if (ior == nullptr || absorp_coef == nullptr){
+		std::cout << "Scene error: specular metal materials require an ior and absorption attribute" << std::endl;
+		std::exit(1);
+	}
+	return std::make_unique<SpecularMetalMaterial>(ior, absorp_coef);
 }
 std::unique_ptr<Material> load_merl(tinyxml2::XMLElement *elem, TextureCache&, const std::string &file){
 	using namespace tinyxml2;
