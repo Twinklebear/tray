@@ -285,7 +285,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	}
 
 	//Compute radiance photon emittances now that we've got the photon maps built
-	if (!radiance_photons.empty()){
+	if (!radiance_photons.empty() && final_gather_samples > 0){
 		std::cout << "PhotonMapIntegrator: computing radiance photon emittance" << std::endl;
 		//We use the number of hw threads to compute radiance + 1 for any overflow photons
 		int hw_threads = std::thread::hardware_concurrency();
@@ -343,8 +343,8 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	}
 	const static BxDFTYPE NON_SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION
 		| BxDFTYPE::DIFFUSE | BxDFTYPE::GLOSSY);
-	if (indirect_map != nullptr){
-		if (radiance_map != nullptr && bsdf->num_bxdfs(NON_SPECULAR_BXDF) > 0){
+	if (indirect_map != nullptr && bsdf->num_bxdfs(NON_SPECULAR_BXDF) > 0){
+		if (radiance_map != nullptr){
 			illum += final_gather(scene, renderer, ray, p, n, *bsdf, sampler, pool);
 		}
 		else {
