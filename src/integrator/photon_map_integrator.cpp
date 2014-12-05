@@ -424,7 +424,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, co
 	for (int i = 0; i < final_gather_samples; ++i){
 		//Uniformly select a photon and use it to sample a vector along the cone centered about its incident direction
 		int photon_id = std::min(phot_query.found - 1,
-			static_cast<int>(bsdf_samples_comp[i] * (phot_query.found - 1)));
+			static_cast<int>(bsdf_samples_comp[i] * phot_query.found));
 		Vector w_x, w_y;
 		coordinate_system(indirect_dirs[photon_id], w_x, w_y);
 		Vector w_i = uniform_sample_cone(bsdf_samples_u[i], gather_angle, w_x, w_y, indirect_dirs[photon_id]);
