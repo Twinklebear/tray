@@ -80,10 +80,10 @@
 
 	<config>
 		<sampler type="adaptive" min="16" max="32"/>
-		<renderer type="photon" max_depth="3" max_photon_depth="16"
-			num_caustic="20000000" num_indirect="20000000"
-			final_gather_samples="0" query_size="50"
-			max_dist_sqr="0.05"/>
+		<renderer type="photon" max_depth="6" max_photon_depth="16"
+			num_caustic="100000" num_indirect="100000"
+			final_gather_samples="32" query_size="50"
+			max_dist_sqr="0.1"/>
 	</config>
 </xml>
 

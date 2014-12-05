@@ -115,7 +115,7 @@ void PhotonMapIntegrator::ShootingTask::trace_photon(const RayDifferential &r, C
 				deposited = true;
 			}
 			//Randomly create radiance photons with some low probability, using the same value here as PBR
-			if (deposited && sampler.random_float() < 0.25){
+			if (deposited && sampler.random_float() < 0.50){
 				//Make sure the normal of the surface faces the right direction when we save it (eg. in case of transmission)
 				Normal n = w_o.dot(dg.normal) < 0 ? -dg.normal : dg.normal;
 				radiance_photons.push_back(RadiancePhoton{dg.point, n, Colorf{0}});
