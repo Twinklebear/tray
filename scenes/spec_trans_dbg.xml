@@ -30,8 +30,8 @@
 		</object>
 
 		<object type="sphere" name="glass_sphere" material="glass_mat">
-			<scale value="8"/>
-			<translate z="8"/>
+			<scale value="4"/>
+			<translate z="4"/>
 		</object>
 		<object type="sphere_r1" name="sphere_light" radius="1" material="wall">
 			<translate x="0" y="0" z="22"/>
@@ -43,12 +43,15 @@
 		<!-- Materials -->
 		<material type="matte" name="wall">
 			<diffuse  r="1" g="1" b="1"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallRed">
 			<diffuse  r="1.0" g="0.2" b="0.2"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallBlue">
 			<diffuse  r="0.2" g="0.2" b="1.0"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="checker">
 			<diffuse texture="checkerboard">
@@ -56,11 +59,7 @@
 				<color2 r="0.5" g="0.5" b="1"/>
 				<scale value="0.08"/>
 			</diffuse>
-		</material>
-		<material type="metal" name="metal_mat">
-			<ior spd="./spds/Ag.eta.spd"/>
-			<absorption spd="./spds/Ag.k.spd"/>
-			<roughness value="0.000001"/>
+			<roughness value="1"/>
 		</material>
 		<material type="glass" name="glass_mat">
 			<reflection value="1"/>
@@ -79,8 +78,11 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="16" max="16"/>
-		<renderer type="path" min_depth="3" max_depth="8"/>
+		<sampler type="adaptive" min="16" max="32"/>
+		<renderer type="photon" max_depth="4" max_photon_depth="10"
+			num_caustic="500000" num_indirect="1000000"
+			final_gather_samples="32" query_size="50"
+			max_dist_sqr="0.01"/>
 	</config>
 </xml>
 

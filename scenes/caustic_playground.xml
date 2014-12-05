@@ -42,22 +42,24 @@
 			<rotate angle="180" z="1"/>
 			<translate y="1" z="7.5"/>
 		</object>
+		-->
 		<object type="obj" name="./models/bunny.obj" material="orange_glass">
 			<scale value="6"/>
 			<rotate angle="90" x="1"/>
 			<translate y="-3" z="2"/>
 		</object>
+		<!--
 		<object type="obj" name="./models/teapot_hres.obj" material="orange_glass">
 			<scale value="0.8"/>
 			<rotate angle="-50" z="1"/>
 		</object>
-		-->
 		<object type="obj" name="./models/smooth_suzanne.obj" material="orange_glass">
 			<scale value="8"/>
 			<rotate angle="50" x="1"/>
 			<rotate angle="30" z="1"/>
 			<translate z="3.5"/>
 		</object>
+		-->
 		<object type="sphere_r1.8" name="sphere_light" radius="2" material="wall">
 			<translate y="8" z="18"/>
 			<light type="area" name="areaLight">
@@ -68,6 +70,7 @@
 		<!-- Materials -->
 		<material type="matte" name="wall">
 			<diffuse  r="0.740063" g="0.742313" b="0.733934"/>
+			<roughness value="1"/>
 		</material>
 		<material type="glass" name="orange_glass">
 			<reflection r="0.9607843" g="0.501960" b="0"/>
@@ -86,10 +89,11 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="photon" max_depth="6"
-			num_caustic="500000" num_indirect="500000"
-			final_gather_samples="8" query_size="20"/>
+		<sampler type="adaptive" min="16" max="32"/>
+		<renderer type="photon" max_depth="0" max_photon_depth="16"
+			num_caustic="1000000" num_indirect="1000000"
+			final_gather_samples="32" query_size="50"
+			max_dist_sqr="0.08"/>
 	</config>
 </xml>
 
