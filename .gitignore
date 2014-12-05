@@ -13,6 +13,8 @@ scenes/brdfs
 *.png
 *.ppm
 *.pgm
+*.bmp
+*.png
 
 # Ignored ycm compiled python file
 *.pyc
