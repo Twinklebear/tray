@@ -316,7 +316,7 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	//Store the total number of paths in non-atomic vars so we can access them quickly
 	caustic_paths = num_caustic.load(std::memory_order_consume);
 	indirect_paths = num_indirect.load(std::memory_order_consume);
-	//TODO: Don't delete when doing the direct map demo render
+	//We're done with the direct map now
 	direct_map = nullptr;
 }
 Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
@@ -337,14 +337,6 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	auto *near_photons = pool.alloc_array<NearPhoton>(query_size);
 
 	illum += uniform_sample_all_lights(scene, renderer, p, n, w_o, *bsdf, sampler, pool);
-	//TODO: Sticking around until I render the direct map to turn in
-	/*
-	int direct_paths = num_direct.load(std::memory_order_consume);
-	if (direct_map != nullptr){
-		illum += photon_radiance(*direct_map, direct_paths, query_size, near_photons, max_dist_sqr,
-			*bsdf, sampler, pool, dg, w_o);
-	}
-	*/
 	if (caustic_map != nullptr){
 		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
