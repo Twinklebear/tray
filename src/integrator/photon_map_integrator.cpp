@@ -353,7 +353,8 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		}
 	}
 	//We handle specular reflection and transmission through standard recursive ray tracing
-	if (ray.depth < max_depth){
+	const static BxDFTYPE SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR);
+	if (ray.depth < max_depth && bsdf->num_bxdfs(SPECULAR_BXDF) > 0){
 		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);
 		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
 	}
@@ -365,7 +366,8 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, co
 	Vector w_o = -ray.d;
 	//Query nearby indirect photons to get an estimate of the average direction of incident illumination at the point
 	PhotonQueryCallback phot_query{pool.alloc_array<NearPhoton>(query_size), query_size, 0};
-	for (float query_dist_sqr = max_dist_sqr; phot_query.found < query_size; query_dist_sqr *= 2){
+	//Re run the query until we get the desired number of photons or go over a limit in how big we're letting the query get
+	for (float query_dist_sqr = max_dist_sqr; phot_query.found < query_size && query_dist_sqr < 8 * max_dist_sqr; query_dist_sqr *= 2){
 		phot_query.found = 0;
 		float dist = query_dist_sqr;
 		indirect_map->query(p, dist, phot_query);
