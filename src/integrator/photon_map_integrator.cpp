@@ -115,7 +115,7 @@ void PhotonMapIntegrator::ShootingTask::trace_photon(const RayDifferential &r, C
 				deposited = true;
 			}
 			//Randomly create radiance photons with some low probability, using the same value here as PBR
-			if (deposited && sampler.random_float() < 0.125){
+			if (deposited && sampler.random_float() < 0.25){
 				//Make sure the normal of the surface faces the right direction when we save it (eg. in case of transmission)
 				Normal n = w_o.dot(dg.normal) < 0 ? -dg.normal : dg.normal;
 				radiance_photons.push_back(RadiancePhoton{dg.point, n, Colorf{0}});
@@ -317,6 +317,9 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	std::cout << "PhotonMapIntegrator: building photon maps took: "
 		<< std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
 		<< "ms\n";
+	//Store the total number of paths in non-atomic vars so we can access them quickly
+	caustic_paths = num_caustic.load(std::memory_order_consume);
+	indirect_paths = num_indirect.load(std::memory_order_consume);
 	//TODO: Don't delete when doing the direct map demo render
 	direct_map = nullptr;
 }
@@ -336,8 +339,7 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 	const Point &p = bsdf->dg.point;
 	const Normal &n = bsdf->dg.normal;
 	auto *near_photons = pool.alloc_array<NearPhoton>(query_size);
-	int caustic_paths = num_caustic.load(std::memory_order_consume);
-	int indirect_paths = num_indirect.load(std::memory_order_consume);
+
 	illum += uniform_sample_all_lights(scene, renderer, p, n, w_o, *bsdf, sampler, pool);
 	//TODO: Sticking around until I render the direct map to turn in
 	/*

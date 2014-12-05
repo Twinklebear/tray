@@ -129,6 +129,7 @@ class PhotonMapIntegrator : public SurfaceIntegrator {
 	const float max_dist_sqr, gather_angle;
 	//Atomic counters to synchronize the number of caustic and indirect photons mapped so far
 	std::atomic<int> num_caustic, num_indirect, num_direct;
+	int caustic_paths, indirect_paths;
 	std::unique_ptr<KdPointTree<Photon>> caustic_map, indirect_map, direct_map;
 	std::unique_ptr<KdPointTree<RadiancePhoton>> radiance_map;
 
