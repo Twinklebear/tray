@@ -266,20 +266,16 @@ void PhotonMapIntegrator::preprocess(const Scene &scene){
 	std::vector<std::thread> threads;
 	threads.reserve(3);
 	if (!caustic_photons.empty()){
-		//TODO: Keep in the serial tree building until comparison times are recorded for it
-		//caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
 		threads.emplace_back([this, &caustic_photons](){
 			caustic_map = std::make_unique<KdPointTree<Photon>>(std::move(caustic_photons));
 		});
 	}
 	if (!indirect_photons.empty()){
-		//indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
 		threads.emplace_back([this, &indirect_photons](){
 			indirect_map = std::make_unique<KdPointTree<Photon>>(std::move(indirect_photons));
 		});
 	}
 	if (!direct_photons.empty()){
-		//direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
 		threads.emplace_back([this, &direct_photons](){
 			direct_map = std::make_unique<KdPointTree<Photon>>(std::move(direct_photons));
 		});
