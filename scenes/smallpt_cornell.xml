@@ -60,7 +60,7 @@
 		<material type="metal" name="metal_mat">
 			<ior spd="./spds/Ag.eta.spd"/>
 			<absorption spd="./spds/Ag.k.spd"/>
-			<roughness value="0.000001"/>
+			<roughness value="0.001"/>
 		</material>
 		<material type="glass" name="glass_mat">
 			<reflection value="1"/>
@@ -81,8 +81,9 @@
 	<config>
 		<sampler type="adaptive" min="16" max="32"/>
 		<renderer type="photon" max_depth="3" max_photon_depth="16"
-			num_caustic="100000" num_indirect="150000"
-			final_gather_samples="32" query_size="50"/>
+			num_caustic="20000000" num_indirect="20000000"
+			final_gather_samples="0" query_size="50"
+			max_dist_sqr="0.05"/>
 	</config>
 </xml>
 
