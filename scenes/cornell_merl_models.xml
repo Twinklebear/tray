@@ -55,12 +55,15 @@
 		<!-- Materials -->
 		<material type="matte" name="wall">
 			<diffuse  r="1" g="1" b="1"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallRed">
 			<diffuse  r="1.0" g="0.2" b="0.2"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallBlue">
 			<diffuse  r="0.2" g="0.2" b="1.0"/>
+			<roughness value="1"/>
 		</material>
 		<material type="merl" name="dragon-mat" file="./brdfs/blue-acrylic.binary"/>
 		<material type="merl" name="buddha-mat" file="./brdfs/gold-metallic-paint.binary"/>

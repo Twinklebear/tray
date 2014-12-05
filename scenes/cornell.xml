@@ -48,12 +48,15 @@
 		<!-- Materials -->
 		<material type="matte" name="wall">
 			<diffuse  r="0.740063" g="0.742313" b="0.733934"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallRed">
 			<diffuse  r="0.366046" g="0.0371827" b="0.0416385"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallGreen">
 			<diffuse  r="0.162928" g="0.408903" b="0.0833759"/>
+			<roughness value="1"/>
 		</material>
 		<material type="plastic" name="plastic_white">
 			<diffuse  r="0.8" g="0.8" b="0.8"/>
@@ -73,7 +76,7 @@
 
 	<config>
 		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="photon" max_depth="8" num_caustic="10" num_indirect="5000000"/>
+		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
 

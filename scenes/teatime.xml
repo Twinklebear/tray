@@ -60,6 +60,7 @@
 		<!-- Materials -->
 		<material type="matte" name="wall">
 			<diffuse  r="0.740063" g="0.742313" b="0.733934"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="checker">
 			<diffuse texture="checkerboard">
@@ -67,6 +68,7 @@
 				<color2 r="0.5" g="0.5" b="1"/>
 				<scale value="0.08"/>
 			</diffuse>
+			<roughness value="1"/>
 		</material>
 		<material type="merl" name="two_layer_silver" file="./brdfs/two-layer-silver.binary"/>
 		<material type="plastic" name="purple_plastic">
@@ -99,7 +101,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="128" max="1024"/>
+		<sampler type="adaptive" min="64" max="64"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>

@@ -47,12 +47,15 @@
 		<!-- Materials -->
 		<material type="matte" name="wall">
 			<diffuse  r="1" g="1" b="1"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallRed">
 			<diffuse  r="1.0" g="0.2" b="0.2"/>
+			<roughness value="1"/>
 		</material>
 		<material type="matte" name="wallBlue">
 			<diffuse  r="0.2" g="0.2" b="1.0"/>
+			<roughness value="1"/>
 		</material>
 		<material type="metal" name="metal_mat">
 			<ior spd="./spds/Ag.eta.spd"/>
@@ -76,7 +79,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="64"/>
+		<sampler type="adaptive" min="32" max="32"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
