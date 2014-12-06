@@ -2,17 +2,18 @@
 #include "linalg/util.h"
 #include "linalg/ray.h"
 #include "linalg/vector.h"
-#include "geometry/geometry.h"
-#include "geometry/cylinder.h"
+#include "geometry/cone.h"
 
-Cylinder::Cylinder(float radius, float height) : radius(radius), height(height){}
-bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
-	//Notes: in PBRT speak my zmin = 0, zmax = height, phimax = 2pi
-	float a = ray.d.x * ray.d.x + ray.d.y * ray.d.y;
-    float b = 2 * (ray.d.x * ray.o.x + ray.d.y * ray.o.y);
-    float c = ray.o.x * ray.o.x + ray.o.y * ray.o.y - radius * radius;
+Cone::Cone(float radius, float height) : radius(radius), height(height){}
+bool Cone::intersect(Ray &ray, DifferentialGeometry &dg) const {
+	//Compute the cone quadratic coefficients
+	float k = radius / height;
+	k *= k;
+	float a = ray.d.x * ray.d.x + ray.d.y * ray.d.y - k * ray.d.z * ray.d.z;
+	float b = 2 * (ray.d.x * ray.o.x + ray.d.y * ray.o.y - k * ray.d.z * (ray.o.z - height));
+	float c = ray.o.x * ray.o.x + ray.o.y * ray.o.y - k * (ray.o.z - height) * (ray.o.z - height);
 	//Solve quadratic equation for t values
-	//If no solutions exist the ray doesn't intersect the cylinder
+	//If no solutions exist the ray doesn't intersect the cone
 	float t[2];
 	if (!solve_quadratic(a, b, c, t[0], t[1])){
 		return false;
@@ -35,8 +36,7 @@ bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
 	if (phi < 0){
 		phi += TAU;
 	}
-	//The hit test is against an infinitely long cylinder so now check that it's actually in
-	//the [0, height] range
+	//The test is against an infinitely long cone, so check that the hit is in range
 	if (point.z < 0 || point.z > height){
 		if (t_hit == t[1]){
 			return false;
@@ -59,13 +59,14 @@ bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
 
 	dg.u = phi / TAU;
 	dg.v = dg.point.z / height;
-	dg.dp_du = Vector{-TAU * dg.point.y, TAU * dg.point.x, 0};
-	dg.dp_dv = Vector{0, 0, height};
-	
-	dg.normal = Normal{dg.point.x, dg.point.y, 0}.normalized();
+	dg.dp_du = Vector{-TAU * point.y, TAU * point.x, 0};
+	dg.dp_dv = Vector{-point.x / (1 - dg.v), -point.y / (1 - dg.v), height};
+
+	dg.normal = Normal{dg.dp_du.cross(dg.dp_dv).normalized()};
 	//Compute derivatives of normals using Weingarten eqns
-	Vector ddp_duu = -TAU * TAU * Vector{dg.point.x, dg.point.y, 0};
-	Vector ddp_duv{0}, ddp_dvv{0};
+	Vector ddp_duu = -TAU * TAU * Vector{point.x, point.y, 0};
+	Vector ddp_duv = TAU / (1 - dg.v) * Vector{point.y, -point.x, 0};
+	Vector ddp_dvv{0};
 
 	float E = dg.dp_du.dot(dg.dp_du);
 	float F = dg.dp_du.dot(dg.dp_dv);
@@ -87,23 +88,13 @@ bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
 	}
 	return true;
 }
-BBox Cylinder::bound() const {
+BBox Cone::bound() const {
 	return BBox{Point{-radius, -radius, 0}, Point{radius, radius, height}};
 }
-void Cylinder::refine(std::vector<Geometry*> &prims){
+void Cone::refine(std::vector<Geometry*> &prims){
 	prims.push_back(this);
 }
-float Cylinder::surface_area() const {
-	return height * TAU * radius;
-}
-Point Cylinder::sample(const GeomSample &gs, Normal &normal) const {
-	float z = lerp(gs.u[0], 0.f, height);
-	float phi = gs.u[1] * TAU;
-	Point p{radius * std::cos(phi), radius * std::sin(phi), z};
-	normal = Normal{p.x, p.y, 0}.normalized();
-	return p;
-}
-bool Cylinder::attach_light(const Transform&){
-	return true;
+float Cone::surface_area() const {
+	return PI * radius * std::sqrt(height * height + radius * radius);
 }
 
