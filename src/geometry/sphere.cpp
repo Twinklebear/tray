@@ -1,4 +1,3 @@
-#include <iostream>
 #include "monte_carlo/util.h"
 #include "linalg/util.h"
 #include "linalg/ray.h"
