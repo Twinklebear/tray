@@ -51,8 +51,6 @@ void Node::attach_light(AreaLight *light){
 void Node::flatten_children(){
 	std::vector<std::shared_ptr<Node>> flat_children;
 	for (auto &c : children){
-		c->transform = transform * c->transform;
-		c->inv_transform = c->inv_transform * inv_transform;
 		if (c->geometry){
 			flat_children.push_back(c);
 		}
@@ -67,6 +65,7 @@ bool Node::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	if (bvh){
 		return bvh->intersect(ray, diff_geom);
 	}
+	assert(children.empty());
 	bool hit = false;
 	Ray node_space = ray;
 	inv_transform(ray, node_space);
@@ -75,9 +74,6 @@ bool Node::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 		if (hit){
 			diff_geom.node = this;
 		}
-	}
-	for (auto &c : children){
-		hit = c->intersect(node_space, diff_geom) || hit;
 	}
 	if (hit){
 		transform(diff_geom, diff_geom);
@@ -139,8 +135,6 @@ const std::string& Node::get_name() const {
 }
 void Node::flatten_children(std::vector<std::shared_ptr<Node>> &nodes){
 	for (auto &c : children){
-		c->transform = transform * c->transform;
-		c->inv_transform = c->inv_transform * inv_transform;
 		if (c->geometry){
 			nodes.push_back(c);
 		}

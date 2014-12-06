@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <stack>
 #include <iostream>
 #include <string>
 #include <array>
@@ -15,6 +16,7 @@
 #include "geometry/tri_mesh.h"
 #include "geometry/cylinder.h"
 #include "geometry/disk.h"
+#include "geometry/cone.h"
 #include "filters/box_filter.h"
 #include "samplers/stratified_sampler.h"
 #include "integrator/path_integrator.h"
@@ -40,7 +42,7 @@ static Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h);
  * file is the scene filepath so we can use it to construct paths to
  * any obj files we're loading
  */
-static void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::string &file);
+static void load_node(tinyxml2::XMLElement *elem, Node &node, std::stack<Transform> &transform_stack, Scene &scene, const std::string &file);
 /*
  * Get the geometry for the type, either return it from the cache
  * or load the geometry into the cache and return it
@@ -115,7 +117,9 @@ Scene load_scene(const std::string &file){
 	if (lights){
 		load_lights(lights, scene.get_light_cache());
 	}
-	load_node(scene_node, scene.get_root(), scene, file);
+	std::stack<Transform> transform_stack;
+	transform_stack.push(Transform{});
+	load_node(scene_node, scene.get_root(), transform_stack, scene, file);
 	return scene;
 }
 Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
@@ -157,12 +161,16 @@ Camera load_camera(tinyxml2::XMLElement *elem, int &w, int &h){
 	return Camera{Transform::look_at(pos, target, up), fov, dof, focal_dist,
 		open, close, w, h};
 }
-void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::string &file){
+void load_node(tinyxml2::XMLElement *elem, Node &node, std::stack<Transform> &transform_stack, Scene &scene, const std::string &file){
 	using namespace tinyxml2;
 	auto &children = node.get_children();
 	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
 		if (c->Value() == std::string{"object"}){
 			XMLElement *e = c->ToElement();
+			if (!e->Attribute("name")){
+				std::cout << "Scene error: Objects must have names!" << std::endl;
+				std::exit(1);
+			}
 			std::string name = e->Attribute("name");
 			const char *t = e->Attribute("type");
 			std::string type;
@@ -188,10 +196,12 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 			children.push_back(std::make_shared<Node>(geom, mat, Transform{}, name));
 			Node &n = *children.back();
 			read_transform(e, n.get_transform());
+			n.get_transform() = transform_stack.top() * n.get_transform();
 			n.get_inv_transform() = n.get_transform().inverse();
 			//Check if there's an area light attached to this geometry
 			XMLElement *light_elem = c->FirstChildElement("light");
 			if (light_elem){
+				std::string light_name = light_elem->Attribute("name");
 				std::cout << "Attaching area light to " << name << std::endl;
 				Colorf emit{1, 1, 1};
 				int n_samples = 6;
@@ -201,11 +211,11 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 				}
 				AreaLight *area_light = nullptr;
 				if (type != "obj"){
-					area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
+					area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__" + name + light_name,
 						std::make_unique<AreaLight>(n.get_transform(), emit, geom, n_samples)));
 				}
 				else {
-					area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__light" + name,
+					area_light = dynamic_cast<AreaLight*>(scene.get_light_cache().add("__" + name + light_name,
 						std::make_unique<AreaLight>(Transform{}, emit, geom, n_samples)));
 				}
 				n.attach_light(area_light);
@@ -215,7 +225,11 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, Scene &scene, const std::
 				}
 			}
 			//Load any children the node may have
-			load_node(e, n, scene, file);
+			if (e->FirstChildElement("object")){
+				transform_stack.push(n.get_transform());
+				load_node(e, n, transform_stack, scene, file);
+				transform_stack.pop();
+			}
 		}
 	}
 }
@@ -248,6 +262,12 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		read_float(elem, radius, "radius");
 		read_float(elem, inner_radius, "inner_radius");
 		return cache.add(type, std::make_unique<Disk>(radius, inner_radius));
+	}
+	else if (type.substr(0, 4) == "cone"){
+		float radius = 1, height = 1;
+		read_float(elem, radius, "radius");
+		read_float(elem, height, "height");
+		return cache.add(type, std::make_unique<Cone>(radius, height));
 	}
 	else if (type == "plane"){
 		return cache.add(type, std::make_unique<Plane>());
