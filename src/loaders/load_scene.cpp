@@ -14,6 +14,7 @@
 #include "geometry/plane.h"
 #include "geometry/tri_mesh.h"
 #include "geometry/cylinder.h"
+#include "geometry/disk.h"
 #include "filters/box_filter.h"
 #include "samplers/stratified_sampler.h"
 #include "integrator/path_integrator.h"
@@ -241,6 +242,12 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		read_float(elem, radius, "radius");
 		read_float(elem, height, "height");
 		return cache.add(type, std::make_unique<Cylinder>(radius, height));
+	}
+	else if (type.substr(0, 4) == "disk"){
+		float radius = 1, inner_radius = 0;
+		read_float(elem, radius, "radius");
+		read_float(elem, inner_radius, "inner_radius");
+		return cache.add(type, std::make_unique<Disk>(radius, inner_radius));
 	}
 	else if (type == "plane"){
 		return cache.add(type, std::make_unique<Plane>());
