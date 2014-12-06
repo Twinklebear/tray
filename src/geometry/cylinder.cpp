@@ -42,6 +42,9 @@ bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
 			return false;
 		}
 		t_hit = t[1];
+		if (t_hit > ray.max_t){
+			return false;
+		}
 		point = ray(t_hit);
 		phi = std::atan2(point.y, point.x);
 		if (phi < 0){
