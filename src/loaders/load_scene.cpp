@@ -13,6 +13,7 @@
 #include "geometry/sphere.h"
 #include "geometry/plane.h"
 #include "geometry/tri_mesh.h"
+#include "geometry/cylinder.h"
 #include "filters/box_filter.h"
 #include "samplers/stratified_sampler.h"
 #include "integrator/path_integrator.h"
@@ -234,6 +235,12 @@ Geometry* get_geometry(const std::string &type, const std::string &name, Scene &
 		float radius = 1;
 		read_float(elem, radius, "radius");
 		return cache.add(type, std::make_unique<Sphere>(radius));
+	}
+	else if (type.substr(0, 8) == "cylinder"){
+		float radius = 1, height = 1;
+		read_float(elem, radius, "radius");
+		read_float(elem, height, "height");
+		return cache.add(type, std::make_unique<Cylinder>(radius, height));
 	}
 	else if (type == "plane"){
 		return cache.add(type, std::make_unique<Plane>());
