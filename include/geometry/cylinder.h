@@ -4,7 +4,7 @@
 #include "geometry.h"
 
 /*
- * A cylinder with some radius and height
+ * A cylinder with some radius and height along the z axis
  */
 class Cylinder : public Geometry {
 	float radius, height;
@@ -14,7 +14,7 @@ public:
 	 * Construct the cylinder with some radius and height
 	 */
 	Cylinder(float radius = 1, float height = 1);
-	bool intersect(Ray &ray, DifferentialGeometry &diff_geom) const override;
+	bool intersect(Ray &ray, DifferentialGeometry &dg) const override;
 	BBox bound() const override;
 	void refine(std::vector<Geometry*> &prims) override;
 	/*

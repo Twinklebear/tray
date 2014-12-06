@@ -12,7 +12,7 @@ bool Plane::intersect(Ray &ray, DifferentialGeometry &diff_geom) const {
 	//We're still treating the plane as infinite here so if it's not
 	//perpindicular it definitely hits somewhere
 	float t = -ray.o.z / ray.d.z;
-	if (t <= ray.min_t || t >= ray.max_t){
+	if (t < ray.min_t || t > ray.max_t){
 		return false;
 	}
 	//It's in the range for the ray so now check if it's in range

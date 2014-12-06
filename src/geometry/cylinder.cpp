@@ -76,6 +76,12 @@ bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
 	dg.dn_dv = Normal{(g * F - f * G) * divisor * dg.dp_du
 		+ (f * F - g * E) * divisor * dg.dp_dv};
 	dg.geom = this;
+	if (ray.d.dot(dg.normal) < 0){
+		dg.hit_side = HITSIDE::FRONT;
+	}
+	else {
+		dg.hit_side = HITSIDE::BACK;
+	}
 	return true;
 }
 BBox Cylinder::bound() const {
