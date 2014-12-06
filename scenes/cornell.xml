@@ -38,12 +38,42 @@
 			<rotate angle="-15" z="1"/>
 			<translate x="4" y="-3" z="2.5"/>
 		</object>
-		<object type="sphere_r1.8" name="sphere_light" radius="1" material="wall">
-			<translate x="0" y="0" z="22"/>
+		<object type="disk" name="disk" material="wall" radius="3">
+			<rotate angle="180" y="1"/>
+			<translate z="23.8"/>
 			<light type="area" name="areaLight">
-				<intensity r="0.780131" g="0.780409" b="0.775833" value="175"/>
+				<intensity r="0.780131" g="0.780409" b="0.775833" value="25"/>
 			</light>
 		</object>
+		<object name="spotlight">
+			<rotate angle="-90" y="1"/>
+			<translate x="6" z="10"/>
+			<object type="cone" name="cone" material="gold" radius="2" height="4">
+			</object>
+			<object type="disk_spot" name="cone_disk_light" material="wall" radius="1.25">
+				<rotate angle="180" x="1"/>
+				<translate z="1.2"/>
+				<light type="area" name="spot_area_light">
+					<intensity r="0.780131" g="0.780409" b="0.775833" value="40"/>
+				</light>
+			</object>
+		</object>
+		<object name="spotlight2">
+			<rotate angle="90" y="1"/>
+			<rotate angle="45" y="1"/>
+			<rotate angle="15" z="1"/>
+			<translate x="-6" y="-3" z="10"/>
+			<object type="cone" name="cone" material="gold" radius="2" height="4">
+			</object>
+			<object type="disk_spot" name="cone_disk_light" material="wall" radius="1.25">
+				<rotate angle="180" x="1"/>
+				<translate z="1.2"/>
+				<light type="area" name="spot_area_light2">
+					<intensity r="0.780131" g="0.780409" b="0.775833" value="100"/>
+				</light>
+			</object>
+		</object>
+
 
 		<!-- Materials -->
 		<material type="matte" name="wall">
@@ -63,6 +93,11 @@
 			<specular r="1.0" g="1.0" b="1.0" value="0.6"/>
 			<roughness value="0.5"/>
 		</material>
+		<material type="metal" name="gold">
+			<ior spd="./spds/Au.eta.spd"/>
+			<absorption spd="./spds/Au.k.spd"/>
+			<roughness value="0.005"/>
+		</material>
 	</scene>
 
 	<camera>
@@ -76,7 +111,7 @@
 
 	<config>
 		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="path" min_depth="3" max_depth="8"/>
+		<renderer type="bidir" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
 
