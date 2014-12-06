@@ -12,7 +12,7 @@ bool Cylinder::intersect(Ray &ray, DifferentialGeometry &dg) const {
     float b = 2 * (ray.d.x * ray.o.x + ray.d.y * ray.o.y);
     float c = ray.o.x * ray.o.x + ray.o.y * ray.o.y - radius * radius;
 	//Solve quadratic equation for t values
-	//If no solutions exist the ray doesn't intersect the sphere
+	//If no solutions exist the ray doesn't intersect the cylinder
 	float t[2];
 	if (!solve_quadratic(a, b, c, t[0], t[1])){
 		return false;
