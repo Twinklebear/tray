@@ -344,9 +344,7 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		illum += photon_radiance(*caustic_map, caustic_paths, query_size, near_photons, max_dist_sqr,
 			*bsdf, sampler, pool, dg, w_o);
 	}
-	const static BxDFTYPE NON_SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION
-		| BxDFTYPE::DIFFUSE | BxDFTYPE::GLOSSY);
-	if (indirect_map != nullptr && bsdf->num_bxdfs(NON_SPECULAR_BXDF) > 0){
+	if (indirect_map != nullptr && bsdf->num_bxdfs(BxDFTYPE::ALL_NON_SPECULAR) > 0){
 		if (radiance_map != nullptr){
 			illum += final_gather(scene, renderer, ray, p, n, *bsdf, sampler, pool);
 		}
@@ -356,21 +354,20 @@ Colorf PhotonMapIntegrator::illumination(const Scene &scene, const Renderer &ren
 		}
 	}
 	//We handle specular reflection and transmission through standard recursive ray tracing
-	const static BxDFTYPE SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION | BxDFTYPE::SPECULAR);
-	if (ray.depth < max_depth && bsdf->num_bxdfs(SPECULAR_BXDF) > 0){
+	if (ray.depth < max_depth && bsdf->num_bxdfs(BxDFTYPE::ALL_SPECULAR) > 0){
 		illum += spec_reflect(ray, *bsdf, renderer, scene, sampler, pool);
 		illum += spec_transmit(ray, *bsdf, renderer, scene, sampler, pool);
 	}
 	return illum;
 }
-Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, const RayDifferential &ray,
+Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
 	const Point &p, const Normal &n, const BSDF &bsdf, Sampler &sampler, MemoryPool &pool) const
 {
 	Vector w_o = -ray.d;
 	//Query nearby indirect photons to get an estimate of the average direction of incident illumination at the point
 	PhotonQueryCallback phot_query{pool.alloc_array<NearPhoton>(query_size), query_size, 0};
 	//Re run the query until we get the desired number of photons or go over a limit in how big we're letting the query get
-	for (float query_dist_sqr = max_dist_sqr; phot_query.found < query_size && query_dist_sqr < 8 * max_dist_sqr; query_dist_sqr *= 2){
+	for (float query_dist_sqr = max_dist_sqr; phot_query.found < query_size && query_dist_sqr < 9 * max_dist_sqr; query_dist_sqr *= 2){
 		phot_query.found = 0;
 		float dist = query_dist_sqr;
 		indirect_map->query(p, dist, phot_query);
@@ -390,7 +387,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, co
 		Vector w_i;
 		float pdf_val = 0;
 		Colorf f = bsdf.sample(w_o, w_i, bsdf_samples_u[i], bsdf_samples_comp[i], pdf_val,
-			BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR));
+			BxDFTYPE(BxDFTYPE::ALL_NON_SPECULAR));
 		if (f.is_black() || pdf_val == 0){
 			continue;
 		}
@@ -399,11 +396,28 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer&, co
 		RayDifferential gather_ray{p, w_i, ray, 0.001};
 		DifferentialGeometry dg;
 		if (scene.get_root().intersect(gather_ray, dg)){
-			Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
-			RadianceQueryCallback rad_query{n_gather, nullptr}; 
-			float query_dist = max_radiance_dist;
-			radiance_map->query(dg.point, query_dist, rad_query);
-			Colorf emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
+			Colorf emit;
+			BSDF *gather_bsdf = dg.node->get_material() != nullptr ? dg.node->get_material()->get_bsdf(dg, pool) : nullptr;
+			if (gather_ray.depth < max_depth && gather_bsdf != nullptr && gather_bsdf->num_bxdfs(BxDFTYPE::ALL_SPECULAR) > 0){
+				emit += spec_reflect(gather_ray, *gather_bsdf, renderer, scene, sampler, pool);
+				if (std::isnan(emit.r) || std::isnan(emit.g) || std::isnan(emit.b)){
+					std::cout << "NaNs got into spec_reflect!\n";
+					emit = 0;
+				}
+
+				emit += spec_transmit(gather_ray, *gather_bsdf, renderer, scene, sampler, pool);
+				if (std::isnan(emit.r) || std::isnan(emit.g) || std::isnan(emit.b)){
+					std::cout << "NaNs got into spec_transmit!\n";
+					emit = 0;
+				}
+			}
+			else {
+				Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
+				RadianceQueryCallback rad_query{n_gather, nullptr}; 
+				float query_dist = max_radiance_dist;
+				radiance_map->query(dg.point, query_dist, rad_query);
+				emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
+			}
 
 			//Compute overall pdf of sampling w_i direction from the photon distribution using a gather angle sized cone
 			float photon_pdf = 0;
@@ -519,9 +533,7 @@ Colorf PhotonMapIntegrator::photon_radiance(const KdPointTree<Photon> &photons, 
 	const DifferentialGeometry &dg, const Vector &w_o)
 {
 	Colorf rad;
-	const static BxDFTYPE NON_SPECULAR_BXDF = BxDFTYPE(BxDFTYPE::REFLECTION | BxDFTYPE::TRANSMISSION
-		| BxDFTYPE::DIFFUSE | BxDFTYPE::GLOSSY);
-	if (bsdf.num_bxdfs(NON_SPECULAR_BXDF) > 0){
+	if (bsdf.num_bxdfs(BxDFTYPE::ALL_NON_SPECULAR) > 0){
 		//Find the photons at the intersection point that we'll use to estimate radiance
 		PhotonQueryCallback callback{near_photons, query_size, 0};
 		photons.query(dg.point, max_dist_sqr, callback);
