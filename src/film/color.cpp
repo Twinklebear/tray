@@ -133,6 +133,9 @@ const float& Colorf::operator[](int i) const {
 			return b;
 	}
 }
+bool Colorf::has_nans() const {
+	return std::isnan(r) || std::isnan(g) || std::isnan(b);
+}
 Colorf::operator Color24() const {
 	return Color24(static_cast<uint8_t>(r * 255), static_cast<uint8_t>(g * 255),
 		static_cast<uint8_t>(b * 255));

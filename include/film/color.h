@@ -79,6 +79,7 @@ struct Colorf {
 	Colorf& operator/=(float s);
 	float& operator[](int i);
 	const float& operator[](int i) const;
+	bool has_nans() const;
 	/*
 	 * Easily convert to the 24bpp and 32bpp color representations
 	 */
