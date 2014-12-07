@@ -372,6 +372,10 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer &ren
 		float dist = query_dist_sqr;
 		indirect_map->query(p, dist, phot_query);
 	}
+	if (phot_query.found == 0){
+		return Colorf{0};
+	}
+
 	auto *indirect_dirs = pool.alloc_array<Vector>(phot_query.found);
 	std::transform(phot_query.queried_photons, phot_query.queried_photons + phot_query.found, indirect_dirs,
 		[](const auto &p){ return p.photon->w_i; });
@@ -397,6 +401,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer &ren
 		DifferentialGeometry dg;
 		if (scene.get_root().intersect(gather_ray, dg)){
 			Colorf emit;
+			/*
 			BSDF *gather_bsdf = dg.node->get_material() != nullptr ? dg.node->get_material()->get_bsdf(dg, pool) : nullptr;
 			if (gather_ray.depth < max_depth && gather_bsdf != nullptr && gather_bsdf->num_bxdfs(BxDFTYPE::ALL_SPECULAR) > 0){
 				emit += spec_reflect(gather_ray, *gather_bsdf, renderer, scene, sampler, pool);
@@ -412,12 +417,13 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer &ren
 				}
 			}
 			else {
+			*/
 				Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
 				RadianceQueryCallback rad_query{n_gather, nullptr}; 
 				float query_dist = max_radiance_dist;
 				radiance_map->query(dg.point, query_dist, rad_query);
 				emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
-			}
+			//}
 
 			//Compute overall pdf of sampling w_i direction from the photon distribution using a gather angle sized cone
 			float photon_pdf = 0;
