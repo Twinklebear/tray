@@ -57,7 +57,7 @@
 			<diffuse  r="0.2" g="0.2" b="1.0"/>
 			<roughness value="1"/>
 		</material>
-		<material type="metal" name="metal_mat">
+		<material type="specular_metal" name="metal_mat">
 			<ior spd="./spds/Ag.eta.spd"/>
 			<absorption spd="./spds/Ag.k.spd"/>
 			<roughness value="0.001"/>
@@ -79,11 +79,11 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="16" max="16"/>
-		<renderer type="photon" max_depth="8" max_photon_depth="16"
-			num_caustic="100000" num_indirect="250000"
-			final_gather_samples="6" query_size="30"
-			max_dist_sqr="0.05" max_radiance_dist="0.5"/>
+		<sampler type="adaptive" min="16" max="32"/>
+		<renderer type="photon" max_depth="6" max_photon_depth="16"
+			num_caustic="1000000" num_indirect="2000000"
+			final_gather_samples="40" query_size="50"
+			max_dist_sqr="0.1" max_radiance_dist="1"/>
 	</config>
 </xml>
 

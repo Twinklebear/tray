@@ -42,17 +42,17 @@
 			<rotate angle="180" z="1"/>
 			<translate y="1" z="7.5"/>
 		</object>
-		-->
 		<object type="obj" name="./models/bunny.obj" material="orange_glass">
 			<scale value="6"/>
 			<rotate angle="90" x="1"/>
 			<translate y="-3" z="2"/>
 		</object>
-		<!--
+		-->
 		<object type="obj" name="./models/teapot_hres.obj" material="orange_glass">
 			<scale value="0.8"/>
 			<rotate angle="-50" z="1"/>
 		</object>
+		<!--
 		<object type="obj" name="./models/smooth_suzanne.obj" material="orange_glass">
 			<scale value="8"/>
 			<rotate angle="50" x="1"/>
@@ -89,11 +89,11 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="16" max="32"/>
-		<renderer type="photon" max_depth="0" max_photon_depth="16"
-			num_caustic="1000000" num_indirect="1000000"
-			final_gather_samples="32" query_size="50"
-			max_dist_sqr="0.08"/>
+		<sampler type="adaptive" min="32" max="32"/>
+		<renderer type="photon" max_depth="6" max_photon_depth="16"
+			num_caustic="2500000" num_indirect="2000000"
+			final_gather_samples="40" query_size="50"
+			max_dist_sqr="0.08" max_radiance_dist="1"/>
 	</config>
 </xml>
 
