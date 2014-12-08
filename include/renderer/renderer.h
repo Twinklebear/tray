@@ -7,6 +7,7 @@
 #include "memory_pool.h"
 
 class SurfaceIntegrator;
+class VolumeIntegrator;
 class Scene;
 
 /*
@@ -15,6 +16,7 @@ class Scene;
  */
 class Renderer {
 	std::unique_ptr<SurfaceIntegrator> surface_integrator;
+	std::unique_ptr<VolumeIntegrator> volume_integrator;
 
 public:
 	Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator);
@@ -28,6 +30,12 @@ public:
 	 * the hit geometry to compute the illumination
 	 */
 	virtual Colorf illumination(RayDifferential &ray, const Scene &scene, Sampler &sampler, MemoryPool &pool) const;
+	/*
+	 * Compute the beam transmittance for line segment along the ray from min_t to max_t using the
+	 * volume integrator, if any. If no volume integrator is being used, simply returns 1 (eg. air)
+	 */
+	virtual Colorf transmittance(const Scene &scene, const RayDifferential &ray, Sampler &sampler, MemoryPool &pool) const;
+
 };
 
 #endif

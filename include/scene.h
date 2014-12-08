@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include "geometry/geometry.h"
+#include "volume/volume_node.h"
 #include "material/material.h"
 #include "textures/texture.h"
 #include "lights/light.h"
@@ -27,6 +28,7 @@ class Scene {
 	std::unique_ptr<Sampler> sampler;
 	std::unique_ptr<Renderer> renderer;
 	Node root;
+	std::shared_ptr<VolumeNode> volume_root;
 	Texture *background, *environment;
 
 public:
@@ -48,8 +50,18 @@ public:
 	const Sampler& get_sampler() const;
 	const Renderer& get_renderer() const;
 	Renderer& get_renderer();
+	/*
+	 * Get the root node of the geometry scene graph
+	 */
 	Node& get_root();
 	const Node& get_root() const;
+	/*
+	 * Get the root node of the volume scene graph
+	 * Note: this may be null as volumes are optional while
+	 * a root geometry node isn't
+	 */
+	VolumeNode* get_volume_root();
+	const VolumeNode* get_volume_root() const;
 	void set_background(Texture *t);
 	void set_environment(Texture *t);
 	const Texture* get_background() const;

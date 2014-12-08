@@ -20,6 +20,7 @@
 #include "filters/box_filter.h"
 #include "samplers/stratified_sampler.h"
 #include "integrator/path_integrator.h"
+#include "integrator/volume_integrator.h"
 #include "loaders/load_filter.h"
 #include "loaders/load_renderer.h"
 #include "loaders/load_material.h"

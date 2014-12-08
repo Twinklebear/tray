@@ -1,5 +1,7 @@
 #include <string>
+#include "integrator/volume_integrator.h"
 #include "geometry/geometry.h"
+#include "volume/volume_node.h"
 #include "material/material.h"
 #include "lights/light.h"
 #include "samplers/sampler.h"
@@ -48,6 +50,12 @@ Node& Scene::get_root(){
 }
 const Node& Scene::get_root() const {
 	return root;
+}
+VolumeNode* Scene::get_volume_root() {
+	return volume_root != nullptr ? volume_root.get() : nullptr;
+}
+const VolumeNode* Scene::get_volume_root() const {
+	return volume_root != nullptr ? volume_root.get() : nullptr;
 }
 void Scene::set_background(Texture *t){
 	background = t;
