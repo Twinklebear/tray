@@ -81,6 +81,11 @@ struct Colorf {
 	const float& operator[](int i) const;
 	bool has_nans() const;
 	/*
+	 * Compute the value of e^color, returning a color with value
+	 * e^r, e^g, e^b
+	 */
+	Colorf exp() const;
+	/*
 	 * Easily convert to the 24bpp and 32bpp color representations
 	 */
 	operator Color24() const;	
@@ -88,6 +93,7 @@ struct Colorf {
 };
 Colorf operator+(const Colorf &a, const Colorf &b);
 Colorf operator-(const Colorf &a, const Colorf &b);
+Colorf operator-(const Colorf &c);
 Colorf operator*(const Colorf &a, const Colorf &b);
 Colorf operator*(const Colorf &a, float s);
 Colorf operator*(float s, const Colorf &a);
