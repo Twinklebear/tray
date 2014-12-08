@@ -419,7 +419,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer &ren
 			else {
 			*/
 				Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
-				RadianceQueryCallback rad_query{n_gather, nullptr}; 
+				RadianceQueryCallback rad_query{n_gather, nullptr};
 				float query_dist = max_radiance_dist;
 				radiance_map->query(dg.point, query_dist, rad_query);
 				emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
@@ -462,7 +462,7 @@ Colorf PhotonMapIntegrator::final_gather(const Scene &scene, const Renderer &ren
 		DifferentialGeometry dg;
 		if (scene.get_root().intersect(gather_ray, dg)){
 			Normal n_gather = dg.normal.dot(-gather_ray.d) < 0 ? -dg.normal : dg.normal;
-			RadianceQueryCallback rad_query{n_gather, nullptr}; 
+			RadianceQueryCallback rad_query{n_gather, nullptr};
 			float query_dist = max_radiance_dist;
 			radiance_map->query(dg.point, query_dist, rad_query);
 			Colorf emit = rad_query.photon != nullptr ? rad_query.photon->emit : Colorf{0};
