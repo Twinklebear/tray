@@ -9,55 +9,80 @@ BBox VolumeNode::bound() const {
 	}
 	return BBox{};
 }
-bool VolumeNode::intersect(Ray &ray) const {
+bool VolumeNode::intersect(const Ray &ray, std::array<float, 2> &t) const {
 	bool hit = false;
 	if (volume){
 		Ray node_space = ray;
-		transform(ray, node_space);
-		hit = volume->intersect(ray);
+		inv_transform(ray, node_space);
+		hit = volume->intersect(node_space, t);
 	}
 	//Note that children are in world space since we apply the transform
 	//stack as we load, so use the world space ray here
 	for (const auto &c : children){
-		hit = c->intersect(ray) || hit;
+		hit = c->intersect(ray, t) || hit;
 	}
 	return hit;
 }
 Colorf VolumeNode::absorption(const Point &p, const Vector &v) const {
+	Colorf absorp{0};
 	if (volume){
-		return volume->absorption(p, v);
+		absorp += volume->absorption(inv_transform(p), v);
 	}
-	return 0;
+	for (const auto &c : children){
+		absorp += c->absorption(p, v);
+	}
+	return absorp;
 }
 Colorf VolumeNode::scattering(const Point &p, const Vector &v) const {
+	Colorf scatter{0};
 	if (volume){
-		return volume->scattering(p, v);
+		scatter += volume->scattering(inv_transform(p), v);
 	}
-	return 0;
+	for (const auto &c : children){
+		scatter += c->scattering(p, v);
+	}
+	return scatter;
 }
 Colorf VolumeNode::attenuation(const Point &p, const Vector &v) const {
+	Colorf atten{0};
 	if (volume){
-		return volume->attenuation(p, v);
+		atten += volume->attenuation(inv_transform(p), v);
 	}
-	return 0;
+	for (const auto &c : children){
+		atten += c->attenuation(p, v);
+	}
+	return atten;
 }
 Colorf VolumeNode::emission(const Point &p, const Vector &v) const {
+	Colorf emit{0};
 	if (volume){
-		return volume->emission(p, v);
+		emit += volume->emission(inv_transform(p), v);
 	}
-	return 0;
+	for (const auto &c : children){
+		emit += c->emission(p, v);
+	}
+	return emit;
 }
 Colorf VolumeNode::optical_thickness(const Ray &ray, float step, float offset) const {
+	Colorf tau{0};
 	if (volume){
-		return volume->optical_thickness(ray, step, offset);
+		tau += volume->optical_thickness(inv_transform(ray), step, offset);
 	}
-	return 0;
+	for (const auto &c : children){
+		tau += c->optical_thickness(ray, step, offset);
+	}
+	return tau;
 }
 float VolumeNode::phase(const Point &p, const Vector &w_i, const Vector &w_o) const {
+	//Is phase multiplicative or additive? Does it even make sense to combine?
+	float phase_val = 0;
 	if (volume){
-		return volume->phase(p, w_i, w_o);
+		phase_val += volume->phase(inv_transform(p), inv_transform(w_i), inv_transform(w_o));
 	}
-	return 0;
+	for (const auto &c : children){
+		phase_val += c->phase(p, w_i, w_i);
+	}
+	return phase_val;
 }
 const Volume* VolumeNode::get_volume() const {
 	return volume;
