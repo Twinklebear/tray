@@ -128,7 +128,7 @@ Colorf BidirPathIntegrator::camera_luminance(const Scene &scene, const Renderer 
 		//specular bounces for all vertices
 		illum += v_c.throughput * uniform_sample_one_light(scene, renderer, p_c, n_c, v_c.w_o, *v_c.bsdf,
 			LightSample{l_samples_u[i], l_samples_comp[i]},
-			BSDFSample{bsdf_samples_u[i], bsdf_samples_comp[i]});
+			BSDFSample{bsdf_samples_u[i], bsdf_samples_comp[i]}, sampler, pool);
 		prev_specular = v_c.specular_bounce;
 	}
 	return illum;
@@ -175,7 +175,7 @@ Colorf BidirPathIntegrator::bidir_luminance(const Scene &scene, const Renderer &
 		//specular bounces for all vertices
 		Colorf direct = v_c.throughput * uniform_sample_one_light(scene, renderer, p_c, n_c, v_c.w_o, *v_c.bsdf,
 			LightSample{l_samples_u[i], l_samples_comp[i]},
-			BSDFSample{bsdf_samples_u[i], bsdf_samples_comp[i]});
+			BSDFSample{bsdf_samples_u[i], bsdf_samples_comp[i]}, sampler, pool);
 		prev_specular = v_c.specular_bounce;
 		//Account for the number of other possible paths that could compute this contribution for the direct light
 		illum += direct / (i + 1 - num_spec_verts[i + 1]);

@@ -12,4 +12,9 @@ bool OcclusionTester::occluded(const Scene &scene){
 	DifferentialGeometry dg;
 	return scene.get_root().intersect(ray, dg);
 }
+Colorf OcclusionTester::transmittance(const Scene &scene, const Renderer &renderer, Sampler &sampler,
+	MemoryPool &pool)
+{
+	return renderer.transmittance(scene, RayDifferential{ray}, sampler, pool);
+}
 

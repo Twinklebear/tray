@@ -3,6 +3,9 @@
 
 #include "linalg/point.h"
 #include "linalg/ray.h"
+#include "renderer/renderer.h"
+#include "samplers/sampler.h"
+#include "memory_pool.h"
 
 class Scene;
 
@@ -24,6 +27,12 @@ struct OcclusionTester {
 	 * Test if the ray or segment set is occluded by some object in the scene
 	 */
 	bool occluded(const Scene &scene);
+	/*
+	 * Compute the transmittance along the ray/segment that the occlusion test
+	 * was performed on
+	 */
+	Colorf transmittance(const Scene &scene, const Renderer &renderer, Sampler &sampler,
+		MemoryPool &pool);
 };
 
 #endif

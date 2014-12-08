@@ -57,7 +57,7 @@ Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer
 		//Uniformly sample one of the lights contribution to the point
 		illum += path_throughput * uniform_sample_one_light(scene, renderer, p, n, w_o, *bsdf,
 			LightSample{l_samples_u[bounce], l_samples_comp[bounce]},
-			BSDFSample{bsdf_samples_u[bounce], bsdf_samples_comp[bounce]});
+			BSDFSample{bsdf_samples_u[bounce], bsdf_samples_comp[bounce]}, sampler, pool);
 
 		//Determine our new path direction by sampling the BSDF
 		Vector w_i;
@@ -89,8 +89,10 @@ Colorf PathIntegrator::illumination(const Scene &scene, const Renderer &renderer
 
 		//Find the next vertex on the path
 		if (!scene.get_root().intersect(ray, dg_current)){
+			//Should do direct sampling of all lights here if specular bounce
 			break;
 		}
+		path_throughput *= renderer.transmittance(scene, ray, sampler, pool);
 	}
 	return illum;
 }

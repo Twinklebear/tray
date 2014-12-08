@@ -106,14 +106,15 @@ Colorf SurfaceIntegrator::uniform_sample_all_lights(const Scene &scene, const Re
 			BSDFSample bsdf_sample{bsdf_samples_u[i], bsdf_samples_comp[i]};
 			LightSample l_sample{l_samples_u[i], l_samples_comp[i]};
 			light_illum += estimate_direct(scene, renderer, p, n, w_o, bsdf, light, l_sample,
-				bsdf_sample, BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR));
+				bsdf_sample, BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR), sampler, pool);
 		}
 		illum += light_illum / light.n_samples;
 	}
 	return illum;
 }
 Colorf SurfaceIntegrator::uniform_sample_one_light(const Scene &scene, const Renderer &renderer, const Point &p,
-	const Normal &n, const Vector &w_o, const BSDF &bsdf, const LightSample &l_sample, const BSDFSample &bsdf_sample)
+	const Normal &n, const Vector &w_o, const BSDF &bsdf, const LightSample &l_sample, const BSDFSample &bsdf_sample,
+	Sampler &sampler, MemoryPool &pool)
 {
 	int n_lights = scene.get_light_cache().size();
 	if (n_lights == 0){
@@ -128,11 +129,11 @@ Colorf SurfaceIntegrator::uniform_sample_one_light(const Scene &scene, const Ren
 		});
 	assert(lit != scene.get_light_cache().end());
 	return n_lights * estimate_direct(scene, renderer, p, n, w_o, bsdf, *lit->second, l_sample,
-		bsdf_sample, BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR));
+		bsdf_sample, BxDFTYPE(BxDFTYPE::ALL & ~BxDFTYPE::SPECULAR), sampler, pool);
 }
-Colorf SurfaceIntegrator::estimate_direct(const Scene &scene, const Renderer &, const Point &p,
+Colorf SurfaceIntegrator::estimate_direct(const Scene &scene, const Renderer &renderer, const Point &p,
 	const Normal &n, const Vector &w_o, const BSDF &bsdf, const Light &light, const LightSample &l_sample,
-	const BSDFSample &bsdf_sample, BxDFTYPE flags)
+	const BSDFSample &bsdf_sample, BxDFTYPE flags, Sampler &sampler, MemoryPool &pool)
 {
 	//We sample both the light source and the BSDF and weight them accordingly to sample both well
 	Colorf direct_light;
@@ -144,6 +145,7 @@ Colorf SurfaceIntegrator::estimate_direct(const Scene &scene, const Renderer &, 
 	if (pdf_light > 0 && !li.is_black()){
 		Colorf f = bsdf(w_o, w_i, flags);
 		if (!f.is_black() && !occlusion.occluded(scene)){
+			li *= occlusion.transmittance(scene, renderer, sampler, pool);
 			//If we have a delta distribution in the light we don't do MIS as it'd be incorrect
 			//Otherwise we do MIS using the power heuristic
 			if (light.delta_light()){
@@ -180,6 +182,7 @@ Colorf SurfaceIntegrator::estimate_direct(const Scene &scene, const Renderer &, 
 				}
 			}
 			if (!li.is_black()){
+				li *= renderer.transmittance(scene, ray, sampler, pool);
 				direct_light += f * li * std::abs(w_i.dot(n)) * weight / pdf_bsdf;
 			}
 		}
