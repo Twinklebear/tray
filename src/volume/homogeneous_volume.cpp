@@ -8,8 +8,8 @@ HomogeneousVolume::HomogeneousVolume(const Colorf &sig_a, const Colorf &sig_s, c
 BBox HomogeneousVolume::bound() const {
 	return region;
 }
-bool HomogeneousVolume::intersect(Ray &ray) const {
-	return region.intersect(ray, &ray.min_t, &ray.max_t);
+bool HomogeneousVolume::intersect(const Ray &ray, std::array<float, 2> &t) const {
+	return region.intersect(ray, &t[0], &t[1]);
 }
 Colorf HomogeneousVolume::absorption(const Point &p, const Vector&) const {
 	return region.inside(p) ? sig_a : 0;

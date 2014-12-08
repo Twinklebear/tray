@@ -36,7 +36,7 @@ public:
 	 * Test if the ray intersects the volume region, returning the min/max t
 	 * values that the ray overlapped the region in
 	 */
-	virtual bool intersect(Ray &ray) const = 0;
+	virtual bool intersect(const Ray &ray, std::array<float, 2> &t) const = 0;
 	/*
 	 * Get the absorption coefficient of the volume at some point
 	 * along the direction passed

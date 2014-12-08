@@ -2,24 +2,24 @@
 #include "integrator/emission_integrator.h"
 
 EmissionIntegrator::EmissionIntegrator(float step_size) : step_size(step_size){}
-Colorf EmissionIntegrator::radiance(const Scene &scene, const Renderer&, const RayDifferential &r,
+Colorf EmissionIntegrator::radiance(const Scene &scene, const Renderer&, const RayDifferential &ray,
 	Sampler &sampler, MemoryPool&, Colorf &transmit) const
 {
 	const VolumeNode *vol = scene.get_volume_root();
-	Ray ray = r;
-	if (vol == nullptr || !vol->intersect(ray) || ray.min_t == ray.max_t){
+	std::array<float, 2> t_range;
+	if (vol == nullptr || !vol->intersect(ray, t_range) || t_range[0] == t_range[1]){
 		transmit = Colorf{1};
 		return Colorf{0};
 	}
 	Colorf rad;
 	//We integrate through the volume via ray marching with steps of size step_size
-	int n_samples = std::ceil((ray.max_t - ray.min_t) / step_size);
-	float step = (ray.max_t - ray.min_t) / n_samples;
+	int n_samples = std::ceil((t_range[1] - t_range[0]) / step_size);
+	float step = (t_range[1] - t_range[0]) / n_samples;
 	transmit = Colorf{1};
-	Point p = ray(ray.min_t), p_prev;
+	Point p = ray(t_range[0]), p_prev;
 	Vector w_o = -ray.d;
 	//Our first point inside the volume is offset by some random value
-	float t = ray.min_t + sampler.random_float() * step;
+	float t = t_range[0] + sampler.random_float() * step;
 	//Step through the volume
 	for (int i = 0; i < n_samples; ++i, t += step, p_prev = p){
 		p = ray(t);

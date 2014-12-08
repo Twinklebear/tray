@@ -25,12 +25,12 @@ public:
 	 * along the ray through transmit
 	 */
 	virtual Colorf radiance(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-		Sampler &sampler, MemoryPool &pool, Colorf &transmit) const = 0;
+		Sampler &sampler, MemoryPool &pool, Colorf &transmit) const override;
 	/*
 	 * Compute the beam transmittance for line segment along the ray from min_t to max_t
 	 */
 	virtual Colorf transmittance(const Scene &scene, const Renderer &renderer, const RayDifferential &ray,
-		Sampler &sampler, MemoryPool &pool) const = 0;
+		Sampler &sampler, MemoryPool &pool) const override;
 };
 
 #endif

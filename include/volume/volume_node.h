@@ -30,7 +30,7 @@ public:
 	 * Test if the ray intersects the volume region, returning the min/max t
 	 * values that the ray overlapped the region in
 	 */
-	 bool intersect(Ray &ray) const override;
+	 bool intersect(const Ray &ray, std::array<float, 2> &t) const override;
 	/*
 	 * Get the absorption coefficient of the volume at some point
 	 * along the direction passed
