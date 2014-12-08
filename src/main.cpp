@@ -80,9 +80,9 @@ int main(int argc, char **argv){
 	scene.get_root().flatten_children();
 
 	Volume *volume = scene.get_volume_cache().add("dbg_vol",
-		std::make_unique<HomogeneousVolume>(0.008, 0, 0.005, 0, BBox{Point{-3, -3, 0}, Point{3, 3, 6}}));
+		std::make_unique<HomogeneousVolume>(0.008, 0, 0.01, 0, BBox{Point{-3, -3, 0}, Point{3, 3, 6}}));
 	scene.set_volume_root(std::make_unique<VolumeNode>(volume,
-		Transform::translate(Vector{-2, 0, 12}), "dbg_volume_node"));
+		Transform::translate(Vector{-2, 0, 12}) * Transform::rotate_z(15), "dbg_volume_node"));
 
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
