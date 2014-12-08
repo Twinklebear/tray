@@ -105,9 +105,10 @@ struct BBox {
 		return i == 0 ? min : max;
 	}
 	/*
-	 * Test if the ray intersects the box
+	 * Test if the ray intersects the box, optionally returning
+	 * the min and max t of the intersection
 	 */
-	inline bool intersect(const Ray &ray) const {
+	inline bool intersect(const Ray &ray, float *min_t = nullptr, float *max_t = nullptr) const {
 		std::array<float, 2> t = { ray.min_t, ray.max_t };
 		//Check each slab of the bbox
 		for (int i = 0; i < 3; ++i){
@@ -122,6 +123,12 @@ struct BBox {
 			if (t[0] > t[1]){
 				return false;
 			}
+		}
+		if (min_t){
+			*min_t = t[0];
+		}
+		if (max_t){
+			*max_t = t[1];
 		}
 		return true;
 	}
