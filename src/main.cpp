@@ -3,6 +3,8 @@
 #include <chrono>
 #include "args.h"
 #include "integrator/volume_integrator.h"
+#include "volume/homogeneous_volume.h"
+#include "volume/volume_node.h"
 #include "loaders/load_scene.h"
 #include "film/render_target.h"
 #include "mesh_preprocess.h"
@@ -76,6 +78,12 @@ int main(int argc, char **argv){
 	std::string scene_file = get_param<std::string>(argv, argv + argc, "-f");
 	Scene scene = load_scene(scene_file);
 	scene.get_root().flatten_children();
+
+	Volume *volume = scene.get_volume_cache().add("dbg_vol",
+		std::make_unique<HomogeneousVolume>(0.008, 0, 0.005, 0, BBox{Point{-3, -3, 0}, Point{3, 3, 6}}));
+	scene.set_volume_root(std::make_unique<VolumeNode>(volume,
+		Transform::translate(Vector{-2, 0, 12}), "dbg_volume_node"));
+
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
 	}

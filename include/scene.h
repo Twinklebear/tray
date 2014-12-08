@@ -23,12 +23,13 @@ class Scene {
 	MaterialCache mat_cache;
 	TextureCache tex_cache;
 	LightCache light_cache;
+	VolumeCache volume_cache;
 	Camera camera;
 	RenderTarget render_target;
 	std::unique_ptr<Sampler> sampler;
 	std::unique_ptr<Renderer> renderer;
 	Node root;
-	std::shared_ptr<VolumeNode> volume_root;
+	std::unique_ptr<VolumeNode> volume_root;
 	Texture *background, *environment;
 
 public:
@@ -44,6 +45,7 @@ public:
 	TextureCache& get_tex_cache();
 	LightCache& get_light_cache();
 	const LightCache& get_light_cache() const;
+	VolumeCache& get_volume_cache();
 	Camera& get_camera();
 	RenderTarget& get_render_target();
 	const RenderTarget& get_render_target() const;
@@ -62,6 +64,7 @@ public:
 	 */
 	VolumeNode* get_volume_root();
 	const VolumeNode* get_volume_root() const;
+	void set_volume_root(std::unique_ptr<VolumeNode> vol);
 	void set_background(Texture *t);
 	void set_environment(Texture *t);
 	const Texture* get_background() const;

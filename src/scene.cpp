@@ -27,6 +27,9 @@ LightCache& Scene::get_light_cache(){
 const LightCache& Scene::get_light_cache() const {
 	return light_cache;
 }
+VolumeCache& Scene::get_volume_cache(){
+	return volume_cache;
+}
 Camera& Scene::get_camera(){
 	return camera;
 }
@@ -56,6 +59,9 @@ VolumeNode* Scene::get_volume_root() {
 }
 const VolumeNode* Scene::get_volume_root() const {
 	return volume_root != nullptr ? volume_root.get() : nullptr;
+}
+void Scene::set_volume_root(std::unique_ptr<VolumeNode> vol){
+	volume_root = std::move(vol);
 }
 void Scene::set_background(Texture *t){
 	background = t;

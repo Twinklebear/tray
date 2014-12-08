@@ -42,7 +42,7 @@
 			<rotate angle="180" y="1"/>
 			<translate z="23.8"/>
 			<light type="area" name="areaLight">
-				<intensity r="0.780131" g="0.780409" b="0.775833" value="25"/>
+				<intensity r="1" g="0.772549" b="0.560784" value="50"/>
 			</light>
 		</object>
 	
@@ -81,8 +81,8 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="bidir" min_depth="3" max_depth="8"/>
+		<sampler type="adaptive" min="64" max="64"/>
+		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>
 
