@@ -75,6 +75,11 @@ public:
 	 Transform& get_transform();
 	 const Transform& get_inv_transform() const;
 	 Transform& get_inv_transform();
+	 /*
+	  * Get the node's children
+	  */
+	 const std::vector<std::shared_ptr<VolumeNode>>& get_children() const;
+	 std::vector<std::shared_ptr<VolumeNode>>& get_children();
 };
 
 #endif

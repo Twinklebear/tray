@@ -99,4 +99,10 @@ const Transform& VolumeNode::get_inv_transform() const {
 Transform& VolumeNode::get_inv_transform(){
 	return inv_transform;
 }
+const std::vector<std::shared_ptr<VolumeNode>>& VolumeNode::get_children() const {
+	return children;
+}
+std::vector<std::shared_ptr<VolumeNode>>& VolumeNode::get_children(){
+	return children;
+}
 

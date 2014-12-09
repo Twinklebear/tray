@@ -69,7 +69,6 @@ Colorf SingleScatteringIntegrator::radiance(const Scene &scene, const Renderer &
 			if (!light_rad.is_black() && pdf_val > 0 && !occlusion.occluded(scene)){
 				Colorf light_direct = light_rad * occlusion.transmittance(scene, renderer, sampler, pool);
 				Colorf s = transmit * scatter * vol->phase(p, w_o, -v) * light_direct * n_lights / pdf_val;
-				//std::cout << "light scattering value " << s << std::endl;
 				rad += s;
 			}
 		}

@@ -9,7 +9,8 @@
 #include "renderer/renderer.h"
 
 Renderer::Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator)
-	: surface_integrator(std::move(surface_integrator)), volume_integrator(std::make_unique<SingleScatteringIntegrator>(0.5f))
+	: surface_integrator(std::move(surface_integrator)),
+	volume_integrator(std::make_unique<SingleScatteringIntegrator>(0.1f))
 {}
 void Renderer::preprocess(const Scene &scene){
 	surface_integrator->preprocess(scene);
