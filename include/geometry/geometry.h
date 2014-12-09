@@ -123,7 +123,6 @@ public:
 	void refine(std::vector<Geometry*> &prims) override;
 	/*
 	 * Get the node's children
-	 * Note: after flattening all the children positions will be in world space
 	 */
 	const std::vector<std::shared_ptr<Node>>& get_children() const;
 	std::vector<std::shared_ptr<Node>>& get_children();
