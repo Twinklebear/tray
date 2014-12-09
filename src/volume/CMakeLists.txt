@@ -1,2 +1,2 @@
-add_library(volume volume.cpp volume_node.cpp homogeneous_volume.cpp)
+add_library(volume volume.cpp volume_node.cpp homogeneous_volume.cpp geometry_volume.cpp)
 
