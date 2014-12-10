@@ -6,6 +6,7 @@
 #include "volume/homogeneous_volume.h"
 #include "volume/volume_node.h"
 #include "volume/geometry_volume.h"
+#include "volume/exponential_volume.h"
 #include "geometry/sphere.h"
 #include "geometry/tri_mesh.h"
 #include "loaders/load_scene.h"
@@ -82,17 +83,10 @@ int main(int argc, char **argv){
 	Scene scene = load_scene(scene_file);
 	scene.get_root().flatten_children();
 
-	auto geom = std::make_unique<TriMesh>("../../scenes/models/cube.obj");
 	Volume *volume = scene.get_volume_cache().add("dbg_vol",
-		std::make_unique<GeometryVolume>(0.0001, 0.08, 0.0005, -0.67, geom.get()));
-	scene.set_volume_root(std::make_unique<VolumeNode>(volume,
-		Transform::translate(Vector{3, -8, 12}) * Transform::scale(2, 2, 2), "dbg_volume_node"));
-	//Add a regular volume using the BBox to compare against
-	Volume *volumeb = scene.get_volume_cache().add("dbg_vol2",
-		std::make_unique<HomogeneousVolume>(0.0001, 0.08, 0.0005, -0.67, BBox{Point{-1, -1, -1}, Point{1, 1, 1}}));
-	auto &children = scene.get_volume_root()->get_children();
-	children.push_back(std::make_shared<VolumeNode>(volumeb,
-		Transform::translate(Vector{-3, -8, 12}) * Transform::scale(2, 2, 2), "dbg_volume_node2"));
+		std::make_unique<ExponentialVolume>(0.008, 0.08, 0.0005, -0.67,
+			BBox{Point{-12, -12, 0}, Point{12, 12, 16}}, 5, 0.25, Vector{0, 0, 1}));
+	scene.set_volume_root(std::make_unique<VolumeNode>(volume, Transform{}, "dbg_volume_node"));
 
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
