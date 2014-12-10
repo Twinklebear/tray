@@ -112,9 +112,9 @@ Examples for uniform, anisotropic and usage of PBRT's spd files are shown below.
 </material>
 ```
 
-Specular Metal
+Specular Metal Material
 ---
-The specular metal describes a perfectly reflective metal BRDF with a delta function, resulting in a mirror-like appearance. The same properties are set as the regular metal material, with the exception of the roughness property.
+The specular metal material describes a perfectly reflective metal BRDF with a delta function, resulting in a mirror-like appearance. The same properties are set as the metal material, with the exception of the roughness property.
 
 ```XML
 <material type="specular_metal" name="metal_specular_1">
