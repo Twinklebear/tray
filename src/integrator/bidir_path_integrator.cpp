@@ -71,7 +71,6 @@ int BidirPathIntegrator::trace_path(const Scene &scene, const Renderer &renderer
 		if (!scene.get_root().intersect(ray, v.dg) || !v.dg.node->get_material()){
 			break;
 		}
-		path_throughput *= renderer.transmittance(scene, ray, sampler, pool);
 		v.throughput = path_throughput;
 		v.dg.compute_differentials(ray);
 		BSDF *bsdf = v.dg.node->get_material()->get_bsdf(v.dg, pool);
@@ -98,6 +97,7 @@ int BidirPathIntegrator::trace_path(const Scene &scene, const Renderer &renderer
 			}
 			path_throughput /= cont_prob;
 		}
+		path_throughput *= renderer.transmittance(scene, ray, sampler, pool);
 		ray = RayDifferential{v.bsdf->dg.point, v.w_i, ray, 0.001};
 	}
 	return path_len;
