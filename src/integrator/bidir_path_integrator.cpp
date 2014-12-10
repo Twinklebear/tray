@@ -200,7 +200,6 @@ Colorf BidirPathIntegrator::bidir_luminance(const Scene &scene, const Renderer &
 						//TODO: multiple importance sampling?
 						float weight = 1.f / (i + j + 2 - num_spec_verts[i + j + 2]);
 						float geom_term = std::abs(w.dot(n_c)) * std::abs(w.dot(n_l)) / p_l.distance_sqr(p_c);
-						//Multiply by transmittance here
 						illum += v_c.throughput * f_c * geom_term * f_l * v_l.throughput * weight
 							* renderer.transmittance(scene, RayDifferential{vis}, sampler, pool);
 					}
