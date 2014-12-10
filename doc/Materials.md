@@ -112,6 +112,26 @@ Examples for uniform, anisotropic and usage of PBRT's spd files are shown below.
 </material>
 ```
 
+Specular Metal
+---
+The specular metal describes a perfectly reflective metal BRDF with a delta function, resulting in a mirror-like appearance. The same properties are set as the regular metal material, with the exception of the roughness property.
+
+```XML
+<material type="specular_metal" name="metal_specular_1">
+	<!-- The metal's index of refraction (can be a texture), required -->
+	<ior r="1.3" g="1.1" b="0.4"/>
+    <!-- The metal's absoprtion coefficient (can be a texture), required -->
+	<absorption r="1.9" g="2.5" b="4.3"/>
+</material>
+```
+```XML
+<material type="metal" name="pbrt_spd_metal">
+	<!-- PBRT SPD files are specified by an spd attribute with the spd file path -->
+	<ior spd="./spds/Cu.eta.spd"/>
+	<absorption spd="./spds/Cu.k.spd"/>
+</material>
+```
+
 MERL Material
 ---
 The MERL material uses measured BRDFs from the [MERL BRDF database](http://www.merl.com/brdf/) introduced in "A Data-Driven Reflectance Model", by Wojciech Matusik, Hanspeter Pfister, Matt Brand and Leonard McMillan which appeared in ACM Transactions on Graphics 22, 3(2003), 759-769. MERL materials are specified by just passing the file path to the measured BRDF data.
