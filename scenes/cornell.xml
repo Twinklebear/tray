@@ -28,6 +28,7 @@
 				<translate x="15"/>
 			</object>
 		</object>
+		<!--
 		<object type="obj" name="./models/cube.obj" material="plastic_white">
 			<scale x="4" y="4" z="10"/>
 			<rotate angle="20" z="1"/>
@@ -38,6 +39,7 @@
 			<rotate angle="-15" z="1"/>
 			<translate x="4" y="-3" z="2.5"/>
 		</object>
+		-->
 		<object type="disk" name="disk" material="wall" radius="3">
 			<rotate angle="180" y="1"/>
 			<translate z="23.8"/>
@@ -81,7 +83,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="64"/>
+		<sampler type="adaptive" min="32" max="32"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
 	</config>
 </xml>

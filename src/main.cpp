@@ -7,6 +7,7 @@
 #include "volume/volume_node.h"
 #include "volume/geometry_volume.h"
 #include "volume/exponential_volume.h"
+#include "volume/grid_volume.h"
 #include "geometry/sphere.h"
 #include "geometry/tri_mesh.h"
 #include "loaders/load_scene.h"
@@ -84,9 +85,9 @@ int main(int argc, char **argv){
 	scene.get_root().flatten_children();
 
 	Volume *volume = scene.get_volume_cache().add("dbg_vol",
-		std::make_unique<ExponentialVolume>(0.008, 0.08, 0.0005, -0.67,
-			BBox{Point{-12, -12, 0}, Point{12, 12, 16}}, 5, 0.25, Vector{0, 0, 1}));
-	scene.set_volume_root(std::make_unique<VolumeNode>(volume, Transform{}, "dbg_volume_node"));
+		std::make_unique<GridVolume>(2, 0.005, 0.0005, -0.67, "../../scenes/volumes/density-0136.vol", 125));
+	scene.set_volume_root(std::make_unique<VolumeNode>(volume,
+		Transform::translate(Vector{0, 0, 10}) * Transform::rotate_x(-90) * Transform::scale(20, 20, 20), "dbg_volume_node"));
 
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
