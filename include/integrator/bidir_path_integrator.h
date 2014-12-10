@@ -45,7 +45,7 @@ private:
 	 * room for at least max_depth vertices in the array. Weight is the starting weight of the
 	 * path, eg. weight from the camera or light source generating the ray
 	 */
-	int trace_path(const Scene &scene, const RayDifferential &ray, const Colorf &weight,
+	int trace_path(const Scene &scene, const Renderer &renderer, const RayDifferential &ray, const Colorf &weight,
 		Sampler &sampler, MemoryPool &pool, PathVertex *path_vertices) const;
 	/*
 	 * Compute the luminance along the camera path using the regular camera path tracing lighting

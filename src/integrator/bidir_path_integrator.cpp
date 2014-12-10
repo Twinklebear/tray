@@ -18,7 +18,7 @@ Colorf BidirPathIntegrator::illumination(const Scene &scene, const Renderer &ren
 	RayDifferential ray = r;
 	ray.max_t = std::numeric_limits<float>::infinity();
 	auto *cam_path = pool.alloc_array<PathVertex>(max_depth);
-	int cam_path_len = trace_path(scene, ray, Colorf{1}, sampler, pool, cam_path);
+	int cam_path_len = trace_path(scene, renderer, ray, Colorf{1}, sampler, pool, cam_path);
 
 	//Now uniformly select a light to sample our light path from
 	auto *l_samples_u = pool.alloc_array<std::array<float, 2>>(2);
@@ -51,10 +51,10 @@ Colorf BidirPathIntegrator::illumination(const Scene &scene, const Renderer &ren
 	//the final illumination along the path
 	light_weight *= std::abs(ray_l.d.dot(n_l.normalized())) / pdf_light;
 	auto *light_path = pool.alloc_array<PathVertex>(max_depth);
-	int light_path_len = trace_path(scene, RayDifferential{ray_l}, light_weight, sampler, pool, light_path);
+	int light_path_len = trace_path(scene, renderer, RayDifferential{ray_l}, light_weight, sampler, pool, light_path);
 	return bidir_luminance(scene, renderer, cam_path, cam_path_len, light_path, light_path_len, sampler, pool);
 }
-int BidirPathIntegrator::trace_path(const Scene &scene, const RayDifferential &r, const Colorf &weight,
+int BidirPathIntegrator::trace_path(const Scene &scene, const Renderer &renderer, const RayDifferential &r, const Colorf &weight,
 	Sampler &sampler, MemoryPool &pool, PathVertex *path_vertices) const
 {
 	//This is identical to what we do in the path integrator but we don't do any lighting computation
@@ -97,6 +97,7 @@ int BidirPathIntegrator::trace_path(const Scene &scene, const RayDifferential &r
 			}
 			path_throughput /= cont_prob;
 		}
+		path_throughput *= renderer.transmittance(scene, ray, sampler, pool);
 		ray = RayDifferential{v.bsdf->dg.point, v.w_i, ray, 0.001};
 	}
 	return path_len;
@@ -199,7 +200,9 @@ Colorf BidirPathIntegrator::bidir_luminance(const Scene &scene, const Renderer &
 						//TODO: multiple importance sampling?
 						float weight = 1.f / (i + j + 2 - num_spec_verts[i + j + 2]);
 						float geom_term = std::abs(w.dot(n_c)) * std::abs(w.dot(n_l)) / p_l.distance_sqr(p_c);
-						illum += v_c.throughput * f_c * geom_term * f_l * v_l.throughput * weight;
+						//Multiply by transmittance here
+						illum += v_c.throughput * f_c * geom_term * f_l * v_l.throughput * weight
+							* renderer.transmittance(scene, RayDifferential{vis}, sampler, pool);
 					}
 				}
 			}
