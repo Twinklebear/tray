@@ -28,7 +28,6 @@
 				<translate x="15"/>
 			</object>
 		</object>
-		<!--
 		<object type="obj" name="./models/cube.obj" material="plastic_white">
 			<scale x="4" y="4" z="10"/>
 			<rotate angle="20" z="1"/>
@@ -39,7 +38,6 @@
 			<rotate angle="-15" z="1"/>
 			<translate x="4" y="-3" z="2.5"/>
 		</object>
-		-->
 		<object type="disk" name="disk" material="wall" radius="3">
 			<rotate angle="180" y="1"/>
 			<translate z="23.8"/>
@@ -47,6 +45,19 @@
 				<intensity r="1" g="0.772549" b="0.560784" value="50"/>
 			</light>
 		</object>
+		<volume_node name="volume_node_test">
+			<rotate angle="-90" x="1"/>
+			<scale value="20"/>
+			<translate z="10"/>
+			<volume name="smoke_sim" type="vol" file="./volumes/density-0136.vol">
+				<absorption value="0.08"/>
+				<scattering value="0.008"/>
+				<emission value="0.0005"/>
+				<phase_asymmetry value="-0.67"/>
+				<density_scale value="125"/>
+			</volume>
+		</volume_node>
+			
 	
 		<!-- Materials -->
 		<material type="matte" name="wall">
@@ -84,7 +95,8 @@
 
 	<config>
 		<sampler type="adaptive" min="32" max="32"/>
-		<renderer type="path" min_depth="3" max_depth="8"/>
+		<renderer type="bidir" min_depth="3" max_depth="8"/>
+		<vol_integrator type="single_scatter" step="0.2"/>
 	</config>
 </xml>
 
