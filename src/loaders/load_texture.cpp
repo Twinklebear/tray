@@ -11,7 +11,6 @@
 #include "textures/uv_mapping.h"
 #include "textures/spherical_mapping.h"
 #include "textures/remapped_texture.h"
-#include "textures/cem_env_mapping.h"
 #include "textures/scale_texture.h"
 #include "loaders/load_scene.h"
 #include "loaders/load_texture.h"
@@ -60,8 +59,8 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 		read_transform(elem, transform);
 		transform = transform.inverse();
 		std::unique_ptr<TextureMapping> mapping;
-		if (tex_map == "cem_env_map"){
-			mapping = std::make_unique<CemEnvMapping>(transform);
+		if (tex_map == "sphere"){
+			mapping = std::make_unique<SphericalMapping>(transform);
 		}
 		else {
 			mapping = std::make_unique<UVMapping>(transform);
@@ -114,14 +113,13 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 		}
 		else if (name == "checkerboard"){
 			Colorf a, b{1};
-			//My checkerboard colors are flipped compared to what Cem's expect
 			XMLElement *c = elem->FirstChildElement("color1");
 			if (c){
-				read_color(c, b);
+				read_color(c, a);
 			}
 			c = elem->FirstChildElement("color2");
 			if (c){
-				read_color(c, a);
+				read_color(c, b);
 			}
 			name = "__" + mat_name + "_" + name + "_tex";
 			cache.add(name, std::make_unique<CheckerboardTexture>(a, b, std::move(mapping)));
