@@ -307,7 +307,12 @@ void read_color(tinyxml2::XMLElement *elem, Colorf &c){
 	elem->QueryFloatAttribute("b", &c.b);
 	float s = 1;
 	read_float(elem, s);
-	c *= s;
+	if (c.is_black()){
+		c = Colorf{s};
+	}
+	else {
+		c *= s;
+	}
 }
 void read_point(tinyxml2::XMLElement *elem, Point &p){
 	elem->QueryFloatAttribute("x", &p.x);
