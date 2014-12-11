@@ -10,6 +10,7 @@ GridVolume::GridVolume(const Colorf &sig_a, const Colorf &sig_s, const Colorf &e
 	//If we fail to load alert the user and set the region to a degenerate box
 	if (!load_vol_file(vol_file)){
 		std::cout << "GridVolume error: Could not load volume file " << vol_file << std::endl;
+		std::exit(1);
 	}
 }
 BBox GridVolume::bound() const {
