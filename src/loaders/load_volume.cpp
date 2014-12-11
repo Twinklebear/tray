@@ -29,7 +29,7 @@ Volume* load_volume(tinyxml2::XMLElement *elem, VolumeCache &cache, const std::s
 	if (vol){
 		return vol;
 	}
-	Colorf sig_a{1}, sig_s{1}, emit{1};
+	Colorf sig_a, sig_s, emit;
 	float phase_asym;
 	read_color(elem->FirstChildElement("absorption"), sig_a);
 	read_color(elem->FirstChildElement("scattering"), sig_s);
