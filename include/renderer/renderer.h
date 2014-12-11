@@ -19,7 +19,7 @@ class Renderer {
 	std::unique_ptr<VolumeIntegrator> volume_integrator;
 
 public:
-	Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator);
+	Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator, std::unique_ptr<VolumeIntegrator> volume_integrator);
 	/*
 	 * Have the renderer and its integrators perform any needed pre-processing of the scene
 	 */

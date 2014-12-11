@@ -29,6 +29,7 @@
 #include "loaders/load_scene.h"
 #include "loaders/load_texture.h"
 #include "loaders/load_renderer.h"
+#include "loaders/load_volume.h"
 #include "scene.h"
 
 /*
@@ -89,12 +90,12 @@ Scene load_scene(const std::string &file){
 	if (cfg){
 		filter = load_filter(cfg);
 		sampler = load_sampler(cfg, w, h);
-		renderer = std::make_unique<Renderer>(load_surface_integrator(cfg));
+		renderer = std::make_unique<Renderer>(load_surface_integrator(cfg), load_volume_integrator(cfg));
 	}
 	else {
 		filter = std::make_unique<BoxFilter>(0.5, 0.5);
 		sampler = std::make_unique<StratifiedSampler>(0, w, 0, h, 1);
-		renderer = std::make_unique<Renderer>(std::make_unique<PathIntegrator>(3, 8));
+		renderer = std::make_unique<Renderer>(std::make_unique<PathIntegrator>(3, 8), nullptr);
 	}
 	RenderTarget render_target{static_cast<size_t>(w), static_cast<size_t>(h),
 		std::move(filter)};
@@ -166,6 +167,14 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, std::stack<Transform> &tr
 	using namespace tinyxml2;
 	auto &children = node.get_children();
 	for (XMLNode *c = elem->FirstChild(); c; c = c->NextSibling()){
+		if (c->Value() == std::string{"volume_node"}){
+			auto *elem = c->ToElement();
+			load_volume_node(elem, scene, transform_stack, file);
+			if (elem->FirstChildElement("object") || elem->FirstChildElement("volume_node")){
+				load_node(elem, node, transform_stack, scene, file);
+			}
+			transform_stack.pop();
+		}
 		if (c->Value() == std::string{"object"}){
 			XMLElement *e = c->ToElement();
 			if (!e->Attribute("name")){
@@ -226,7 +235,7 @@ void load_node(tinyxml2::XMLElement *elem, Node &node, std::stack<Transform> &tr
 				}
 			}
 			//Load any children the node may have
-			if (e->FirstChildElement("object")){
+			if (e->FirstChildElement("object") || e->FirstChildElement("volume_node")){
 				transform_stack.push(n.get_transform());
 				load_node(e, n, transform_stack, scene, file);
 				transform_stack.pop();

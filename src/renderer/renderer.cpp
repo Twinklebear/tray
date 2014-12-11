@@ -8,9 +8,8 @@
 #include "integrator/single_scattering_integrator.h"
 #include "renderer/renderer.h"
 
-Renderer::Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator)
-	: surface_integrator(std::move(surface_integrator)),
-	volume_integrator(std::make_unique<SingleScatteringIntegrator>(0.1f))
+Renderer::Renderer(std::unique_ptr<SurfaceIntegrator> surface_integrator, std::unique_ptr<VolumeIntegrator> volume_integrator)
+	: surface_integrator(std::move(surface_integrator)), volume_integrator(std::move(volume_integrator))
 {}
 void Renderer::preprocess(const Scene &scene){
 	surface_integrator->preprocess(scene);
@@ -22,7 +21,7 @@ Colorf Renderer::illumination(RayDifferential &ray, const Scene &scene, Sampler 
 		illum = surface_integrator->illumination(scene, *this, ray, dg, sampler, pool);
 	}
 	else if (scene.get_environment()){
-		//TODO: Compute light along the ray coming from lights
+		//TODO: Compute light along the ray coming from lights, eg for things like lightmaps that are wrapped around the scene
 		DifferentialGeometry dg;
 		dg.point = Point{ray.d.x, ray.d.y, ray.d.z};
 		illum = scene.get_environment()->sample(dg);

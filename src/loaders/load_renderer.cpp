@@ -5,6 +5,8 @@
 #include "integrator/whitted_integrator.h"
 #include "integrator/bidir_path_integrator.h"
 #include "integrator/photon_map_integrator.h"
+#include "integrator/emission_integrator.h"
+#include "integrator/single_scattering_integrator.h"
 #include "loaders/load_renderer.h"
 
 std::unique_ptr<SurfaceIntegrator> load_surface_integrator(tinyxml2::XMLElement *elem){
@@ -42,5 +44,22 @@ std::unique_ptr<SurfaceIntegrator> load_surface_integrator(tinyxml2::XMLElement 
 	}
 	std::cout << "Load renderer error: Unrecognized surface integrator " << type << std::endl;
 	return std::make_unique<PathIntegrator>(3, 8);
+}
+std::unique_ptr<VolumeIntegrator> load_volume_integrator(tinyxml2::XMLElement *elem){
+	tinyxml2::XMLElement *integrator = elem->FirstChildElement("vol_integrator");
+	if (!integrator){
+		return nullptr;
+	}
+	std::string type = integrator->Attribute("type");
+	float step = integrator->FloatAttribute("step");
+
+	if (type == "emission"){
+		return std::make_unique<EmissionIntegrator>(step);
+	}
+	if (type == "single_scatter"){
+		return std::make_unique<SingleScatteringIntegrator>(step);
+	}
+	std::cout << "Scene error: Unrecognized volume integrator " << type << std::endl;
+	return nullptr;
 }
 

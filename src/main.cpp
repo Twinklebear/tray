@@ -84,11 +84,6 @@ int main(int argc, char **argv){
 	Scene scene = load_scene(scene_file);
 	scene.get_root().flatten_children();
 
-	Volume *volume = scene.get_volume_cache().add("dbg_vol",
-		std::make_unique<GridVolume>(2, 0.005, 0.0005, -0.67, "../../scenes/volumes/density-0136.vol", 125));
-	scene.set_volume_root(std::make_unique<VolumeNode>(volume,
-		Transform::translate(Vector{0, 0, 10}) * Transform::rotate_x(-90) * Transform::scale(20, 20, 20), "dbg_volume_node"));
-
 	if (bw == -1){
 		bw = scene.get_render_target().get_width();
 	}
