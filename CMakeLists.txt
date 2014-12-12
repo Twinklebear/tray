@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(CS6620)
+project(TRAY)
 
 # Bump up warning levels appropriately for each compiler
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
@@ -15,15 +15,15 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	endif()
 endif()
 
-set(CS6620_INSTALL_DIR "${CS6620_SOURCE_DIR}/bin")
+set(TRAY_INSTALL_DIR "${TRAY_SOURCE_DIR}/bin")
 
-set(tinyxml2_DIR "${CS6620_SOURCE_DIR}/external/tinyxml2/")
+set(tinyxml2_DIR "${TRAY_SOURCE_DIR}/external/tinyxml2/")
 file(DOWNLOAD "https://raw.githubusercontent.com/leethomason/tinyxml2/master/tinyxml2.cpp"
 	"${tinyxml2_DIR}/tinyxml2.cpp")
 file(DOWNLOAD "https://raw.githubusercontent.com/leethomason/tinyxml2/master/tinyxml2.h"
 	"${tinyxml2_DIR}/tinyxml2.h")
 # Use stb_image for wider range of image format support
-set(stb_image_INCLUDE_DIR "${CS6620_SOURCE_DIR}/external/stb/")
+set(stb_image_INCLUDE_DIR "${TRAY_SOURCE_DIR}/external/stb/")
 file(DOWNLOAD "https://raw.githubusercontent.com/nothings/stb/master/stb_image.h"
 	"${stb_image_INCLUDE_DIR}/stb_image.h")
 include_directories(include ${tinyxml2_DIR} ${stb_image_INCLUDE_DIR})
@@ -32,7 +32,7 @@ include_directories(include ${tinyxml2_DIR} ${stb_image_INCLUDE_DIR})
 if (BUILD_PREVIEWER)
 	add_definitions(-DBUILD_PREVIEWER)
 	# Use our modified FindSDL2 modules for windows/etc
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CS6620_SOURCE_DIR}/cmake")
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${TRAY_SOURCE_DIR}/cmake")
 	find_package(SDL2 REQUIRED)
 	find_package(OpenGL REQUIRED)
 	include_directories(${SDL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} previewer)

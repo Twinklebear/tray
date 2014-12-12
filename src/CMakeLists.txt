@@ -12,18 +12,18 @@ add_subdirectory(integrator)
 add_subdirectory(renderer)
 add_subdirectory(monte_carlo)
 add_subdirectory(volume)
-set(RAY_LIBS loaders lights renderer integrator linalg film geometry volume
+set(TRAY_LIBS loaders lights renderer integrator linalg film geometry volume
 	samplers material accelerators filters textures monte_carlo)
 
-add_executable(ray_tracer main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp
+add_executable(tray main.cpp mesh_preprocess.cpp driver.cpp block_queue.cpp args.cpp scene.cpp
 	memory_pool.cpp)
 
 # Need to link libm on Unix
 if (NOT WIN32)
 	find_library(M_LIB m)
-	set(LIBS ${RAY_LIBS} ${M_LIB})
+	set(LIBS ${TRAY_LIBS} ${M_LIB})
 else ()
-	set(LIBS ${RAY_LIBS})
+	set(LIBS ${TRAY_LIBS})
 endif()
 
 # If we're buidling the previewer we need SDL2 and OpenGL
@@ -31,6 +31,6 @@ if (BUILD_PREVIEWER)
 	set(LIBS ${LIBS} previewer ${SDL2_LIBRARY} ${OPENGL_LIBRARIES})
 endif()
 
-target_link_libraries(ray_tracer ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
-install(TARGETS ray_tracer DESTINATION ${CS6620_INSTALL_DIR})
+target_link_libraries(tray ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
+install(TARGETS tray DESTINATION ${TRAY_INSTALL_DIR})
 
