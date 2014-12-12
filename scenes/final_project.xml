@@ -62,7 +62,7 @@
 			<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
 				<translate z="0.75"/>
 				<light type="area" name="cylinder_area_light">
-					<intensity r="1" g="0.772549" b="0.560784" value="70"/>
+					<intensity r="1" g="0.772549" b="0.560784" value="80"/>
 				</light>
 			</object>
 		</object>
