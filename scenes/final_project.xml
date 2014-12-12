@@ -28,11 +28,23 @@
 				<translate x="15"/>
 			</object>
 		</object>
+		<!-- Buddha should have his own material, some MERL BRDF? -->
+		<object type="obj" name="models/buddha.obj" material="rough_gold">
+			<scale value="17"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="-125" z="1"/>
+			<translate x="-9.5" y="-6" z="7.5"/>
+		</object>
 		<object type="obj" name="models/teapot_hres.obj" material="rough_gold">
 			<scale value="0.8"/>
 			<rotate angle="-35" z="1"/>
 			<translate y="6.5" z="-0.15"/>
 		</object>
+		<object type="sphere" name="checker_sphere" material="blue_acrylic">
+			<scale value="1.5"/>
+			<translate x="12" y="0" z="13"/>
+		</object>
+
 		<object type="disk" name="disk" material="wall" radius="3.5">
 			<rotate angle="180" y="1"/>
 			<translate z="23.8"/>
@@ -41,16 +53,22 @@
 			</light>
 		</object>
 		<!-- Light comes out of +Z if not rotated -->
-		<object type="disk_r0.75" name="disk_light" material="wall" radius="0.75">
-			<rotate angle="90" x="1"/>
-			<rotate angle="90" z="1"/>
-			<translate x="-12" y="-3" z="3.75"/>
-			<light type="area" name="cylinder_area_light">
-				<intensity r="1" g="0.2" b="1" value="35"/>
-			</light>
+		<object name="cylinder_spotlight">
+			<rotate angle="30" x="1"/>
+			<rotate angle="-90" z="1"/>
+			<translate x="-4" y="-6" z="1"/>
+			<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
+			</object>
+			<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
+				<translate z="0.75"/>
+				<light type="area" name="cylinder_area_light">
+					<intensity r="1" g="0.772549" b="0.560784" value="70"/>
+				</light>
+			</object>
 		</object>
+
 		<volume_node name="floor_fog_node">
-			<scale x="20" y="20" z="5"/>
+			<scale x="20" y="20" z="4.5"/>
 			<volume name="floor_fog" type="exponential">
 				<absorption value="0.03"/>
 				<scattering value="0.08"/>
@@ -82,11 +100,12 @@
 			<absorption spd="./spds/Au.k.spd"/>
 			<roughness value="0.003"/>
 		</material>
-		<material type="metal" name="aniso_silver">
-			<ior spd="./spds/Ag.eta.spd"/>
-			<absorption spd="./spds/Ag.k.spd"/>
-			<roughness value="0.005"/>
+		<material type="metal" name="rough_copper">
+			<ior spd="./spds/Cu.eta.spd"/>
+			<absorption spd="./spds/Cu.k.spd"/>
+			<roughness value="0.06"/>
 		</material>
+		<material type="merl" name="blue_acrylic" file="brdfs/blue-acrylic.binary"/>
 	</scene>
 
 	<camera>
@@ -99,7 +118,8 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="64"/>
+		<sampler type="adaptive" min="32" max="32"/>
+		<filter type="mitchell" w="1.5" h="1.5" b="0.33" c="0.33"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
 		<vol_integrator type="single_scatter" step="0.2"/>
 	</config>
