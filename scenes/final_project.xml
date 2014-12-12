@@ -40,6 +40,12 @@
 			<rotate angle="-35" z="1"/>
 			<translate y="6.5" z="-0.15"/>
 		</object>
+		<object type="obj" name="./models/dragon.obj" material="rough_copper">
+			<scale value="9.5"/>
+			<rotate angle="90" x="1"/>
+			<rotate angle="110" z="1"/>
+			<translate x="7" y="-7" z="2.65"/>
+		</object>
 		<object type="sphere" name="checker_sphere" material="blue_acrylic">
 			<scale value="1.5"/>
 			<translate x="12" y="0" z="13"/>
