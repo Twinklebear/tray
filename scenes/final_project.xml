@@ -28,8 +28,7 @@
 				<translate x="15"/>
 			</object>
 		</object>
-		<!-- Buddha should have his own material, some MERL BRDF? -->
-		<object type="obj" name="models/buddha.obj" material="rough_gold">
+		<object type="obj" name="models/buddha.obj" material="white_marble">
 			<scale value="17"/>
 			<rotate angle="90" x="1"/>
 			<rotate angle="-125" z="1"/>
@@ -40,7 +39,7 @@
 			<rotate angle="-35" z="1"/>
 			<translate y="6.5" z="-0.15"/>
 		</object>
-		<object type="obj" name="./models/dragon.obj" material="rough_copper">
+		<object type="obj" name="./models/dragon.obj" material="red_fabric">
 			<scale value="9.5"/>
 			<rotate angle="90" x="1"/>
 			<rotate angle="110" z="1"/>
@@ -60,7 +59,7 @@
 		</object>
 		<!-- Light comes out of +Z if not rotated -->
 		<object name="cylinder_spotlight">
-			<rotate angle="30" x="1"/>
+			<rotate angle="25" x="1"/>
 			<rotate angle="-90" z="1"/>
 			<translate x="-4" y="-6" z="1"/>
 			<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
@@ -104,14 +103,16 @@
 		<material type="metal" name="rough_gold">
 			<ior spd="./spds/Au.eta.spd"/>
 			<absorption spd="./spds/Au.k.spd"/>
-			<roughness value="0.003"/>
+			<roughness value="0.0005"/>
 		</material>
 		<material type="metal" name="rough_copper">
 			<ior spd="./spds/Cu.eta.spd"/>
 			<absorption spd="./spds/Cu.k.spd"/>
 			<roughness value="0.06"/>
 		</material>
-		<material type="merl" name="blue_acrylic" file="brdfs/blue-acrylic.binary"/>
+		<material type="merl" name="blue_acrylic" file="./brdfs/blue-acrylic.binary"/>
+		<material type="merl" name="white_marble" file="./brdfs/white-marble.binary"/>
+		<material type="merl" name="red_fabric" file="./brdfs/red-fabric.binary"/>
 	</scene>
 
 	<camera>
@@ -126,7 +127,7 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="32" max="32"/>
+		<sampler type="adaptive" min="128" max="128"/>
 		<filter type="mitchell" w="1.5" h="1.5" b="0.33" c="0.33"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
 		<vol_integrator type="single_scatter" step="0.2"/>
