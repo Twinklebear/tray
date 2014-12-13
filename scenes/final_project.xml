@@ -121,6 +121,8 @@
 		<fov value="30"/>
 		<width value="800"/>
 		<height value="600"/>
+		<focaldist value="64"/>
+		<dof value="0.45"/>
 	</camera>
 
 	<config>
