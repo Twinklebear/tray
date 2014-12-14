@@ -88,20 +88,16 @@ Colorf VolumeNode::optical_thickness(const Ray &ray, float step, float offset) c
 	return tau;
 }
 float VolumeNode::phase(const Point &p, const Vector &w_i, const Vector &w_o) const {
-	//Is phase multiplicative or additive? Does it even make sense to combine?
+	//TODO: Is phase multiplicative or additive? Does it even make sense to combine?
+	//how to combine it?
 	float phase_val = 0;
 	if (volume){
 		phase_val += volume->phase(inv_transform(p), inv_transform(w_i), inv_transform(w_o));
 	}
-	//TODO: How to properly combine the phase values of overlapping volumes?
-	return phase_val;
-	/*
 	for (const auto &c : children){
-		//Definitely wrong :)
 		phase_val += c->phase(p, w_i, w_i);
 	}
 	return phase_val;
-	*/
 }
 const Volume* VolumeNode::get_volume() const {
 	return volume;

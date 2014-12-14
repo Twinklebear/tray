@@ -32,7 +32,10 @@ Colorf VaryingDensityVolume::optical_thickness(const Ray &ray, float step, float
 	}
 	return tau * step;
 }
-float VaryingDensityVolume::phase(const Point&, const Vector &w_i, const Vector &w_o) const {
+float VaryingDensityVolume::phase(const Point &p, const Vector &w_i, const Vector &w_o) const {
+	if (density(p) == 0){
+		return 0;
+	}
 	return phase_henyey_greenstein(w_i, w_o, phase_asymmetry);
 }
 
