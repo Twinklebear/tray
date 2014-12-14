@@ -167,7 +167,7 @@
 			<roughness value="0.06"/>
 		</material>
 		<material type="merl" name="blue_acrylic" file="./brdfs/blue-acrylic.binary"/>
-		<material type="merl" name="white_marble" file="./brdfs/white-marble.binary"/>
+		<material type="merl" name="white_marble" file="./brdfs/pearl-paint.binary"/>
 		<material type="merl" name="red_fabric" file="./brdfs/red-fabric.binary"/>
 	</scene>
 
