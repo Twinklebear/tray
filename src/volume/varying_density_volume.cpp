@@ -27,7 +27,6 @@ Colorf VaryingDensityVolume::optical_thickness(const Ray &ray, float step, float
 		return 0;
 	}
 	Colorf tau;
-	t[0] += offset * step;
 	for (float i = t[0] + offset * step; i < t[1]; i += step){
 		tau += attenuation(r(i), -r.d);
 	}
