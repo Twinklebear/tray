@@ -19,7 +19,21 @@ bool VolumeNode::intersect(const Ray &ray, std::array<float, 2> &t) const {
 	//Note that children are in world space since we apply the transform
 	//stack as we load, so use the world space ray here
 	for (const auto &c : children){
-		hit = c->intersect(ray, t) || hit;
+		std::array<float, 2> c_t;
+		bool c_hit = c->intersect(ray, c_t);
+		if (c_hit && !hit){
+			hit = c_hit;
+			t = c_t;
+		}
+		//Expand the range to cover both of the volumes we've hit
+		else if (c_hit && hit){
+			if (c_t[0] < t[0]){
+				t[0] = c_t[0];
+			}
+			if (c_t[1] > t[1]){
+				t[1] = c_t[1];
+			}
+		}
 	}
 	return hit;
 }
