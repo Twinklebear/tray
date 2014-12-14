@@ -51,7 +51,7 @@ static std::unique_ptr<Material> load_glass(tinyxml2::XMLElement *elem, TextureC
  * Load the Mix material properties and return the material
  * elem should be root of the material being loaded
  */
-static std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mcache);
+static std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mcache, TextureCache &tcache, const std::string &file);
 
 void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
@@ -88,7 +88,7 @@ void load_materials(tinyxml2::XMLElement *elem, MaterialCache &cache, TextureCac
 				material = load_glass(m, tcache, file);
 			}
 			else if (type == "mix"){
-				material = load_mix(m, cache);
+				material = load_mix(m, cache, tcache, file);
 			}
 			if (material != nullptr){
 				cache.add(name, std::move(material));
@@ -281,10 +281,11 @@ std::unique_ptr<Material> load_glass(tinyxml2::XMLElement *elem, TextureCache &t
 	}
 	return std::make_unique<GlassMaterial>(refl, trans, ior);
 }
-std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mcache){
+std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mcache, TextureCache &tcache, const std::string &file){
 	using namespace tinyxml2;
-	Colorf scale{1};
+	Texture *scale = nullptr;
 	const Material *mat_a = nullptr, *mat_b = nullptr;
+	std::string name = elem->Attribute("name");
 	XMLElement *e = elem->FirstChildElement("material");
 	if (e){
 		mat_a = mcache.get(e->Attribute("name"));
@@ -295,11 +296,15 @@ std::unique_ptr<Material> load_mix(tinyxml2::XMLElement *elem, MaterialCache &mc
 	}
 	e = elem->FirstChildElement("scale");
 	if (e){
-		read_color(e, scale);
+		scale = load_texture(e, name, tcache, file);
 	}
 	if (mat_a == nullptr || mat_b == nullptr){
 		std::cout << "Scene error: mix materials require two material attributes which must be materials "
 			<< "declared prior to the mix material" << std::endl;
+		std::exit(1);
+	}
+	if (scale == nullptr){
+		std::cout << "Scene error: mix materials require a scale color or texture" << std::endl;
 		std::exit(1);
 	}
 	return std::make_unique<MixMaterial>(mat_a, mat_b, scale);

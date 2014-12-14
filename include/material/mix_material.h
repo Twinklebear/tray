@@ -1,6 +1,7 @@
 #ifndef MIX_MATERIAL_H
 #define MIX_MATERIAL_H
 
+#include "textures/texture.h"
 #include "material/material.h"
 
 /*
@@ -9,14 +10,14 @@
  */
 class MixMaterial : public Material {
 	const Material *mat_a, *mat_b;
-	Colorf scale;
+	const Texture *scale;
 
 public:
 	/*
 	 * Specify the two materials to be mixed and the scale level for material a,
 	 * material b is scaled by (1 - scale)
 	 */
-	MixMaterial(const Material *mat_a, const Material *mat_b, const Colorf &scale);
+	MixMaterial(const Material *mat_a, const Material *mat_b, const Texture *scale);
 	/*
 	 * Get the BSDF to compute the shading for the material at this
 	 * piece of geometry. Allocation of the BxDFs and BSDF will be done in the
