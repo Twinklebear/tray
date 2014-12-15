@@ -125,10 +125,10 @@
 			</volume>
 		</volume_node>
 		<volume_node name="teapot_steam_node">
-			<scale value="12"/>
+			<scale x="9.5" y="12" z="12"/>
 			<rotate angle="-90" x="1"/>
 			<rotate angle="180" z="1"/>
-			<translate x="14.75" y="-0.5" z="15.65"/>
+			<translate x="13.9" y="-0.8" z="15.55"/>
 			<volume name="teapot_steam" type="vol" file="volumes/teapot_steam.vol">
 				<absorption value="0.06"/>
 				<scattering value="0.008"/>
