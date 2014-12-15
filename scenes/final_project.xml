@@ -57,20 +57,7 @@
 		<object name="spotlight_ring">
 			<translate x="-8.75" y="-6" z="0.5"/>
 			<object name="cylinder_spotlight">
-				<rotate angle="20" x="1"/>
-				<rotate angle="-90" z="1"/>
-				<translate x="6"/>
-				<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
-				</object>
-				<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
-					<translate z="0.75"/>
-					<light type="area" name="cylinder_area_light">
-						<intensity r="1" g="0.772549" b="0.560784" value="35"/>
-					</light>
-				</object>
-			</object>
-			<object name="cylinder_spotlight">
-				<rotate angle="20" x="1"/>
+				<rotate angle="15" x="1"/>
 				<rotate angle="-120" z="1"/>
 				<translate x="4.75" y="-4.75"/>
 				<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
@@ -78,12 +65,12 @@
 				<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
 					<translate z="0.75"/>
 					<light type="area" name="cylinder_area_light1">
-						<intensity r="1" g="0.772549" b="0.560784" value="35"/>
+						<intensity r="1" g="0.34509" b="0.21176" value="35"/>
 					</light>
 				</object>
 			</object>
 			<object name="cylinder_spotlight">
-				<rotate angle="20" x="1"/>
+				<rotate angle="15" x="1"/>
 				<rotate angle="-150" z="1"/>
 				<translate x="1.35" y="-6.75"/>
 				<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
@@ -91,20 +78,33 @@
 				<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
 					<translate z="0.75"/>
 					<light type="area" name="cylinder_area_light2">
-						<intensity r="1" g="0.772549" b="0.560784" value="35"/>
+						<intensity r="0.470588" g="0.207843" b="0.909803" value="35"/>
 					</light>
 				</object>
 			</object>
 			<object name="cylinder_spotlight">
-				<rotate angle="20" x="1"/>
+				<rotate angle="15" x="1"/>
+				<rotate angle="-90" z="1"/>
+				<translate x="6"/>
+				<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
+				</object>
+				<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
+					<translate z="0.75"/>
+					<light type="area" name="cylinder_area_light3">
+						<intensity r="0.909803" g="0.207843" b="0.43529" value="35"/>
+					</light>
+				</object>
+			</object>
+			<object name="cylinder_spotlight">
+				<rotate angle="15" x="1"/>
 				<rotate angle="-60" z="1"/>
 				<translate x="4.75" y="5.25"/>
 				<object type="cylinder" name="cylinder" material="rough_copper" height="1.25" radius="0.75">
 				</object>
 				<object type="disk_cyl" name="cylinder_disk_light" material="wall" radius="0.74">
 					<translate z="0.75"/>
-					<light type="area" name="cylinder_area_light3">
-						<intensity r="1" g="0.772549" b="0.560784" value="35"/>
+					<light type="area" name="cylinder_area_light4">
+						<intensity r="0.90588" g="0.27843" b="1" value="35"/>
 					</light>
 				</object>
 			</object>
@@ -166,8 +166,7 @@
 			<absorption spd="./spds/Cu.k.spd"/>
 			<roughness x="0.01" y="0.003"/>
 		</material>
-		<material type="merl" name="blue_acrylic" file="./brdfs/blue-acrylic.binary"/>
-		<material type="merl" name="white_marble" file="./brdfs/pearl-paint.binary"/>
+		<material type="merl" name="white_marble" file="./brdfs/two-layer-silver.binary"/>
 		<material type="merl" name="red_fabric" file="./brdfs/red-fabric.binary"/>
 		<material type="mix" name="checker_floor">
 			<material name="aniso_copper"/>
