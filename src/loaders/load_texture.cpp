@@ -25,7 +25,7 @@ Texture* load_texture(tinyxml2::XMLElement *elem, const std::string &mat_name,
 	read_color(elem, color);
 	std::string name, gen_name, tex_map;
 	if (elem->Value() == "environment"s){
-		tex_map = "cem_env_map";
+		tex_map = "sphere";
 	}
 
 	if (elem->Attribute("texture") && color == Colorf{1, 1, 1}){
