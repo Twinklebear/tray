@@ -151,15 +151,6 @@
 			<diffuse r="0.162928" g="0.408903" b="0.0833759"/>
 			<roughness value="1"/>
 		</material>
-		<material type="mix" name="checker_floor">
-			<material name="wall"/>
-			<material name="wallRed"/>
-			<scale texture="checkerboard">
-				<color1 value="1"/>
-				<color2 value="0"/>
-				<scale x="0.2" y="0.2"/>
-			</scale>
-		</material>
 		<material type="metal" name="rough_gold">
 			<ior spd="./spds/Au.eta.spd"/>
 			<absorption spd="./spds/Au.k.spd"/>
@@ -170,9 +161,23 @@
 			<absorption spd="./spds/Cu.k.spd"/>
 			<roughness value="0.06"/>
 		</material>
+		<material type="metal" name="aniso_copper">
+			<ior spd="./spds/Cu.eta.spd"/>
+			<absorption spd="./spds/Cu.k.spd"/>
+			<roughness x="0.01" y="0.003"/>
+		</material>
 		<material type="merl" name="blue_acrylic" file="./brdfs/blue-acrylic.binary"/>
 		<material type="merl" name="white_marble" file="./brdfs/pearl-paint.binary"/>
 		<material type="merl" name="red_fabric" file="./brdfs/red-fabric.binary"/>
+		<material type="mix" name="checker_floor">
+			<material name="aniso_copper"/>
+			<material name="wall"/>
+			<scale texture="checkerboard">
+				<color1 value="1"/>
+				<color2 value="0"/>
+				<scale x="0.2" y="0.2"/>
+			</scale>
+		</material>
 	</scene>
 
 	<camera>
@@ -180,8 +185,8 @@
 		<target x="0" y="0" z="12"/>
 		<up x="0" y="0" z="1"/>
 		<fov value="30"/>
-		<width value="800"/>
-		<height value="600"/>
+		<width value="1280"/>
+		<height value="960"/>
 		<focaldist value="64"/>
 		<dof value="0.45"/>
 	</camera>
