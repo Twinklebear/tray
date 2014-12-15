@@ -28,20 +28,20 @@ Planes
 The built in plane is defined as a plane centered at the origin with extent [-1, -1, 0] to [1, 1, 0] and a normal facing [0, 0, 1] specified by setting the geometry type to plane. The same transformations can be applied as any other geometry. Below is an example of using child geometry to create a red/blue Cornell box built out of the built in plane geometry.
 ```XML
 <object name="box">
-	<translate x="0" y="0" z="12"/>
+	<translate y="12"/>
 	<object type="plane" name="WallBottom" material="wall">
 		<scale value="32"/>
-		<translate z="-12"/>
+		<translate y="-12"/>
 	</object>
 	<object type="plane" name="WallTop" material="wall">
 		<scale value="32"/>
 		<rotate angle="180" x="1"/>
-		<translate z="12"/>
+		<translate y="12"/>
 	</object>
 	<object type="plane" name="WallBack" material="wall">
 		<scale value="32"/>
 		<rotate angle="90" x="1"/>
-		<translate y="20"/>
+		<translate z="20"/>
 	</object>
 	<object type="plane" name="WallLeft" material="wallRed">
 		<scale value="32"/>
