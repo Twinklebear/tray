@@ -42,8 +42,8 @@
 		<object type="obj" name="./models/dragon.obj" material="red_fabric">
 			<scale value="9.5"/>
 			<rotate angle="90" x="1"/>
-			<rotate angle="110" z="1"/>
-			<translate x="7" y="-7" z="2.65"/>
+			<rotate angle="125" z="1"/>
+			<translate x="10" y="-6" z="2.65"/>
 		</object>
 
 		<object type="disk" name="disk" material="wall" radius="3.5">
@@ -191,11 +191,10 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="64" max="64"/>
+		<sampler type="adaptive" min="512" max="2048"/>
 		<filter type="mitchell" w="1.5" h="1.5" b="0.33" c="0.33"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
-		<!-- Increase step resolution when running final render -->
-		<vol_integrator type="single_scatter" step="0.2"/>
+		<vol_integrator type="single_scatter" step="0.1"/>
 	</config>
 </xml>
 
