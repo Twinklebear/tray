@@ -8,7 +8,7 @@
 /*
  * Defines a volume where the density values are stored in some
  * 3D grid. Currently only gridvolume format encoding 1 from Mitsuba is supported
- * See pg 118 of the Mitsuba doc for the file format:
+ * See the grid-based volume data source section of the Mitsuba doc for the file format:
  * http://www.mitsuba-renderer.org/releases/current/documentation.pdf
  *
  * Wenzel Jakob's fluid simulator is quick to get running and outputs
