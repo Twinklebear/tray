@@ -1,3 +1,4 @@
+#include <chrono>
 #include <atomic>
 #include <iostream>
 #include <vector>
@@ -25,7 +26,7 @@ static uint32_t morton2(uint32_t x, uint32_t y){
 }
 
 BlockQueue::BlockQueue(const Sampler &sampler, int bwidth, int bheight)
-	: samplers(sampler.get_subsamplers(bwidth, bheight)), sampler_idx(0)
+	: samplers(sampler.get_subsamplers(bwidth, bheight)), sampler_idx(0), total_time(0)
 {
 	//Sort the samplers in Morton order
 	std::sort(samplers.begin(), samplers.end(),
@@ -40,10 +41,25 @@ Sampler* BlockQueue::get_block(){
 	if (s >= samplers.size()){
 		return nullptr;
 	}
+	//Only one thread will get the sampler with this number unless we're running
+	//really fast, so should be ok here
 	if (s % (samplers.size() / 10) == 0){
 		std::cout << "Starting work on block " << s << " of " << samplers.size()
 			<< " : ~" << 100.f * static_cast<float>(s) / samplers.size() << "% of pixels completed"
 			<< std::endl;
+		if (s == 0){
+			prev = std::chrono::high_resolution_clock::now();
+		}
+		else {
+			auto now = std::chrono::high_resolution_clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - prev);
+			auto avg_block = (total_time.count() + elapsed.count()) / s;
+			std::cout << "Average block time: " << avg_block << "ms"
+				<< "\nRender time so far: " << total_time.count() << "ms"
+				<< "\nEstimated remaining time: " << avg_block * (samplers.size() - s) << "ms\n";
+			total_time += elapsed;
+			prev = now;
+		}
 	}
 	return samplers[s].get();
 }

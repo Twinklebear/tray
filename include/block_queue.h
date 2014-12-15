@@ -1,6 +1,7 @@
 #ifndef BLOCK_QUEUE_H
 #define BLOCK_QUEUE_H
 
+#include <chrono>
 #include <memory>
 #include <atomic>
 #include "samplers/sampler.h"
@@ -13,6 +14,9 @@ class BlockQueue {
 	std::vector<std::unique_ptr<Sampler>> samplers;
 	//The index of the next sampler to be handed out
 	std::atomic_uint sampler_idx, loops;
+	//Total time and previous time we printed out timing info
+	std::chrono::milliseconds total_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> prev;
 
 public:
 	/*
