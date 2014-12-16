@@ -191,10 +191,10 @@
 	</camera>
 
 	<config>
-		<sampler type="adaptive" min="1024" max="8192"/>
+		<sampler type="adaptive" min="128" max="2048"/>
 		<filter type="mitchell" w="1.5" h="1.5" b="0.33" c="0.33"/>
 		<renderer type="path" min_depth="3" max_depth="8"/>
-		<vol_integrator type="single_scatter" step="0.1"/>
+		<vol_integrator type="single_scatter" step="0.2"/>
 	</config>
 </xml>
 
