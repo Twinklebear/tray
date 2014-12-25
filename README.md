@@ -1,6 +1,6 @@
 tray - A Toy Ray Tracer
 ===
-tray was initially written for the [ray tracing course at the University of Utah](http://www.cemyuksel.com/courses/utah/cs6620/fall2014/) taught by [Cem Yuksel](http://www.cemyuksel.com/) but has continued development as a side project. To follow tray from its humble beginnings you can browse my [projects page](http://www.willusher.io/courses/cs6620/) for the course. A lot of the design of the renderer and its modularity is based off of the techniques discussed in [Physically Based Rendering](http://pbrt.org/) so some details may feel quite familiar if you've worked through the book (and if you haven't, you should!).
+tray was initially written for the ray tracing course at the University of Utah but has continued development as a side project. To follow tray from its humble beginnings you can browse my [projects page](http://www.willusher.io/courses/cs6620/) for the course. A lot of the design of the renderer and its modularity is based off of the techniques discussed in [Physically Based Rendering](http://pbrt.org/) so some details may feel quite familiar if you've worked through the book (and if you haven't, you should!).
 
 Building
 ---
