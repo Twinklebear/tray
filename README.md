@@ -1,10 +1,10 @@
 tray - A Toy Ray Tracer
 ===
-tray was initially written for the ray tracing course at the University of Utah but has continued development as a side project. To follow tray from its humble beginnings you can browse my [projects page](http://www.willusher.io/courses/cs6620/) for the course. A lot of the design of the renderer and its modularity is based off of the techniques discussed in [Physically Based Rendering](http://pbrt.org/) so some details may feel quite familiar if you've worked through the book (and if you haven't, you should!).
+tray is a toy physically based ray tracer built off of the techniques discussed in [Physically Based Rendering](http://pbrt.org/). It currently has support for path tracing, bidirectional path tracing, photon mapping and can describe materials with physically based microfacet models and measured data although support for more features is planned.
 
 Building
 ---
-A compliant C++14 compiler is required, or at least one that implements just the C++11/14 features I use (I don't have a list of required features though). GCC 4.9.x+ or Clang 3.4+ should definitely work, I haven't yet tested on the VS2015 CTP but I'll update this note when I do.
+A compliant C++14 compiler is required, or at least one that implements just the C++11/14 features I use (I don't have a list of required features though). GCC 4.9+ or Clang 3.4+ should definitely work, I haven't yet tested on the VS2015 CTP but I'll update this note when I do.
 
 The project should build easily with CMake and if you aren't building the live previewer will download the minimal dependencies it requires. I also *strongly* recommend compiling in release mode to avoid the ray tracer being incredibly slow.
 
@@ -13,11 +13,12 @@ The project should build easily with CMake and if you aren't building the live p
 The live previewer lets you optionally open a window and see the render update live as the image is computed. This is useful if you're trying to get some objects positioned correctly or just don't want to have to open a separate image viewer. To build the live previewer you'll need [SDL2](http://libsdl.org/) and when running CMake should pass `-DBUILD_PREVIEWER=1` to build it.
 
 ### Building With Trilinear Texture Filtering
+
 tray defaults to using elliptically weighted averaging for high quality texture filtering results but if you want to trade the quality of the texture filtering for speed you can tell tray to use trilinear texture filtering instead. This is done by passing `-DTEX_TRILINEAR=1` when building the project. This was done as a compile flag to try and keep extraneous checks and work out of the texture filtering code as it's called a lot when rendering.
 
 Dependencies
 ---
-- [SDL2](http://libsdl.org/)
+- [SDL2](http://libsdl.org/), only required if building the live previewer
 - [TinyXML-2](https://github.com/leethomason/tinyxml2), downloaded by CMake
 - [stb_image](https://github.com/nothings/stb), downloaded by CMake
 - [glLoadGen](https://bitbucket.org/alfonse/glloadgen/wiki/Home), GL3.3 files included
@@ -55,3 +56,4 @@ Scene files are in XML and should have the following structure:
 </xml>
 ```
 Some example scenes can be found under `scenes` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `Objects.md` discusses the object types supported by tray and their usage.
+
