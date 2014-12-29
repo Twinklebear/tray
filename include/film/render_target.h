@@ -45,10 +45,6 @@ public:
 	 * Write a color value to the image at pixel(x, y)
 	 */
 	void write_pixel(float x, float y, const Colorf &c);
-	/*
-	 * Write a float value to the float buffer at pixel(x, y)
-	 */
-	void write_float(size_t x, size_t y, float d);
 	//Save the image or depth buffer to the desired file
 	bool save_image(const std::string &file) const;
 	size_t get_width() const;
