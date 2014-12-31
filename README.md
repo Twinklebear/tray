@@ -57,3 +57,9 @@ Scene files are in XML and should have the following structure:
 ```
 Some example scenes can be found under `scenes` and detailed documentation about the supported objects, materials and so on can be found under `doc` where files are titled by the section they cover, eg. `Objects.md` discusses the object types supported by tray and their usage.
 
+Sample Render
+---
+Below is a sample render of the classic Cornell box scene rendered with tray's path tracer integrator using up to 128/2048 adaptive sampling for each pixel.
+
+![Cornell Box](http://i.imgur.com/zPpNVDs.png)
+
