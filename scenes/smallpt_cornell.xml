@@ -58,8 +58,8 @@
 			<roughness value="1"/>
 		</material>
 		<material type="specular_metal" name="metal_mat">
-			<ior spd="./spds/Ag.eta.spd"/>
-			<absorption spd="./spds/Ag.k.spd"/>
+			<ior r="0.155265" g="0.116723" b="0.138381"/>
+			<absorption r="4.82835" g="3.12225" b="2.14696"/>
 			<roughness value="0.001"/>
 		</material>
 		<material type="glass" name="glass_mat">
