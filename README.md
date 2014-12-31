@@ -59,7 +59,7 @@ Some example scenes can be found under `scenes` and detailed documentation about
 
 Sample Render
 ---
-Below is a sample render of the classic Cornell box scene rendered with tray's path tracer integrator using up to 128/2048 adaptive sampling for each pixel.
+Below is a sample render of the classic Cornell box scene rendered with tray's path tracer integrator using 128/2048 adaptive sampling for each pixel.
 
 ![Cornell Box](http://i.imgur.com/zPpNVDs.png)
 
