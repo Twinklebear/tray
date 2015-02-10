@@ -43,7 +43,7 @@ bool render_with_preview(Driver &driver){
 #endif
 
 	const RenderTarget &target = driver.get_scene().get_render_target();
-	SDL_Window *win = SDL_CreateWindow("CS6620", SDL_WINDOWPOS_CENTERED,
+	SDL_Window *win = SDL_CreateWindow("tray render", SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED, target.get_width(), target.get_height(),
 		SDL_WINDOW_OPENGL);
 	SDL_GLContext context = SDL_GL_CreateContext(win);
