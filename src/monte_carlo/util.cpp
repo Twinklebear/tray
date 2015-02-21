@@ -49,12 +49,7 @@ std::array<float, 2> concentric_sample_disk(const std::array<float, 2> &u){
 		}
 		else {
 			radius = -s[1];
-			if (s[1] != 0){
-				theta = 6 - s[0] / s[1];
-			}
-			else {
-				theta = 0;
-			}
+			theta = 6 - s[0] / s[1];
 		}
 	}
 	theta *= PI / 4.f;
