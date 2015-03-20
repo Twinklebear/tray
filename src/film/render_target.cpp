@@ -186,7 +186,6 @@ bool RenderTarget::save_bmp(const std::string &file, const uint8_t *data) const 
 	}
 	// Write each row follwed by any necessary padding
 	size_t padding = (w * 3) % 4;
-	std::cout << "padding = " << padding << "\n";
 	for (size_t r = 0; r < h; ++r){
 		if (fwrite(data + 3 * w * r, 1, 3 * w, fp) != 3 * w){
 			fclose(fp);
