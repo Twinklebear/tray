@@ -16,6 +16,7 @@ scenes/volumes
 *.pgm
 *.bmp
 *.png
+tags
 
 # Ignored ycm compiled python file
 *.pyc

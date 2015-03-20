@@ -54,7 +54,6 @@ public:
 	 * stored in img
 	 */
 	void get_colorbuf(std::vector<Color24> &img) const;
-	void get_colorbuf(std::vector<Color32> &img) const;
 
 private:
 	/*

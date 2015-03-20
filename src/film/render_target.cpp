@@ -39,7 +39,7 @@ struct BMPHeader {
 	const uint32_t header_size = 40;
 	const std::array<int32_t, 2> dims;
 	const uint16_t color_planes = 1;
-	const uint16_t bpp = 32;
+	const uint16_t bpp = 24;
 	const uint32_t compression = 0;
 	const uint32_t img_size;
 	const int32_t res[2] = {2835, 2835};
@@ -112,12 +112,12 @@ bool RenderTarget::save_image(const std::string &file) const {
 		return save_ppm(file, &img[0].r);
 	}
 	if (file_ext == "bmp"){
-		std::vector<Color32> img(width * height);
+		std::vector<Color24> img(width * height);
 		get_colorbuf(img);
 		//Do y-flip for BMP since BMP starts at the bottom-left
 		for (size_t y = 0; y < height / 2; ++y){
-			Color32 *a = &img[y * width];
-			Color32 *b = &img[(height - y - 1) * width];
+			Color24 *a = &img[y * width];
+			Color24 *b = &img[(height - y - 1) * width];
 			for (size_t x = 0; x < width; ++x){
 				std::swap(a[x], b[x]);
 			}
@@ -138,24 +138,6 @@ size_t RenderTarget::get_height() const {
 	return height;
 }
 void RenderTarget::get_colorbuf(std::vector<Color24> &img) const { 
-	//Compute the correct image from the saved pixel data
-	img.resize(width * height);
-	for (size_t y = 0; y < height; ++y){
-		for (size_t x = 0; x < width; ++x){
-			const Pixel &p = pixels[y * width + x];
-			float weight = p.weight.load(std::memory_order_consume);
-			if (weight != 0){
-				Colorf c{p.r.load(std::memory_order_consume),
-					p.g.load(std::memory_order_consume),
-					p.b.load(std::memory_order_consume)};
-				c /= weight;
-				c.normalize();
-				img[y * width + x] = c.to_sRGB();
-			}
-		}
-	}
-}
-void RenderTarget::get_colorbuf(std::vector<Color32> &img) const { 
 	//Compute the correct image from the saved pixel data
 	img.resize(width * height);
 	for (size_t y = 0; y < height; ++y){
@@ -202,9 +184,21 @@ bool RenderTarget::save_bmp(const std::string &file, const uint8_t *data) const 
 		fclose(fp);
 		return false;
 	}
-	if (fwrite(data, 1, 4 * w * h, fp) != 4 * w * h){
-		fclose(fp);
-		return false;
+	// Write each row follwed by any necessary padding
+	size_t padding = (w * 3) % 4;
+	std::cout << "padding = " << padding << "\n";
+	for (size_t r = 0; r < h; ++r){
+		if (fwrite(data + 3 * w * r, 1, 3 * w, fp) != 3 * w){
+			fclose(fp);
+			return false;
+		}
+		if (padding != 0){
+			if (fwrite(data, 1, padding, fp) != padding){
+				fclose(fp);
+				return false;
+			}
+		}
+
 	}
 	fclose(fp);
 	return true;
