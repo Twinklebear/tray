@@ -97,16 +97,12 @@ Transform Transform::rotate(const Vector &axis, float deg){
 Transform Transform::look_at(const Point &pos, const Point &center, const Vector &up){
 	Matrix4 m;
 	Vector dir = (center - pos).normalized();
-	Vector right = dir.cross(up).normalized();
-	Vector u = dir.cross(right).normalized();
+	Vector left = up.cross(dir).normalized();
+	Vector u = dir.cross(left).normalized();
 	for (int i = 0; i < 3; ++i){
-		//Col 0 maps x -> right
-		m.at(i, 0) = right[i];
-		//Col 1 maps y -> u
+		m.at(i, 0) = left[i];
 		m.at(i, 1) = u[i];
-		//Col 2 maps z -> dir
 		m.at(i, 2) = dir[i];
-		//Col 3 is the position
 		m.at(i, 3) = pos[i];
 	}
 	return Transform(m);

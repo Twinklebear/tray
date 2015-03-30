@@ -16,18 +16,22 @@ Camera::Camera(const Transform &cam_world, float fov, float dof, float focal_dis
 	//space the image size is normalized so that the shorter axis has
 	//a half length of 1, while the longer has a half length of aspect ratio
 	float aspect_ratio = static_cast<float>(xres) / yres;
-	float screen[2];
+	float screen[4];
 	if (aspect_ratio > 1){
-		screen[0] = aspect_ratio;
-		screen[1] = 1;
+		screen[0] = -aspect_ratio;
+		screen[1] = aspect_ratio;
+		screen[2] = -1;
+		screen[3] = 1;
 	}
 	else {
-		screen[0] = 1;
-		screen[1] = 1 / aspect_ratio;
+		screen[0] = -1;
+		screen[1] = 1;
+		screen[2] = -1 / aspect_ratio;
+		screen[3] = 1 / aspect_ratio;
 	}
 	Transform screen_raster = Transform::scale(xres, yres, 1)
-		* Transform::scale(1.f / (2 * screen[0]), 1.f / (2 * screen[1]), 1)
-		* Transform::translate(Vector{screen[0], screen[1], 0});
+		* Transform::scale(1.f / (screen[1] - screen[0]), 1.f / (screen[2] - screen[3]), 1)
+		* Transform::translate(Vector{-screen[0], -screen[3], 0});
 	Transform raster_screen = screen_raster.inverse();
 	Transform cam_screen = Transform::perspective(fov, 1, 1000);
 	raster_cam = cam_screen.inverse() * raster_screen;
