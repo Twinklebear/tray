@@ -261,7 +261,7 @@ uint32_t BVH::flatten_tree(const std::unique_ptr<BuildNode> &node, uint32_t &off
 	}
 	return node_offset;
 }
-bool BVH::fast_box_intersect(const BBox &bounds, Ray &r, const Vector &inv_dir, const std::array<int, 3> &neg_dir) const {
+bool BVH::fast_box_intersect(const BBox &bounds, const Ray &r, const Vector &inv_dir, const std::array<int, 3> &neg_dir) const {
 	//Check X & Y intersection
 	float tmin = (bounds[neg_dir[0]].x - r.o.x) * inv_dir.x;
 	float tmax = (bounds[1 - neg_dir[0]].x - r.o.x) * inv_dir.x;

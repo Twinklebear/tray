@@ -125,7 +125,7 @@ private:
 	 * A specialized fast bbox intersection test for the BVH traversal
 	 * Based on the optimized multiple box test from http://people.csail.mit.edu/amy/papers/box-jgt.pdf
 	 */
-	bool fast_box_intersect(const BBox &bounds, Ray &r, const Vector &inv_dir, const std::array<int, 3> &neg_dir) const;
+	bool fast_box_intersect(const BBox &bounds, const Ray &r, const Vector &inv_dir, const std::array<int, 3> &neg_dir) const;
 };
 
 #endif
