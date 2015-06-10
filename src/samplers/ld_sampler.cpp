@@ -10,7 +10,7 @@
 LDSampler::LDSampler(int x_start, int x_end, int y_start, int y_end, int sp, int seed)
 	: Sampler(x_start, x_end, y_start, y_end, seed), spp(round_up_pow2(sp))
 {
-	if (sp % 2 != 0){
+	if (sp != spp){
 		std::cout << "Warning: LDSampler requires power of 2 samples per pixel."
 			<< " Rounded spp up to " << spp << std::endl;
 	}
